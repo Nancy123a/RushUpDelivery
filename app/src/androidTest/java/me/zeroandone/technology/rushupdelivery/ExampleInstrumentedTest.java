@@ -1,4 +1,5 @@
-package rushup.technology.zeroandone.me.rushupdelivery;
+package me.zeroandone.technology.rushupdelivery;
+
 
 import android.content.Context;
 import android.support.test.InstrumentationRegistry;
@@ -11,7 +12,7 @@ import static junit.framework.Assert.assertEquals;
 import static org.junit.Assert.*;
 
 /**
- * Instrumented test, which will execute on an Android device.
+ * Instrumentation test, which will execute on an Android device.
  *
  * @see <a href="http://d.android.com/tools/testing">Testing documentation</a>
  */
