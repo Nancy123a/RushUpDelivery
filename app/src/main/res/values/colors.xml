@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <color name="colorPrimary">#811D2B</color>
+    ..0
+    <color name="colorPrimaryDark">#811D2B</color>
+    <color name="colorAccent">#FFFFFF</color>
+    <color name="violet">#3F1B3F</color>
+    <color name="dark_red">#811D2B</color>
+    <color name="normal_red">#D31F1D</color>
+    <color name="edit_text">#80D31F1D</color>
+    <color name="bottom_menu">#ececec</color>
+    <color name="semi_trans_gray">#99ececec</color>
+    <color name="trans_violet">#403F1B3F</color>
+    <color name="trans_white">#B3FFFFFF</color>
+    <color name="white">#FFFFFF</color>
+    <color name="hint">#59FFFFFF</color>
+    <color name="black">#000000</color>
+    <color name="transgray">#40808080</color>
+    <color name="grey">#bdbdbd</color>
+    <color name="orange">#eca466</color>
+    <color name="green">#64d3b3</color>
+    <color name="trans_hint">#F2939393</color>
+
+</resources>

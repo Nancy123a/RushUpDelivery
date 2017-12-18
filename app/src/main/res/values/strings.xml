@@ -1,0 +1,36 @@
+<resources>
+    <string name="app_name">RushUpDelivery</string>
+    <string name="RushUp">RushUp</string>
+    <string name="the_app_that">The app that</string>
+    <string name="always_delievers">Always Delivers</string>
+    <string name="phonenumber_email">Email / Phone number</string>
+    <string name="password">Password</string>
+    <string name="forget_password">Forget your login details? <u> Get help signing in.</u></string>
+    <string name="login">Login</string>
+    <string name="step1">Step One</string>
+    <string name="setup_your_profile">Setup your profile</string>
+    <string name="username">Username</string>
+    <string name="insertcode">Insert Code</string>
+    <string name="submit">Submit</string>
+    <string name="title_activity_inside_app">InsideApp</string>
+    <string name="score">Score</string>
+    <string name="balance">Balance</string>
+    <string name="history">History</string>
+    <string name="settings">Settings</string>
+    <string name="package_pickup">Package Pick Up</string>
+    <string name="package_dropoff">Package Drop off</string>
+    <string name="fragile_package">Fragile package, take good care</string>
+    <string name="insert_nbcode">Insert code nb</string>
+    <string name="accept_delivery">Accept Delivery</string>
+    <string name="decline_delivery">Decline</string>
+    <string name="dropoff_address">The Creative 9, Verdun \n Kia Motors bld., 6th floor</string>
+    <string name="pickup_address">Fattal, Jisr el Watti \n next to Soul el Ahad</string>
+    <string name="pickup_point">pick up \n point</string>
+    <string name="dropoff_point">delivery \n point</string>
+    <string name="date_time_price"> date \n time \n price</string>
+    <string name="pickup_delivery">pick up \n delivery</string>
+    <string name="dollars">$</string>
+    <string name="notification">Notification Sound</string>
+
+
+</resources>

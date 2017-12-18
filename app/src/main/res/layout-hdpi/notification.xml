@@ -1,0 +1,111 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent" android:layout_height="match_parent">
+
+    <RelativeLayout
+        android:id="@+id/ball"
+        android:layout_width="50dp"
+        android:layout_height="50dp"
+        android:elevation="@dimen/padding_10"
+        android:layout_centerHorizontal="true"
+        android:background="@drawable/gradient">
+
+    <TextView
+        android:id="@+id/time"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="3sec"
+        android:textSize="@dimen/text_size_12"
+        android:textColor="@color/white"
+        android:layout_centerInParent="true"/>
+
+    </RelativeLayout>
+
+    <RelativeLayout
+        android:layout_width="240dp"
+        android:layout_height="wrap_content"
+        android:layout_alignParentTop="true"
+        android:layout_centerHorizontal="true"
+        android:layout_marginTop="25dp"
+        android:background="@mipmap/bg3">
+
+        <ImageView
+            android:id="@+id/dropoff"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_centerHorizontal="true"
+            android:layout_marginTop="@dimen/padding_50"
+            android:src="@mipmap/dropoff" />
+
+        <TextView
+            android:id="@+id/dropoff_address"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_below="@+id/dropoff"
+            android:layout_centerHorizontal="true"
+            android:gravity="center"
+            android:text="@string/dropoff_address"
+            android:textColor="@color/orange"
+            android:textSize="@dimen/text_size_12" />
+
+        <ImageView
+            android:id="@+id/pickup"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_below="@+id/dropoff_address"
+            android:layout_centerHorizontal="true"
+            android:layout_marginTop="@dimen/padding_20"
+            android:src="@mipmap/pickup" />
+
+        <TextView
+            android:id="@+id/pickup_address"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_below="@+id/pickup"
+            android:layout_centerHorizontal="true"
+            android:gravity="center"
+            android:textColor="@color/green"
+            android:text="@string/pickup_address"
+            android:textSize="@dimen/text_size_12" />
+
+
+        <TextView
+            android:id="@+id/accept_delivery"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_below="@+id/pickup_address"
+            android:layout_centerHorizontal="true"
+            android:layout_marginTop="@dimen/padding_30"
+            android:background="@drawable/button"
+            android:paddingBottom="@dimen/padding_5"
+            android:paddingLeft="@dimen/padding_20"
+            android:paddingRight="@dimen/padding_20"
+            android:paddingTop="@dimen/padding_5"
+            android:textSize="@dimen/text_size_12"
+            android:text="@string/accept_delivery"
+            android:textColor="@color/colorAccent" />
+
+        <TextView
+            android:id="@+id/decline_delivery"
+            android:layout_width="125dp"
+            android:layout_height="wrap_content"
+            android:layout_alignLeft="@+id/accept_delivery"
+            android:layout_alignStart="@+id/accept_delivery"
+            android:layout_below="@+id/accept_delivery"
+            android:layout_marginTop="18dp"
+            android:background="@drawable/button"
+            android:gravity="center"
+            android:layout_marginBottom="@dimen/padding_40"
+            android:paddingBottom="@dimen/padding_5"
+            android:paddingLeft="@dimen/padding_20"
+            android:paddingRight="@dimen/padding_20"
+            android:paddingTop="@dimen/padding_5"
+            android:text="@string/decline_delivery"
+            android:textColor="@color/colorAccent"
+            android:textSize="@dimen/text_size_12" />
+
+        =
+
+
+    </RelativeLayout>
+</RelativeLayout>

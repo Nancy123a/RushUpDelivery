@@ -1,0 +1,5 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="user_pool_key">cognito-idp.eu-west-2.amazonaws.com/eu-west-2_9Rfg3SRNy</string>
+    <string name="google_maps_key">AIzaSyBBH4AqEm85dwL3VMWHaMM1slY2lI029ZE</string>
+</resources>

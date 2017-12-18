@@ -1,0 +1,62 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@mipmap/bg1">
+
+    <ImageView
+        android:id="@+id/logo"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_centerInParent="true"
+        android:src="@mipmap/logo" />
+
+    <TextView
+        android:id="@+id/rushup"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/logo"
+        android:layout_centerHorizontal="true"
+        android:elevation="@dimen/padding_10"
+        android:text="@string/RushUp"
+        android:textAllCaps="true"
+        android:textColor="@color/white"
+        android:textSize="@dimen/text_size_30" />
+
+    <TextView
+        android:id="@+id/theapp"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/rushup"
+        android:layout_centerHorizontal="true"
+        android:layout_marginTop="@dimen/padding_15"
+        android:text="@string/the_app_that"
+        android:textAllCaps="true"
+        android:textColor="@color/white"
+        android:textSize="@dimen/text_size_20" />
+
+    <TextView
+        android:id="@+id/theappdev"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/theapp"
+        android:layout_centerHorizontal="true"
+        android:elevation="@dimen/padding_10"
+        android:text="@string/always_delievers"
+        android:textAllCaps="true"
+        android:textColor="@color/white"
+        android:textSize="@dimen/text_size_20" />
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/RushUp"
+        android:padding="@dimen/padding_15"
+        android:textColor="@color/hint"
+        android:textAllCaps="true"
+        android:textSize="@dimen/text_size_10"
+        android:layout_alignParentRight="true"/>
+
+</RelativeLayout>
