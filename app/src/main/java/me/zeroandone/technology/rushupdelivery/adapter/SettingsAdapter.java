@@ -1,4 +1,4 @@
-package me.zeroandone.technology.rushup.adapter;
+package me.zeroandone.technology.rushupdelivery.adapter;
 
 
 import android.content.Context;
@@ -10,12 +10,10 @@ import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
 
-import com.amazonaws.mobileconnectors.cognitoidentityprovider.CognitoUserDetails;
-
 import java.util.List;
 
-import me.zeroandone.technology.rushup.R;
-import me.zeroandone.technology.rushup.objects.Settings;
+import me.zeroandone.technology.rushupdelivery.R;
+import me.zeroandone.technology.rushupdelivery.objects.Settings;
 
 public class SettingsAdapter  extends RecyclerView.Adapter<RecyclerView.ViewHolder>{
 

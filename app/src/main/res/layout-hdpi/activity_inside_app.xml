@@ -4,7 +4,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context="me.zeroandone.technology.rushup.InsideApp"
+    tools:context="me.zeroandone.technology.rushupdelivery.InsideApp"
     xmlns:slidingLayer="http://schemas.android.com/apk/res-auto">
 
     <RelativeLayout
@@ -168,7 +168,7 @@
                     android:layout_marginTop="@dimen/padding_15"
                     android:background="@android:color/black" />
 
-                <me.zeroandone.technology.rushup.widget.SettingsRecycleView
+                <me.zeroandone.technology.rushupdelivery.widget.SettingsRecycleView
                     android:id="@+id/settings_recycle_view"
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
@@ -217,7 +217,7 @@
                 android:layout_marginTop="@dimen/padding_10"
                 android:background="@android:color/black" />
 
-            <me.zeroandone.technology.rushup.widget.HistoryRecycleView
+            <me.zeroandone.technology.rushupdelivery.widget.HistoryRecycleView
                 android:id="@+id/historyRecycleView"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
@@ -266,7 +266,7 @@
                     android:layout_marginTop="@dimen/padding_10"
                     android:background="@android:color/black" />
 
-                <me.zeroandone.technology.rushup.widget.BalanceRecyclerView
+                <me.zeroandone.technology.rushupdelivery.widget.BalanceRecyclerView
                     android:id="@+id/balanceRecycleView"
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"

@@ -1,5 +1,4 @@
-package me.zeroandone.technology.rushup.widget;
-
+package me.zeroandone.technology.rushupdelivery.widget;
 
 import android.content.Context;
 import android.graphics.drawable.Drawable;
@@ -15,35 +14,36 @@ import android.util.AttributeSet;
 import java.util.ArrayList;
 import java.util.List;
 
-import me.zeroandone.technology.rushup.R;
-import me.zeroandone.technology.rushup.adapter.HistoryAdapter;
-import me.zeroandone.technology.rushup.objects.HistoryObject;
+import me.zeroandone.technology.rushupdelivery.R;
+import me.zeroandone.technology.rushupdelivery.adapter.BalanceAdapter;
+import me.zeroandone.technology.rushupdelivery.objects.BalanceObject;
 
-public class HistoryRecycleView extends RecyclerView {
+
+public class BalanceRecyclerView extends RecyclerView {
+
     Context context;
 
-    public HistoryRecycleView(Context context) {
+    public BalanceRecyclerView(Context context) {
         super(context);
         this.context=context;
     }
 
-    public HistoryRecycleView(Context context, @Nullable AttributeSet attrs) {
+    public BalanceRecyclerView(Context context, @Nullable AttributeSet attrs) {
         super(context, attrs);
         this.context=context;
     }
 
-    public HistoryRecycleView(Context context, @Nullable AttributeSet attrs, int defStyle) {
+    public BalanceRecyclerView(Context context, @Nullable AttributeSet attrs, int defStyle) {
         super(context, attrs, defStyle);
         this.context=context;
     }
 
-
-    public void setAdapter(HistoryRecycleView RV){
+    public void setAdapter(BalanceRecyclerView RV){
         if(RV!=null && context!=null) {
-            List<HistoryObject> Historylist=new ArrayList<>();
-            HistoryObject obj=new HistoryObject("Aley","29-11-2017","11:00:59 AM","15$","Bchamoun");
-            Historylist.add(obj);
-            HistoryAdapter menu_adapter = new HistoryAdapter(Historylist, context);
+            List<BalanceObject> Balancelist=new ArrayList<>();
+            BalanceObject obj=new BalanceObject("Aley","15$");
+            Balancelist.add(obj);
+            BalanceAdapter menu_adapter = new BalanceAdapter(Balancelist, context);
             LinearLayoutManager linearLayoutManager = new LinearLayoutManager(context, OrientationHelper.VERTICAL, false);
             RV.setLayoutManager(linearLayoutManager);
             RV.setItemAnimator(new DefaultItemAnimator());

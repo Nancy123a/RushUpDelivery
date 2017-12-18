@@ -1,11 +1,7 @@
-package me.zeroandone.technology.rushup;
+package me.zeroandone.technology.rushupdelivery;
 
 import android.os.Bundle;
-import android.support.design.widget.FloatingActionButton;
-import android.support.design.widget.Snackbar;
 import android.support.v7.app.AppCompatActivity;
-import android.support.v7.widget.RecyclerView;
-import android.support.v7.widget.Toolbar;
 import android.view.View;
 import android.widget.ImageView;
 import android.widget.RelativeLayout;
@@ -15,9 +11,9 @@ import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.OnMapReadyCallback;
 import com.google.android.gms.maps.SupportMapFragment;
 
-import me.zeroandone.technology.rushup.widget.BalanceRecyclerView;
-import me.zeroandone.technology.rushup.widget.HistoryRecycleView;
-import me.zeroandone.technology.rushup.widget.SettingsRecycleView;
+import me.zeroandone.technology.rushupdelivery.widget.BalanceRecyclerView;
+import me.zeroandone.technology.rushupdelivery.widget.HistoryRecycleView;
+import me.zeroandone.technology.rushupdelivery.widget.SettingsRecycleView;
 
 
 public class InsideApp extends AppCompatActivity implements OnMapReadyCallback,View.OnClickListener {

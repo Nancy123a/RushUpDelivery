@@ -1,4 +1,4 @@
-package me.zeroandone.technology.rushup.objects;
+package me.zeroandone.technology.rushupdelivery.objects;
 
 
 public class Settings {

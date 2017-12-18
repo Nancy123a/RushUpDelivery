@@ -1,4 +1,5 @@
-package me.zeroandone.technology.rushup.adapter;
+package me.zeroandone.technology.rushupdelivery.adapter;
+
 
 import android.content.Context;
 import android.support.v7.widget.RecyclerView;
@@ -9,24 +10,23 @@ import android.widget.TextView;
 
 import java.util.List;
 
-import me.zeroandone.technology.rushup.R;
-import me.zeroandone.technology.rushup.objects.HistoryObject;
+import me.zeroandone.technology.rushupdelivery.R;
+import me.zeroandone.technology.rushupdelivery.objects.BalanceObject;
 
-
-public class HistoryAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
-    List<HistoryObject> result;
+public class BalanceAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder>{
+    List<BalanceObject> result;
     Context context;
 
 
-    public HistoryAdapter(List<HistoryObject> result, Context context) {
+    public BalanceAdapter(List<BalanceObject> result, Context context) {
         this.result = result;
         this.context = context;
     }
 
     @Override
     public RecyclerView.ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
-        View itemView = LayoutInflater.from(parent.getContext()).inflate(R.layout.history_row, parent, false);
-        return new HistoryAdapter.ViewHolder(itemView);
+        View itemView = LayoutInflater.from(parent.getContext()).inflate(R.layout.balance_row, parent, false);
+        return new BalanceAdapter.ViewHolder(itemView);
     }
 
     @Override
@@ -41,12 +41,11 @@ public class HistoryAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder
 
     public class ViewHolder extends RecyclerView.ViewHolder {
         View View;
-        TextView pickup_point,delivery_point,otherifo;
+        TextView pickup_point,dollars;
         public ViewHolder(View view) {
             super(view);
             pickup_point=(TextView) view.findViewById(R.id.pickup_point);
-            delivery_point=(TextView) view.findViewById(R.id.delivery_point);
-            otherifo=(TextView) view.findViewById(R.id.otherinfo);
+            dollars=(TextView) view.findViewById(R.id.dollars);
             View = view;
         }
     }

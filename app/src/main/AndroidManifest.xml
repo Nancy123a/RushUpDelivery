@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
-    package="me.zeroandone.technology.rushup">
+    package="me.zeroandone.technology.rushupdelivery">
 
     <supports-screens
         android:anyDensity="true"
@@ -40,7 +40,7 @@
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
         <activity
-            android:name=".MainActivity"
+            android:name="me.zeroandone.technology.rushupdelivery.MainActivity"
             android:screenOrientation="portrait">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
@@ -53,7 +53,7 @@
             android:value="bbe2b28429ebfdebb5fc982841e8a7daaa6b5185" />
 
         <activity
-            android:name=".InsideApp"
+            android:name="me.zeroandone.technology.rushupdelivery.InsideApp"
             android:label="@string/title_activity_inside_app"
             android:screenOrientation="portrait"
             android:theme="@style/AppTheme" ></activity>

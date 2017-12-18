@@ -13,7 +13,7 @@
  * permissions and limitations under the License.
  */
 
-package me.zeroandone.technology.rushup.model;
+package me.zeroandone.technology.rushupdelivery.model;
 
 
 public class PushRequest {

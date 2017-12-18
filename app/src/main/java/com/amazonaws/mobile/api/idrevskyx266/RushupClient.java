@@ -16,10 +16,10 @@
 package com.amazonaws.mobile.api.idrevskyx266;
 
 
-import me.zeroandone.technology.rushup.model.ContactSyncRequest;
-import me.zeroandone.technology.rushup.model.ContactSyncResponse;
-import me.zeroandone.technology.rushup.model.PushRequest;
-import me.zeroandone.technology.rushup.model.TokenRequest;
+import me.zeroandone.technology.rushupdelivery.model.ContactSyncRequest;
+import me.zeroandone.technology.rushupdelivery.model.ContactSyncResponse;
+import me.zeroandone.technology.rushupdelivery.model.PushRequest;
+import me.zeroandone.technology.rushupdelivery.model.TokenRequest;
 
 @com.amazonaws.mobileconnectors.apigateway.annotation.Service(endpoint = "https://j9rgxxut6b.execute-api.eu-west-1.amazonaws.com/prod")
 public interface RushupClient {

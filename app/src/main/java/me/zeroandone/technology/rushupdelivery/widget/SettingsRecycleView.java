@@ -1,4 +1,4 @@
-package me.zeroandone.technology.rushup.widget;
+package me.zeroandone.technology.rushupdelivery.widget;
 
 
 import android.content.Context;
@@ -12,9 +12,8 @@ import android.util.AttributeSet;
 import java.util.ArrayList;
 import java.util.List;
 
-import me.zeroandone.technology.rushup.R;
-import me.zeroandone.technology.rushup.adapter.SettingsAdapter;
-import me.zeroandone.technology.rushup.objects.Settings;
+import me.zeroandone.technology.rushupdelivery.adapter.SettingsAdapter;
+import me.zeroandone.technology.rushupdelivery.objects.Settings;
 
 public class SettingsRecycleView extends RecyclerView{
     Context context;

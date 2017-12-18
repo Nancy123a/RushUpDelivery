@@ -1,14 +1,13 @@
-package me.zeroandone.technology.rushup;
+package me.zeroandone.technology.rushupdelivery;
 
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
-import android.view.View;
 import android.widget.TextView;
 
 import com.crashlytics.android.Crashlytics;
 import io.fabric.sdk.android.Fabric;
-import me.zeroandone.technology.rushup.utils.Utils;
+import me.zeroandone.technology.rushupdelivery.utils.Utils;
 
 public class MainActivity extends AppCompatActivity {
 

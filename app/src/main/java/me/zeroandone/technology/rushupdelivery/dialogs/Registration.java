@@ -1,4 +1,4 @@
-package me.zeroandone.technology.rushup.dialogs;
+package me.zeroandone.technology.rushupdelivery.dialogs;
 
 
 import android.content.pm.ActivityInfo;
@@ -9,7 +9,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
-import me.zeroandone.technology.rushup.R;
+import me.zeroandone.technology.rushupdelivery.R;
 
 public class Registration extends DialogFragment{
 

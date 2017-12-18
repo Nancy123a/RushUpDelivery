@@ -1,4 +1,4 @@
-package me.zeroandone.technology.rushup.utils;
+package me.zeroandone.technology.rushupdelivery.utils;
 
 
 import android.content.Context;
