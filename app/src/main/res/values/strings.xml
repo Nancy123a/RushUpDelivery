@@ -31,6 +31,16 @@
     <string name="pickup_delivery">pick up \n delivery</string>
     <string name="dollars">$</string>
     <string name="notification">Notification Sound</string>
-
-
+    <string name="username_error">Please Enter Username</string>
+    <string name="enter_correct_password">Enter Correct Password</string>
+    <string name="password_error">Please enter your password</string>
+    <string name="password_valid">Password dont satisfy the credentials (Requires number,special character,lower character and upper case)</string>
+    <string name="helpyou">We\'re here to help!</string>
+    <string name="email">Email</string>
+    <string name="insert_email">Insert your email. A link to change \n password will be sent.</string>
+    <string name="send_link">Send Link</string>
+    <string name="email_username_phone_error">Please enter your email or your phone number or your username</string>
+    <string name="new_password">New Password</string>
+    <string name="verification_code">Verification Code</string>
+    <string name="Next">Next</string>
 </resources>

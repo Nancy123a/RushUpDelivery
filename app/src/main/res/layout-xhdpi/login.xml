@@ -91,18 +91,7 @@
         android:layout_toRightOf="@+id/login"
         />
 
-    <TextView
-        android:id="@+id/forget_password"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_centerHorizontal="true"
-        android:paddingBottom="@dimen/padding_100"
-        android:layout_alignParentBottom="true"
-        android:background="@android:color/transparent"
-        android:text="@string/forget_password"
-        android:textColor="@color/white"
-        android:textSize="@dimen/text_size_10"
-        android:textStyle="bold" />
+
 
 
 </RelativeLayout>

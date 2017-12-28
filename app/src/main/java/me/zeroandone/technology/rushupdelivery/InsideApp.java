@@ -68,6 +68,13 @@ public class InsideApp extends AppCompatActivity implements OnMapReadyCallback,V
     }
 
     @Override
+    public void onBackPressed() {
+        //make some alert for the user
+        return;
+    }
+
+
+    @Override
     public void onClick(View v) {
         switch (v.getId()){
             case R.id.settings:
