@@ -1,35 +1,35 @@
 {
   "project_info": {
-    "project_number": "6488603275",
-    "firebase_url": "https://rushup-36ef1.firebaseio.com",
-    "project_id": "rushup-36ef1",
-    "storage_bucket": "rushup-36ef1.appspot.com"
+    "project_number": "725986029210",
+    "firebase_url": "https://rushupdelivery.firebaseio.com",
+    "project_id": "rushupdelivery",
+    "storage_bucket": "rushupdelivery.appspot.com"
   },
   "client": [
     {
       "client_info": {
-        "mobilesdk_app_id": "1:6488603275:android:df75d5c2f378d90f",
+        "mobilesdk_app_id": "1:725986029210:android:019ad10cfd3aeff8",
         "android_client_info": {
-          "package_name": "me.zeroandone.technology.rushup"
+          "package_name": "me.zeroandone.technology.rushupdelivery"
         }
       },
       "oauth_client": [
         {
-          "client_id": "6488603275-4sl9nqtnpihs6e2s678mt9g1v7k8bbt6.apps.googleusercontent.com",
+          "client_id": "725986029210-04872fcp5f2iilbt0i4ggnkjgjcabmn6.apps.googleusercontent.com",
           "client_type": 1,
           "android_info": {
-            "package_name": "me.zeroandone.technology.rushup",
+            "package_name": "me.zeroandone.technology.rushupdelivery",
             "certificate_hash": "95d69aa8e09805bc2eb95f5cf2bc7358543c1aa7"
           }
         },
         {
-          "client_id": "6488603275-vbipema563ljm0sfjitl87hg3ii63u1k.apps.googleusercontent.com",
+          "client_id": "725986029210-a6mumdn3fgubm6uca5hq78kif1f29epd.apps.googleusercontent.com",
           "client_type": 3
         }
       ],
       "api_key": [
         {
-          "current_key": "AIzaSyCXlp-imsAseiSInFksnF02kBIjUgTviHQ"
+          "current_key": "AIzaSyDH9nR_VhF0ORHZXeFXmYYvNoemGz6-lbQ"
         }
       ],
       "services": {
@@ -40,41 +40,10 @@
           "status": 2,
           "other_platform_oauth_client": [
             {
-              "client_id": "6488603275-vbipema563ljm0sfjitl87hg3ii63u1k.apps.googleusercontent.com",
+              "client_id": "725986029210-a6mumdn3fgubm6uca5hq78kif1f29epd.apps.googleusercontent.com",
               "client_type": 3
             }
           ]
-        },
-        "ads_service": {
-          "status": 2
-        }
-      }
-    },
-    {
-      "client_info": {
-        "mobilesdk_app_id": "1:6488603275:android:019ad10cfd3aeff8",
-        "android_client_info": {
-          "package_name": "me.zeroandone.technology.rushupdelivery"
-        }
-      },
-      "oauth_client": [
-        {
-          "client_id": "6488603275-vbipema563ljm0sfjitl87hg3ii63u1k.apps.googleusercontent.com",
-          "client_type": 3
-        }
-      ],
-      "api_key": [
-        {
-          "current_key": "AIzaSyCXlp-imsAseiSInFksnF02kBIjUgTviHQ"
-        }
-      ],
-      "services": {
-        "analytics_service": {
-          "status": 1
-        },
-        "appinvite_service": {
-          "status": 1,
-          "other_platform_oauth_client": []
         },
         "ads_service": {
           "status": 2
