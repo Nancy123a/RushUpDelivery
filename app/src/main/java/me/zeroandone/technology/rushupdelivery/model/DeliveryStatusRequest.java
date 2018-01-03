@@ -15,9 +15,27 @@
 
 package me.zeroandone.technology.rushupdelivery.model;
 
-import java.util.ArrayList;
-import java.util.*;
 
-public class ContactSyncResponse extends ArrayList<ContactSyncResponseItem>{
+public class DeliveryStatusRequest {
+    @com.google.gson.annotations.SerializedName("delivery_status")
+    private String deliveryStatus = null;
+
+    /**
+     * Gets deliveryStatus
+     *
+     * @return deliveryStatus
+     **/
+    public String getDeliveryStatus() {
+        return deliveryStatus;
+    }
+
+    /**
+     * Sets the value of deliveryStatus.
+     *
+     * @param deliveryStatus the new value
+     */
+    public void setDeliveryStatus(String deliveryStatus) {
+        this.deliveryStatus = deliveryStatus;
+    }
 
 }

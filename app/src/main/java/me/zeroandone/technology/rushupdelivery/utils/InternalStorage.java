@@ -18,7 +18,7 @@ public class InternalStorage {
         fos.close();
     }
 
-    public static String raedFCMToken(Context context,String key) throws IOException, ClassNotFoundException{
+    public static String readFCMToken(Context context,String key) throws IOException, ClassNotFoundException{
         FileInputStream fin = context.openFileInput(key);
         int c;
         String fcm_token="";

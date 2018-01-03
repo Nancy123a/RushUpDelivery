@@ -1,6 +1,8 @@
 package me.zeroandone.technology.rushupdelivery.fcm;
 
 
+import android.util.Log;
+
 import com.google.firebase.iid.FirebaseInstanceId;
 import com.google.firebase.iid.FirebaseInstanceIdService;
 
@@ -14,6 +16,7 @@ public class FirebaseInstanceIDService extends FirebaseInstanceIdService {
     @Override
     public void onTokenRefresh() {
         token = FirebaseInstanceId.getInstance().getToken();
+        Log.d("Heron","Obtaining Token FCM "+token);
         try {
             InternalStorage.writeFCMToken(this,"FCMToken",token);
         } catch (IOException e) {

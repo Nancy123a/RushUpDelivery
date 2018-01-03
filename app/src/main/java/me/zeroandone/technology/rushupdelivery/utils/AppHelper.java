@@ -2,13 +2,18 @@ package me.zeroandone.technology.rushupdelivery.utils;
 
 import android.content.Context;
 import android.util.Log;
+
+import com.amazonaws.mobile.api.idrevskyx266.RushupClient;
 import com.amazonaws.mobile.auth.core.IdentityManager;
 import com.amazonaws.mobile.auth.userpools.CognitoUserPoolsSignInProvider;
 import com.amazonaws.mobile.config.AWSConfiguration;
 import com.amazonaws.mobile.content.UserFileManager;
+import com.amazonaws.mobileconnectors.apigateway.ApiClientFactory;
 import com.amazonaws.mobileconnectors.cognitoidentityprovider.CognitoDevice;
 import com.amazonaws.mobileconnectors.cognitoidentityprovider.CognitoUserSession;
 import com.amazonaws.regions.Regions;
+
+import me.zeroandone.technology.rushupdelivery.model.TokenRequest;
 
 
 public class AppHelper{
@@ -128,7 +133,30 @@ public class AppHelper{
         return formattedString;
     }
 
+    public static RushupClient rushupClient = null;
+    public static RushupClient getRushUpClient() {
+        if(rushupClient == null) {
+            IdentityManager identityManager=IdentityManager.getDefaultIdentityManager();
+            ApiClientFactory factory = new ApiClientFactory().credentialsProvider(identityManager.getUnderlyingProvider());
+            rushupClient = factory.build(RushupClient.class);
+        }
+        return rushupClient;
+    }
 
 
+    public static void SaveDriverFCMTokenToCloud(final String tokenValue, final String phonenumber){
+        new Thread(new Runnable() {
+            public void run() {
+                try {
+                    TokenRequest token = new TokenRequest();
+                    token.setToken(tokenValue);
+                    getRushUpClient().driverTokenPost(token);
+                    Log.d("HeroJongi","Success token post");
+                }catch (Exception ex) {
+                    Log.e("HeroJongi","Error in token",ex);
+                }
+            }
+        }).start();
+    }
 
 }

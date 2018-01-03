@@ -21,6 +21,8 @@ public class PushRequest {
     private String phone = null;
     @com.google.gson.annotations.SerializedName("message")
     private String message = null;
+    @com.google.gson.annotations.SerializedName("type")
+    private String type = null;
 
     /**
      * Gets phone
@@ -56,6 +58,24 @@ public class PushRequest {
      */
     public void setMessage(String message) {
         this.message = message;
+    }
+
+    /**
+     * Gets type
+     *
+     * @return type
+     **/
+    public String getType() {
+        return type;
+    }
+
+    /**
+     * Sets the value of type.
+     *
+     * @param type the new value
+     */
+    public void setType(String type) {
+        this.type = type;
     }
 
 }

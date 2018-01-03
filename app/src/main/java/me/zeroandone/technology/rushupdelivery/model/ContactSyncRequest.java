@@ -16,7 +16,8 @@
 package me.zeroandone.technology.rushupdelivery.model;
 
 import java.util.ArrayList;
+import java.util.*;
 
-public class ContactSyncRequest extends ArrayList<String> {
+public class ContactSyncRequest extends ArrayList<String>{
 
 }

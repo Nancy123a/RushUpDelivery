@@ -16,46 +16,46 @@
 package me.zeroandone.technology.rushupdelivery.model;
 
 
-public class ContactSyncResponseItemLocationsItem {
-    @com.google.gson.annotations.SerializedName("value")
-    private String value = null;
-    @com.google.gson.annotations.SerializedName("key")
-    private String key = null;
+public class DriverRequest {
+    @com.google.gson.annotations.SerializedName("latitude")
+    private String latitude = null;
+    @com.google.gson.annotations.SerializedName("longitude")
+    private String longitude = null;
 
     /**
-     * Gets value
+     * Gets latitude
      *
-     * @return value
+     * @return latitude
      **/
-    public String getValue() {
-        return value;
+    public String getLatitude() {
+        return latitude;
     }
 
     /**
-     * Sets the value of value.
+     * Sets the value of latitude.
      *
-     * @param value the new value
+     * @param latitude the new value
      */
-    public void setValue(String value) {
-        this.value = value;
+    public void setLatitude(String latitude) {
+        this.latitude = latitude;
     }
 
     /**
-     * Gets key
+     * Gets longitude
      *
-     * @return key
+     * @return longitude
      **/
-    public String getKey() {
-        return key;
+    public String getLongitude() {
+        return longitude;
     }
 
     /**
-     * Sets the value of key.
+     * Sets the value of longitude.
      *
-     * @param key the new value
+     * @param longitude the new value
      */
-    public void setKey(String key) {
-        this.key = key;
+    public void setLongitude(String longitude) {
+        this.longitude = longitude;
     }
 
 }

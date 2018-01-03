@@ -18,12 +18,14 @@ package com.amazonaws.mobile.api.idrevskyx266;
 
 import me.zeroandone.technology.rushupdelivery.model.ContactSyncRequest;
 import me.zeroandone.technology.rushupdelivery.model.ContactSyncResponse;
+import me.zeroandone.technology.rushupdelivery.model.DeliveryRequest;
+import me.zeroandone.technology.rushupdelivery.model.DeliveryStatusRequest;
+import me.zeroandone.technology.rushupdelivery.model.DriverRequest;
 import me.zeroandone.technology.rushupdelivery.model.PushRequest;
 import me.zeroandone.technology.rushupdelivery.model.TokenRequest;
 
 @com.amazonaws.mobileconnectors.apigateway.annotation.Service(endpoint = "https://j9rgxxut6b.execute-api.eu-west-1.amazonaws.com/prod")
 public interface RushupClient {
-
 
     /**
      * A generic invoker to invoke any API Gateway endpoint.
@@ -31,44 +33,129 @@ public interface RushupClient {
      * @return ApiResponse
      */
     com.amazonaws.mobileconnectors.apigateway.ApiResponse execute(com.amazonaws.mobileconnectors.apigateway.ApiRequest request);
-    
+
     /**
-     * 
-     * 
-     * @param body 
+     *
+     *
+     * @param body
      * @return ContactSyncResponse
      */
     @com.amazonaws.mobileconnectors.apigateway.annotation.Operation(path = "/contact", method = "POST")
     ContactSyncResponse contactPost(
             ContactSyncRequest body);
-    
+
     /**
-     * 
-     * 
+     *
+     *
+     * @param body
+     * @return DeliveryRequest
+     */
+    @com.amazonaws.mobileconnectors.apigateway.annotation.Operation(path = "/delivery", method = "POST")
+    DeliveryRequest deliveryPost(
+            DeliveryRequest body);
+
+    /**
+     *
+     *
+     * @param deliveryId
+     * @return DeliveryRequest
+     */
+    @com.amazonaws.mobileconnectors.apigateway.annotation.Operation(path = "/delivery/{delivery_id}", method = "GET")
+    DeliveryRequest deliveryDeliveryIdGet(
+            @com.amazonaws.mobileconnectors.apigateway.annotation.Parameter(name = "delivery_id", location = "path")
+                    String deliveryId);
+
+    /**
+     *
+     *
+     * @param deliveryId
+     * @param body
+     * @return void
+     */
+    @com.amazonaws.mobileconnectors.apigateway.annotation.Operation(path = "/delivery/{delivery_id}", method = "PUT")
+    void deliveryDeliveryIdPut(
+            @com.amazonaws.mobileconnectors.apigateway.annotation.Parameter(name = "delivery_id", location = "path")
+                    String deliveryId,
+            DeliveryStatusRequest body);
+
+    /**
+     *
+     *
+     * @param deliveryId
+     * @return void
+     */
+    @com.amazonaws.mobileconnectors.apigateway.annotation.Operation(path = "/delivery/{delivery_id}/assign", method = "PUT")
+    void deliveryDeliveryIdAssignPut(
+            @com.amazonaws.mobileconnectors.apigateway.annotation.Parameter(name = "delivery_id", location = "path")
+                    String deliveryId);
+
+    /**
+     *
+     *
+     * @param body
+     * @return void
+     */
+    @com.amazonaws.mobileconnectors.apigateway.annotation.Operation(path = "/driver/location", method = "PUT")
+    void driverLocationPut(
+            DriverRequest body);
+
+    /**
+     *
+     *
+     * @param body
+     * @return void
+     */
+    @com.amazonaws.mobileconnectors.apigateway.annotation.Operation(path = "/driver/token", method = "POST")
+    void driverTokenPost(
+            TokenRequest body);
+
+    /**
+     *
+     *
+     * @param driverId
+     * @return void
+     */
+    @com.amazonaws.mobileconnectors.apigateway.annotation.Operation(path = "/driver/{driver_id}", method = "GET")
+    void driverDriverIdGet(
+            @com.amazonaws.mobileconnectors.apigateway.annotation.Parameter(name = "driver_id", location = "path")
+                    String driverId);
+
+    /**
+     *
+     *
      * @return void
      */
     @com.amazonaws.mobileconnectors.apigateway.annotation.Operation(path = "/ping", method = "GET")
     void pingGet();
-    
+
     /**
-     * 
-     * 
-     * @param body 
+     *
+     *
+     * @param body
      * @return void
      */
     @com.amazonaws.mobileconnectors.apigateway.annotation.Operation(path = "/publish", method = "POST")
     void publishPost(
             PushRequest body);
-    
+
     /**
-     * 
-     * 
-     * @param body 
+     *
+     *
+     * @param body
+     * @return void
+     */
+    @com.amazonaws.mobileconnectors.apigateway.annotation.Operation(path = "/rushie/token", method = "POST")
+    void rushieTokenPost(
+            TokenRequest body);
+
+    /**
+     *
+     *
+     * @param body
      * @return void
      */
     @com.amazonaws.mobileconnectors.apigateway.annotation.Operation(path = "/token", method = "POST")
     void tokenPost(
             TokenRequest body);
-    
-}
 
+}

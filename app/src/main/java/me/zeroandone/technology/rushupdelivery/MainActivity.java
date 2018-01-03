@@ -67,29 +67,16 @@ public class MainActivity extends AppCompatActivity implements StartupAuthResult
     @Override
     public void onComplete(StartupAuthResult authResults) {
         final IdentityManager identityManager = authResults.getIdentityManager();
+        Log.d("HeroJongi","StartUpAuthResult");
         if(identityManager.isUserSignedIn()){
-            Log.d(LOG_TAG,"onSuccess Signin"+"user is sign in");
+            Log.d("HeroJongi","onSuccess Signin"+"user is sign in");
             Intent intent=new Intent(MainActivity.this,InsideApp.class);
             startActivity(intent);
         }
         else if (authResults.isUserAnonymous()) {
-            Log.d(LOG_TAG,"onfailure Signin"+"user is not sign in");
-            // Optionally, you can check whether refreshing a previously signed in provider failed.
-            final StartupAuthErrorDetails errors = authResults.getErrorDetails();
-            if (errors.didErrorOccurRefreshingProvider()) {
-                final AuthException providerAuthException = errors.getProviderRefreshException();
-                Log.w(LOG_TAG, String.format(
-                        "Credentials for Previously signed-in provider %s could not be refreshed.",
-                        providerAuthException.getProvider().getDisplayName()),
-                        providerAuthException);
-            }
             OpenSignInActivity();
         }
         else {
-            Log.d(LOG_TAG,"onfailure Signin"+"user is not sign in");
-            final StartupAuthErrorDetails errors = authResults.getErrorDetails();
-            Log.e(LOG_TAG, "No Identity could be obtained. Continuing with no identity.",
-                    errors.getUnauthenticatedErrorException());
             OpenSignInActivity();
         }
     }

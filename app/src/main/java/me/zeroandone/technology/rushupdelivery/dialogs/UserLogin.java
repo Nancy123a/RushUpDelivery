@@ -106,8 +106,7 @@ public class UserLogin extends DialogFragment implements SignInStateChangeListen
             username.setError(null);
             password.setError(null);
             AppHelper.federateWithProvider();
-            Intent intent=new Intent(getActivity(),InsideApp.class);
-            startActivity(intent);
+            openInsideActivity();
         }
 
         @Override
@@ -141,6 +140,12 @@ public class UserLogin extends DialogFragment implements SignInStateChangeListen
         }
 
     };
+
+    private void openInsideActivity() {
+        Log.d("HeroJongi","Reach Here inside app");
+        Intent intent=new Intent(getActivity(),InsideApp.class);
+        startActivity(intent);
+    }
 
 
     @Override

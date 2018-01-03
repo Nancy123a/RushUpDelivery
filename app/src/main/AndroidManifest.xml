@@ -57,7 +57,7 @@
             android:name="me.zeroandone.technology.rushupdelivery.InsideApp"
             android:label="@string/title_activity_inside_app"
             android:screenOrientation="portrait"
-            android:theme="@style/AppTheme" ></activity>
+            android:theme="@style/AppTheme" />
 
         <uses-library
             android:name="com.google.android.maps"
@@ -83,13 +83,6 @@
             </intent-filter>
         </receiver>
 
-        <meta-data
-            android:name="com.google.firebase.messaging.default_notification_icon"
-            android:resource="@mipmap/logoheader"/>
-
-        <meta-data
-            android:name="com.google.firebase.messaging.default_notification_color"
-            android:resource="@color/black" />
 
         <service
             android:name="me.zeroandone.technology.rushupdelivery.fcm.FCMNotificationIntentService">

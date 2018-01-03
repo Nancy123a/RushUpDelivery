@@ -15,10 +15,9 @@
 
 package me.zeroandone.technology.rushupdelivery.model;
 
-import java.io.Serializable;
-import java.util.List;
+import java.util.*;
 
-public class ContactSyncResponseItem implements Serializable {
+public class ContactSyncResponseItem {
     @com.google.gson.annotations.SerializedName("user_name")
     private String userName = null;
     @com.google.gson.annotations.SerializedName("phone_number")
