@@ -16,11 +16,21 @@
 package me.zeroandone.technology.rushupdelivery.model;
 
 
-public class DriverRequest {
+
+
+import java.io.Serializable;
+
+public class DriverLocationRequest implements Serializable {
     @com.google.gson.annotations.SerializedName("latitude")
     private String latitude = null;
     @com.google.gson.annotations.SerializedName("longitude")
     private String longitude = null;
+
+
+    public DriverLocationRequest(String latitude, String longitude) {
+        this.latitude = latitude;
+        this.longitude = longitude;
+    }
 
     /**
      * Gets latitude
@@ -58,4 +68,11 @@ public class DriverRequest {
         this.longitude = longitude;
     }
 
+    @Override
+    public String toString() {
+        return "DriverLocationRequest{" +
+                "latitude='" + latitude + '\'' +
+                ", longitude='" + longitude + '\'' +
+                '}';
+    }
 }

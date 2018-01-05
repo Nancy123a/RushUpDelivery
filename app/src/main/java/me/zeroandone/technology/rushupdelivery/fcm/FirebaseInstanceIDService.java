@@ -16,7 +16,7 @@ public class FirebaseInstanceIDService extends FirebaseInstanceIdService {
     @Override
     public void onTokenRefresh() {
         token = FirebaseInstanceId.getInstance().getToken();
-        Log.d("Heron","Obtaining Token FCM "+token);
+        Log.d("HeroJongi","Obtaining Token FCM "+token);
         try {
             InternalStorage.writeFCMToken(this,"FCMToken",token);
         } catch (IOException e) {

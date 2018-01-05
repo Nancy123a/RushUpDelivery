@@ -20,12 +20,13 @@ import me.zeroandone.technology.rushupdelivery.model.ContactSyncRequest;
 import me.zeroandone.technology.rushupdelivery.model.ContactSyncResponse;
 import me.zeroandone.technology.rushupdelivery.model.DeliveryRequest;
 import me.zeroandone.technology.rushupdelivery.model.DeliveryStatusRequest;
-import me.zeroandone.technology.rushupdelivery.model.DriverRequest;
+import me.zeroandone.technology.rushupdelivery.model.DriverLocationRequest;
 import me.zeroandone.technology.rushupdelivery.model.PushRequest;
 import me.zeroandone.technology.rushupdelivery.model.TokenRequest;
 
 @com.amazonaws.mobileconnectors.apigateway.annotation.Service(endpoint = "https://j9rgxxut6b.execute-api.eu-west-1.amazonaws.com/prod")
 public interface RushupClient {
+
 
     /**
      * A generic invoker to invoke any API Gateway endpoint.
@@ -97,7 +98,7 @@ public interface RushupClient {
      */
     @com.amazonaws.mobileconnectors.apigateway.annotation.Operation(path = "/driver/location", method = "PUT")
     void driverLocationPut(
-            DriverRequest body);
+            DriverLocationRequest body);
 
     /**
      *

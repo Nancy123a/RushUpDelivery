@@ -1,6 +1,7 @@
 package me.zeroandone.technology.rushupdelivery.utils;
 
 import android.content.Context;
+import android.location.Location;
 import android.util.Log;
 
 import com.amazonaws.mobile.api.idrevskyx266.RushupClient;
@@ -13,6 +14,7 @@ import com.amazonaws.mobileconnectors.cognitoidentityprovider.CognitoDevice;
 import com.amazonaws.mobileconnectors.cognitoidentityprovider.CognitoUserSession;
 import com.amazonaws.regions.Regions;
 
+import me.zeroandone.technology.rushupdelivery.model.DriverLocationRequest;
 import me.zeroandone.technology.rushupdelivery.model.TokenRequest;
 
 
@@ -153,7 +155,24 @@ public class AppHelper{
                     getRushUpClient().driverTokenPost(token);
                     Log.d("HeroJongi","Success token post");
                 }catch (Exception ex) {
-                    Log.e("HeroJongi","Error in token",ex);
+                    Log.d("HeroJongi","Error in token",ex);
+                }
+            }
+        }).start();
+    }
+
+    public static void sendDriverLocation(final Location location) {
+        new Thread(new Runnable() {
+            public void run() {
+                if (location != null) {
+                    Log.d("HeroJongi ", "Location " + location.getLongitude() + "  " + location.getLongitude());
+                    try {
+                        DriverLocationRequest driver = new DriverLocationRequest(String.valueOf(location.getLatitude()), String.valueOf(location.getLongitude()));
+                        getRushUpClient().driverLocationPut(driver);
+                        Log.d("HeroJongi", "Driver Location post success");
+                    } catch (Exception ex) {
+                        Log.d("HeroJongi", "Driver Location post error " + ex.getMessage());
+                    }
                 }
             }
         }).start();
