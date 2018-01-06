@@ -16,6 +16,7 @@ import com.amazonaws.regions.Regions;
 
 import me.zeroandone.technology.rushupdelivery.model.DriverLocationRequest;
 import me.zeroandone.technology.rushupdelivery.model.TokenRequest;
+import me.zeroandone.technology.rushupdelivery.objects.DeliveryRequest;
 
 
 public class AppHelper{
@@ -173,6 +174,19 @@ public class AppHelper{
                     } catch (Exception ex) {
                         Log.d("HeroJongi", "Driver Location post error " + ex.getMessage());
                     }
+                }
+            }
+        }).start();
+    }
+
+    public static void assignDeliveryToDriver(final DeliveryRequest deliveryRequest){
+        new Thread(new Runnable() {
+            public void run() {
+                try {
+                    Log.d("HeroJongi"," assignDeliveryToDriver "+deliveryRequest.getId());
+                    getRushUpClient().deliveryDeliveryIdAssignPut(deliveryRequest.getId());
+                }catch (Exception ex) {
+                    Log.e("HeroJongi","Fail status update",ex);
                 }
             }
         }).start();

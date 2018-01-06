@@ -1,8 +1,8 @@
 package me.zeroandone.technology.rushupdelivery;
 
-import android.*;
 import android.Manifest;
 import android.annotation.TargetApi;
+import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
 import android.location.Location;
@@ -20,6 +20,7 @@ import android.support.v7.widget.DefaultItemAnimator;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.OrientationHelper;
 import android.support.v7.widget.RecyclerView;
+import android.util.DisplayMetrics;
 import android.util.Log;
 import android.view.View;
 import android.widget.ImageView;
@@ -41,6 +42,7 @@ import com.google.android.gms.maps.SupportMapFragment;
 import com.google.android.gms.maps.model.BitmapDescriptorFactory;
 import com.google.android.gms.maps.model.CameraPosition;
 import com.google.android.gms.maps.model.LatLng;
+import com.google.android.gms.maps.model.LatLngBounds;
 import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
 
@@ -50,16 +52,21 @@ import java.util.ArrayList;
 import java.util.List;
 
 import me.zeroandone.technology.rushupdelivery.adapter.SettingsAdapter;
+import me.zeroandone.technology.rushupdelivery.interfaces.RushUpDeliverySettings;
 import me.zeroandone.technology.rushupdelivery.model.Driver;
+import me.zeroandone.technology.rushupdelivery.objects.DeliveryRequest;
+import me.zeroandone.technology.rushupdelivery.objects.PushType;
 import me.zeroandone.technology.rushupdelivery.objects.Settings;
 import me.zeroandone.technology.rushupdelivery.utils.AppHelper;
+import me.zeroandone.technology.rushupdelivery.utils.Application;
+import me.zeroandone.technology.rushupdelivery.utils.DrawPolylineVolley;
 import me.zeroandone.technology.rushupdelivery.utils.InternalStorage;
 import me.zeroandone.technology.rushupdelivery.utils.Utils;
 import me.zeroandone.technology.rushupdelivery.widget.BalanceRecyclerView;
 import me.zeroandone.technology.rushupdelivery.widget.HistoryRecycleView;
 
 
-public class InsideApp extends AppCompatActivity implements OnMapReadyCallback, View.OnClickListener, GoogleApiClient.ConnectionCallbacks, GoogleApiClient.OnConnectionFailedListener, LocationListener {
+public class InsideApp extends AppCompatActivity implements RushUpDeliverySettings,OnMapReadyCallback, View.OnClickListener, GoogleApiClient.ConnectionCallbacks, GoogleApiClient.OnConnectionFailedListener, LocationListener {
 
     private SupportMapFragment mapFragment;
     private GoogleMap map;
@@ -74,6 +81,10 @@ public class InsideApp extends AppCompatActivity implements OnMapReadyCallback, 
     public static final int Access_Location = 70;
     LocationListener locationListener=this;
     Marker Driver;
+    DrawPolylineVolley drawPolyline;
+    Marker PickupMarker,DropOffMarker;
+    DeliveryRequest deliveryRequest;
+    RushUpDeliverySettings rushUpDeliverySettings=this;
 
     // Location updates intervals in sec
     private static int UPDATE_INTERVAL = 10000; // 10 sec
@@ -94,6 +105,11 @@ public class InsideApp extends AppCompatActivity implements OnMapReadyCallback, 
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_inside_app);
 
+        Application.getInstance().setRushUpDeliverySettings(rushUpDeliverySettings);
+        drawPolyline = new DrawPolylineVolley(this);
+        deliveryRequest=new DeliveryRequest();
+
+
         mapFragment = ((SupportMapFragment) getSupportFragmentManager().findFragmentById(R.id.map));
         settings = (TextView) findViewById(R.id.settings);
         homelayout = (RelativeLayout) findViewById(R.id.homelayout);
@@ -110,6 +126,7 @@ public class InsideApp extends AppCompatActivity implements OnMapReadyCallback, 
         historyRecycleView = (HistoryRecycleView) findViewById(R.id.historyRecycleView);
         balanceRecyclerView = (BalanceRecyclerView) findViewById(R.id.balanceRecycleView);
         settings_recycler_view = (RecyclerView) findViewById(R.id.settings_recycle_view);
+
 
         if (AppHelper.getPool() != null && AppHelper.getPool().getCognitoUserPool().getCurrentUser() != null) {
             AppHelper.getPool().getCognitoUserPool().getCurrentUser().getDetailsInBackground(detailsHandler);
@@ -156,6 +173,7 @@ public class InsideApp extends AppCompatActivity implements OnMapReadyCallback, 
             details = cognitoUserDetails;
             Username = AppHelper.getPool().getCognitoUserPool().getCurrentUser().getUserId();
             Phonenumber = cognitoUserDetails.getAttributes().getAttributes().get("phone_number");
+            ReadSettings();
             SharedPreferences settingss = getSharedPreferences("showpopup", 0);
             SharedPreferences.Editor editor = settingss.edit();
             if (!settingss.contains("firsttime")) {
@@ -186,6 +204,27 @@ public class InsideApp extends AppCompatActivity implements OnMapReadyCallback, 
 
         }
     };
+
+    private void ReadSettings() {
+        try {
+            Object data = InternalStorage.readObject(this, "ActiveDelivery");
+            if (data instanceof DeliveryRequest) {
+                DeliveryRequest deliveryRequest=(DeliveryRequest)data;
+                this.deliveryRequest=deliveryRequest;
+             // plot the pins
+                if(deliveryRequest!=null) {
+                    PlotPins(deliveryRequest);
+                }
+            }
+        }
+            catch (IOException e) {
+                Log.d("HeroJongi", "error" + e.getMessage());
+                e.printStackTrace();
+            } catch (ClassNotFoundException e) {
+                Log.d("HeroJongi", "error" + e.getMessage());
+                e.printStackTrace();
+            }
+    }
 
 
     @Override
@@ -274,7 +313,7 @@ public class InsideApp extends AppCompatActivity implements OnMapReadyCallback, 
             Log.d("HeroJongi", mLastLocation + "");
             AppHelper.sendDriverLocation(location);
             if (Driver == null) {
-                DropDriverOnMap(location.getLatitude(), location.getLongitude());
+                DropDriverOnMap(location.getLatitude(), location.getLongitude(),true);
             } else {
                 Driver.setPosition(new LatLng(location.getLatitude(), location.getLongitude()));
                 ZoomtoMyCurrentLocation(location.getLatitude(), location.getLongitude());
@@ -290,21 +329,35 @@ public class InsideApp extends AppCompatActivity implements OnMapReadyCallback, 
         }
     }
 
-    public void DropDriverOnMap(double latitude,double longitude){
+    public void DropDriverOnMap(double latitude,double longitude,boolean zoomtomylocation){
         if( map!=null) {
             Log.d("HeroJongi","location "+"Pick Up pin");
             MarkerOptions markerOpts = new MarkerOptions().position(new LatLng(latitude,longitude));
             markerOpts.icon(BitmapDescriptorFactory.fromResource(R.mipmap.bike));
             Driver = map.addMarker(markerOpts);
-            ZoomtoMyCurrentLocation(latitude,longitude);
+            if(zoomtomylocation) {
+                ZoomtoMyCurrentLocation(latitude, longitude);
+            }
         }
     }
 
 
     @Override
     public void onConnected(@Nullable Bundle bundle) {
-        Log.d("HeroJongi","Here on connected");
             startLocationUpdates();
+            IntentsListener();
+    }
+
+    private void IntentsListener() {
+        Intent intent = getIntent();
+        if (intent != null) {
+            if (intent.getSerializableExtra("delivery_update") != null) {
+                DeliveryRequest deliveryRequest=(DeliveryRequest)intent.getSerializableExtra("delivery_update");
+                if(deliveryRequest!=null){
+                    Utils.showDriverDialog(InsideApp.this,deliveryRequest,rushUpDeliverySettings);
+                }
+            }
+        }
     }
 
     @Override
@@ -343,6 +396,7 @@ public class InsideApp extends AppCompatActivity implements OnMapReadyCallback, 
         if(mGoogleApiClient!=null && mGoogleApiClient.isConnected()) {
             stopLocationUpdates();
         }
+        SaveActiveDelivery(deliveryRequest);
     }
 
     @TargetApi(Build.VERSION_CODES.M)
@@ -383,5 +437,105 @@ public class InsideApp extends AppCompatActivity implements OnMapReadyCallback, 
             }
         }
     }
+
+    @Override
+    public void onNotificationRecieved(final PushType pushType,final Object object) {
+        runOnUiThread(new Thread(new Runnable() {
+
+            public void run() {
+                switch (pushType) {
+                    case delivery_update:
+                       // show Dialog
+                        DeliveryRequest deliveryRequest=(DeliveryRequest)object;
+                       if(deliveryRequest!=null) {
+                           Utils.showDriverDialog(InsideApp.this, deliveryRequest, rushUpDeliverySettings);
+                       }
+                        break;
+                }
+            }
+
+        }));
+    }
+
+    @Override
+    public void SaveActiveDelivery(DeliveryRequest deliveryRequest) {
+        this.deliveryRequest=deliveryRequest;
+        try {
+            InternalStorage.writeObject(InsideApp.this,"ActiveDelivery",deliveryRequest);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+
+    @Override
+    public void PlotPins(DeliveryRequest deliveryRequest) {
+        if (map!=null && deliveryRequest != null && deliveryRequest.getPickupLocation()!=null && deliveryRequest.getDropoffLocation()!=null && deliveryRequest.getDropoffLocation().getLatitude() != null && deliveryRequest.getDropoffLocation().getLongitude() != null && deliveryRequest.getPickupLocation().getLatitude()
+                != null && deliveryRequest.getPickupLocation().getLongitude() != null) {
+            map.clear();
+            LatLng pickup = new LatLng(Double.parseDouble(deliveryRequest.getPickupLocation().getLatitude()), Double.parseDouble(deliveryRequest.getPickupLocation().getLongitude()));
+            LatLng dropoff = new LatLng(Double.parseDouble(deliveryRequest.getDropoffLocation().getLatitude()), Double.parseDouble(deliveryRequest.getDropoffLocation().getLongitude()));
+            DropPickUpPin(pickup);
+            DropDroOffPin(dropoff);
+            if(mLastLocation!=null) {
+                DropDriverOnMap(mLastLocation.getLatitude(), mLastLocation.getLongitude(), false);
+            }
+            ZoomCameraToBothPins();
+            APICallToDrawPolyline();
+        }
+    }
+
+    public String getDirectionUrl() {
+        double pickupLatitude = PickupMarker.getPosition().latitude;
+        double pickupLongitude = PickupMarker.getPosition().longitude;
+        double dropOffLatitude = DropOffMarker.getPosition().latitude;
+        double dropOffLongitude = DropOffMarker.getPosition().longitude;
+        return Utils.getUrl(InsideApp.this, String.valueOf(pickupLatitude), String.valueOf(pickupLongitude),
+                String.valueOf(dropOffLatitude), String.valueOf(dropOffLongitude));
+    }
+
+
+    public void APICallToDrawPolyline(){
+        if(map!=null && DropOffMarker!=null && PickupMarker!=null) {
+            String directionAPI = getDirectionUrl();
+            drawPolyline.getDirectionFromDirectionApiServer(directionAPI, map);
+        }
+    }
+
+    public void DropPickUpPin(LatLng location){
+        if(location!=null && location.latitude!=0 && location.longitude!=0 && map!=null) {
+            MarkerOptions markerOpts = new MarkerOptions().position(location);
+            markerOpts.icon(BitmapDescriptorFactory.fromResource(R.mipmap.greenpin));
+            PickupMarker = map.addMarker(markerOpts);
+        }
+    }
+
+    public void DropDroOffPin(LatLng location){
+        if(location!=null && location.latitude!=0 && location.longitude!=0 && map!=null) {
+            MarkerOptions markerOpts = new MarkerOptions().position(location);
+            markerOpts.icon(BitmapDescriptorFactory.fromResource(R.mipmap.orangepin));
+            DropOffMarker = map.addMarker(markerOpts);
+        }
+    }
+
+    private void ZoomCameraToBothPins() {
+        if(map!=null) {
+            LatLngBounds.Builder builder = new LatLngBounds.Builder();
+            builder.include(PickupMarker.getPosition());
+            builder.include(DropOffMarker.getPosition());
+            builder.include(Driver.getPosition());
+            LatLngBounds bounds = builder.build();
+
+            DisplayMetrics displayMetrics = new DisplayMetrics();
+            getWindowManager().getDefaultDisplay().getMetrics(displayMetrics);
+
+            int width = displayMetrics.widthPixels - 140;
+            int height = displayMetrics.heightPixels;
+            int padding = (int) (width * 0.20); // offset from edges of the map 10% of screen
+
+            CameraUpdate cu = CameraUpdateFactory.newLatLngBounds(bounds, width, height, padding);
+            map.animateCamera(cu);
+        }
+    }
+
 
 }

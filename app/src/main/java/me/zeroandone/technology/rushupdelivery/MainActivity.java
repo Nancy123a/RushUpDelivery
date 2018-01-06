@@ -21,6 +21,7 @@ import com.crashlytics.android.Crashlytics;
 import io.fabric.sdk.android.Fabric;
 import me.zeroandone.technology.rushupdelivery.dialogs.Registration;
 import me.zeroandone.technology.rushupdelivery.dialogs.UserLogin;
+import me.zeroandone.technology.rushupdelivery.objects.DeliveryRequest;
 import me.zeroandone.technology.rushupdelivery.utils.Utils;
 
 public class MainActivity extends AppCompatActivity implements StartupAuthResultHandler {
@@ -71,6 +72,7 @@ public class MainActivity extends AppCompatActivity implements StartupAuthResult
         if(identityManager.isUserSignedIn()){
             Log.d("HeroJongi","onSuccess Signin"+"user is sign in");
             Intent intent=new Intent(MainActivity.this,InsideApp.class);
+            putIntent(intent,getIntent());
             startActivity(intent);
         }
         else if (authResults.isUserAnonymous()) {
@@ -81,10 +83,18 @@ public class MainActivity extends AppCompatActivity implements StartupAuthResult
         }
     }
 
+    public void putIntent(Intent intent,Intent getIntent) {
+        if (getIntent != null) {
+            if (getIntent.getSerializableExtra("delivery_update") != null) {
+                DeliveryRequest notificationObject = (DeliveryRequest) getIntent.getSerializableExtra("delivery_update");
+                intent.putExtra("delivery_update", notificationObject);
+            }
+        }
+    }
+
     public void OpenSignInActivity() {
-        FragmentManager fm = getSupportFragmentManager();
-        UserLogin signin = UserLogin.newInstance("Some Title");
-        signin.setStyle(android.app.DialogFragment.STYLE_NO_TITLE, R.style.AppTheme);
-        signin.show(fm, "login");
+       Intent intent=new Intent(this,UserLogin.class);
+       putIntent(intent,getIntent());
+       startActivity(intent);
     }
 }

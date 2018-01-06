@@ -13,6 +13,8 @@ import com.amazonaws.mobileconnectors.pinpoint.PinpointConfiguration;
 import com.amazonaws.mobileconnectors.pinpoint.PinpointManager;
 import com.android.volley.RequestQueue;
 
+import me.zeroandone.technology.rushupdelivery.interfaces.RushUpDeliverySettings;
+
 //import com.amazonaws.mobile.auth.google.GoogleButton;
 //import com.amazonaws.mobile.auth.google.GoogleSignInProvider;
 
@@ -20,6 +22,7 @@ public class Application extends android.app.Application {
     private static final String LOG_TAG = Application.class.getSimpleName();
     public static AWSConfiguration awsConfiguration;
     public static PinpointManager pinpointManager;
+    RushUpDeliverySettings rushUpDeliverySettings;
     public static AuthUIConfiguration sAuthUIConfiguration =
             new AuthUIConfiguration.Builder()
                     .userPools(true)
@@ -58,7 +61,13 @@ public class Application extends android.app.Application {
         InternetConnector_Receiver.connectivityReceiverListener = listener;
     }
 
+    public RushUpDeliverySettings getRushUpDeliverySettings() {
+        return rushUpDeliverySettings;
+    }
 
+    public void setRushUpDeliverySettings(RushUpDeliverySettings rushUpDeliverySettings) {
+        this.rushUpDeliverySettings = rushUpDeliverySettings;
+    }
 
     public RequestQueue getVolleyRequestQueue() {
         return requestQueue;
@@ -117,6 +126,7 @@ public class Application extends android.app.Application {
             }
         };
     }
+
 
     @Override
     public void onTrimMemory(final int level) {

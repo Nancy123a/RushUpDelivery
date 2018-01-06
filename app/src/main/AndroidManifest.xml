@@ -59,6 +59,10 @@
             android:screenOrientation="portrait"
             android:theme="@style/AppTheme" />
 
+        <activity
+            android:name=".dialogs.UserLogin"
+            android:screenOrientation="portrait" />
+
         <uses-library
             android:name="com.google.android.maps"
             android:required="true" />

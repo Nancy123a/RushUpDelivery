@@ -5,6 +5,7 @@ import android.content.pm.ActivityInfo;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.FragmentManager;
+import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -26,10 +27,11 @@ import com.wang.avi.AVLoadingIndicatorView;
 
 import me.zeroandone.technology.rushupdelivery.InsideApp;
 import me.zeroandone.technology.rushupdelivery.R;
+import me.zeroandone.technology.rushupdelivery.objects.DeliveryRequest;
 import me.zeroandone.technology.rushupdelivery.utils.AppHelper;
 import me.zeroandone.technology.rushupdelivery.utils.Utils;
 
-public class UserLogin extends DialogFragment implements SignInStateChangeListener,View.OnClickListener {
+public class UserLogin extends AppCompatActivity implements SignInStateChangeListener,View.OnClickListener {
 
     private static final String LOG_TAG = UserLogin.class.getSimpleName();
     EditText username,password;
@@ -39,51 +41,23 @@ public class UserLogin extends DialogFragment implements SignInStateChangeListen
     TextView login;
     String Username,Password;
 
-    public static UserLogin newInstance(String title) {
-        UserLogin frag = new UserLogin();
-        Bundle args = new Bundle();
-        args.putString("title", title);
-        frag.setArguments(args);
-        frag.setCancelable(false);
-        return frag;
-    }
-
     @Override
-    public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-        View v = inflater.inflate(R.layout.login, container, false);
-        return v;
-    }
-
-    @Override
-    public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
-        super.onViewCreated(view, savedInstanceState);
+    protected void onCreate(@Nullable Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        setContentView(R.layout.login);
+        overridePendingTransition(R.anim.slide_up, R.anim.slide_down);
         identityManager = IdentityManager.getDefaultIdentityManager();
         identityManager.addSignInStateChangeListener(this);
         if (identityManager.getCurrentIdentityProvider() == null) {
-            AppHelper.initializeCognitoPool(getActivity().getApplicationContext());
+            AppHelper.initializeCognitoPool(this);
         }
-        username = (EditText) view.findViewById(R.id.username);
-        password = (EditText) view.findViewById(R.id.password);
-        login=(TextView) view.findViewById(R.id.login);
-        close=(ImageView) view.findViewById(R.id.close);
-        indicator = (AVLoadingIndicatorView) view.findViewById(R.id.indicator);
+        username = (EditText) findViewById(R.id.username);
+        password = (EditText) findViewById(R.id.password);
+        login=(TextView) findViewById(R.id.login);
+        close=(ImageView) findViewById(R.id.close);
+        indicator = (AVLoadingIndicatorView) findViewById(R.id.indicator);
         close.setOnClickListener(this);
         login.setOnClickListener(this);
-    }
-
-    @Override
-    public void onResume() {
-        super.onResume();
-        //lock screen to portrait
-        if(getActivity()!=null) {
-            getActivity().setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
-        }
-    }
-
-    @Override
-    public void onActivityCreated(Bundle arg0) {
-        super.onActivityCreated(arg0);
-        getDialog().getWindow().getAttributes().windowAnimations = R.style.DialogAnimation;
     }
 
 
@@ -143,10 +117,19 @@ public class UserLogin extends DialogFragment implements SignInStateChangeListen
 
     private void openInsideActivity() {
         Log.d("HeroJongi","Reach Here inside app");
-        Intent intent=new Intent(getActivity(),InsideApp.class);
+        Intent intent=new Intent(this,InsideApp.class);
+        putIntent(intent,getIntent());
         startActivity(intent);
     }
 
+    public void putIntent(Intent intent,Intent getIntent) {
+        if (getIntent != null) {
+            if (getIntent.getSerializableExtra("delivery_update") != null) {
+                DeliveryRequest notificationObject = (DeliveryRequest) getIntent.getSerializableExtra("delivery_update");
+                intent.putExtra("delivery_update", notificationObject);
+            }
+        }
+    }
 
     @Override
     public void onClick(View v) {
