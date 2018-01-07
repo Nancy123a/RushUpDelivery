@@ -93,7 +93,11 @@ public class Utils {
     }
 
     public static void showDriverDialog(Context context, final DeliveryRequest deliveryRequest, final RushUpDeliverySettings rushUpDeliverySettings){
-         if(rushUpDeliverySettings!=null && deliveryRequest!=null){
+
+         if(rushUpDeliverySettings!=null && deliveryRequest!=null && deliveryRequest.getPickupLocation()!=null && deliveryRequest.getPickupLocation().getName()!=null
+                 && !deliveryRequest.getPickupLocation().getName().equalsIgnoreCase("") && !deliveryRequest.getDropoffLocation().getName().equalsIgnoreCase("")
+                 && deliveryRequest.getPickupName()!=null && deliveryRequest.getDropoffName()!=null){
+
              final Dialog dialog = new Dialog(context, android.R.style.Theme_Translucent_NoTitleBar);
              dialog.requestWindowFeature(Window.FEATURE_NO_TITLE);
              dialog.setContentView(R.layout.notification);

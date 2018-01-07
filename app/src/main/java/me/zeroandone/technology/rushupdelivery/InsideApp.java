@@ -520,9 +520,15 @@ public class InsideApp extends AppCompatActivity implements RushUpDeliverySettin
     private void ZoomCameraToBothPins() {
         if(map!=null) {
             LatLngBounds.Builder builder = new LatLngBounds.Builder();
-            builder.include(PickupMarker.getPosition());
-            builder.include(DropOffMarker.getPosition());
-            builder.include(Driver.getPosition());
+            if(PickupMarker!=null) {
+                builder.include(PickupMarker.getPosition());
+            }
+            if(DropOffMarker!=null) {
+                builder.include(DropOffMarker.getPosition());
+            }
+            if(Driver!=null) {
+                builder.include(Driver.getPosition());
+            }
             LatLngBounds bounds = builder.build();
 
             DisplayMetrics displayMetrics = new DisplayMetrics();

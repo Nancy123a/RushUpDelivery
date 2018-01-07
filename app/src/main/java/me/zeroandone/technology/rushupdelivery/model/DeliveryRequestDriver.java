@@ -16,7 +16,9 @@
 package me.zeroandone.technology.rushupdelivery.model;
 
 
-public class DeliveryRequestDriver {
+import java.io.Serializable;
+
+public class DeliveryRequestDriver implements Serializable{
     @com.google.gson.annotations.SerializedName("driver_location")
     private DeliveryRequestDriverDriverLocation driverLocation = null;
     @com.google.gson.annotations.SerializedName("identity_id")

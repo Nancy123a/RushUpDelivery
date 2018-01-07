@@ -16,7 +16,9 @@
 package me.zeroandone.technology.rushupdelivery.model;
 
 
-public class DeliveryRequestDriverDriverLocation {
+import java.io.Serializable;
+
+public class DeliveryRequestDriverDriverLocation implements Serializable {
     @com.google.gson.annotations.SerializedName("latitude")
     private String latitude = null;
     @com.google.gson.annotations.SerializedName("longitude")
