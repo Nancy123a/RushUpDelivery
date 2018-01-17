@@ -22,6 +22,7 @@ import java.util.regex.Pattern;
 import me.zeroandone.technology.rushupdelivery.R;
 import me.zeroandone.technology.rushupdelivery.interfaces.RushUpDeliverySettings;
 import me.zeroandone.technology.rushupdelivery.objects.DeliveryRequest;
+import me.zeroandone.technology.rushupdelivery.objects.DriverStatus;
 
 public class Utils {
     public static final int MY_SOCKET_TIMEOUT_MS = 5000;
@@ -122,8 +123,17 @@ public class Utils {
                  dialog.dismiss();
                  rushUpDeliverySettings.PlotPins(deliveryRequest);
                  rushUpDeliverySettings.SaveActiveDelivery(deliveryRequest);
+                 rushUpDeliverySettings.showBottomMenu(deliveryRequest);
                  // save state to assign
                  AppHelper.assignDeliveryToDriver(deliveryRequest);
+
+                 }
+             });
+             decline_delivery.setOnClickListener(new View.OnClickListener() {
+                 @Override
+                 public void onClick(View v) {
+                     dialog.dismiss();
+                     rushUpDeliverySettings.showOptions();
                  }
              });
 

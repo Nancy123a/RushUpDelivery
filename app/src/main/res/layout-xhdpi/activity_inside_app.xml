@@ -18,6 +18,7 @@
     </RelativeLayout>
 
     <FrameLayout
+        android:id="@+id/maplayout"
         android:layout_width="match_parent"
         android:layout_height="match_parent">
 
@@ -306,42 +307,41 @@
     <com.wunderlist.slidinglayer.SlidingLayer
         android:id="@+id/slidingLayer2"
         android:layout_width="match_parent"
-        android:layout_height="280dp"
+        android:layout_height="200dp"
         android:elevation="2dip"
         android:layout_alignParentBottom="true"
         slidingLayer:changeStateOnTap="false"
         slidingLayer:stickTo="bottom">
 
         <RelativeLayout
+            android:id="@+id/mainlayout"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:background="@color/colorAccent">
 
             <TextView
                 android:id="@+id/package_pickup"
-                android:layout_width="wrap_content"
+                android:layout_width="115dp"
                 android:layout_height="wrap_content"
                 android:text="@string/package_pickup"
                 android:layout_centerHorizontal="true"
                 android:textColor="@color/violet"
-                android:layout_marginTop="@dimen/padding_15"
-                android:layout_marginBottom="@dimen/padding_20"/>
+                android:textSize="@dimen/text_size_15"
+                android:layout_marginTop="@dimen/padding_10"
+                android:layout_marginBottom="@dimen/padding_10"/>
 
-            <LinearLayout
+            <RelativeLayout
                 android:id="@+id/description"
-                android:layout_width="wrap_content"
+                android:layout_width="115dp"
                 android:layout_height="wrap_content"
-                android:layout_below="@+id/package_pickup"
                 android:layout_centerHorizontal="true"
-                android:layout_marginTop="@dimen/padding_20"
-                android:orientation="vertical">
+                android:layout_below="@+id/package_pickup">
 
                 <TextView
                     android:id="@+id/pickupname"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="The Creative 9"
-                    android:gravity="left"
+                    android:gravity="center"
                     android:textColor="@color/violet"
                     android:textSize="@dimen/text_size_15"
                     android:textStyle="bold"/>
@@ -351,80 +351,122 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:gravity="left"
-                    android:textSize="@dimen/text_size_15"
-                    android:textColor="@color/violet"
-                    android:text="Verdun"/>
+                    android:layout_below="@+id/pickupname"
+                    android:textSize="@dimen/text_size_12"
+                    android:textColor="@color/violet"/>
 
-            </LinearLayout>
 
-            <ImageView
-                android:id="@+id/pickupimage"
-                android:layout_width="80dp"
-                android:layout_height="80dp"
-                android:layout_below="@+id/package_pickup"
+            </RelativeLayout>
+
+            <RelativeLayout
+                android:id="@+id/delivery_boy_photo"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
                 android:layout_toLeftOf="@+id/description"
-                android:layout_marginRight="@dimen/padding_10"
-                android:background="@drawable/circularimage"
-                android:tint="@color/black"
-                android:src="@mipmap/camera"
-                android:scaleType="fitXY"
-                android:layout_toStartOf="@+id/description"
-                android:layout_marginEnd="@dimen/padding_10" />
+                android:layout_marginRight="@dimen/padding_30"
+                android:layout_below="@+id/package_pickup">
+
+                <de.hdodenhof.circleimageview.CircleImageView
+                    android:id="@+id/boy_photo"
+                    android:layout_width="60dp"
+                    android:layout_height="60dp"
+                    android:src="@color/violet"
+                    android:layout_alignParentLeft="true"
+                    android:layout_centerHorizontal="true" />
+
+                <TextView
+                    android:id="@+id/driver_xxphoto"
+                    android:layout_width="60dp"
+                    android:layout_height="60dp"
+                    android:background="@drawable/greycircle"
+                    android:gravity="center"
+                    android:visibility="gone"
+                    android:textAlignment="center"
+                    android:textColor="@color/white"
+                    android:textSize="@dimen/text_size_20"/>
+
+
+            </RelativeLayout>
 
             <ImageView
                 android:id="@+id/call"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
+                android:layout_width="60dp"
+                android:layout_height="60dp"
                 android:src="@mipmap/call"
                 android:scaleType="fitXY"
                 android:layout_centerVertical="true"
                 android:layout_toRightOf="@+id/description"
-                android:layout_marginTop="@dimen/padding_20"
-                android:layout_marginLeft="@dimen/padding_10"
+                android:layout_marginLeft="@dimen/padding_20"
                 android:layout_below="@+id/package_pickup"
                 android:layout_toEndOf="@+id/description"
-                android:layout_marginStart="@dimen/padding_10" />
+                android:layout_marginStart="@dimen/padding_20" />
+
 
             <TextView
                 android:id="@+id/fragile_package"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:textSize="@dimen/text_size_15"
-                android:layout_below="@+id/pickupimage"
                 android:layout_centerHorizontal="true"
                 android:textStyle="bold"
+                android:layout_above="@+id/insertcode"
                 android:textColor="@color/violet"
                 android:text="@string/fragile_package"
-                android:layout_marginTop="@dimen/padding_30"/>
+                android:layout_marginBottom="@dimen/padding_10"/>
 
-            <RelativeLayout
-                android:id="@+id/contacts"
-                android:layout_width="match_parent"
+            <TextView
+                android:id="@+id/insertcode"
+                android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_below="@+id/fragile_package"
-                android:layout_marginRight="@dimen/padding_30"
-                android:layout_marginLeft="@dimen/padding_30"
-                android:layout_marginTop="@dimen/padding_20"
-                android:background="@drawable/menu_button">
-
-                <TextView
-                    android:id="@+id/insertcode"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:padding="@dimen/padding_8"
-                    android:textStyle="bold"
-                    android:textColor="@color/violet"
-                    android:text="@string/insert_nbcode"
-                    android:textSize="@dimen/text_size_15"
-                    android:layout_centerHorizontal="true"/>
-
-            </RelativeLayout>
+                android:textStyle="bold"
+                android:layout_marginBottom="@dimen/padding_20"
+                android:textColor="@color/violet"
+                android:text="@string/insert_nbcode"
+                android:layout_alignParentBottom="true"
+                android:paddingLeft="@dimen/padding_60"
+                android:paddingRight="@dimen/padding_60"
+                android:paddingBottom="@dimen/padding_5"
+                android:paddingTop="@dimen/padding_5"
+                android:textSize="@dimen/text_size_15"
+                android:background="@drawable/menu_button"
+                android:layout_centerHorizontal="true"/>
 
         </RelativeLayout>
 
     </com.wunderlist.slidinglayer.SlidingLayer>
 
+    <LinearLayout
+        android:id="@+id/relative"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:gravity="center"
+        android:layout_centerHorizontal="true"
+        android:layout_alignParentBottom="true"
+        android:layout_marginBottom="@dimen/padding_30">
 
+        <Button
+            android:id="@+id/off"
+            android:layout_width="50dp"
+            android:layout_height="50dp"
+            android:background="@mipmap/inactive"
+            android:textColor="@color/white"
+            android:textSize="@dimen/text_size_15"
+            android:layout_marginRight="@dimen/padding_10"
+            android:text="@string/off"/>
+
+        <Button
+            android:id="@+id/on"
+            android:layout_width="50dp"
+            android:layout_height="50dp"
+            android:text="@string/on"
+            android:textColor="@color/white"
+            android:textSize="@dimen/text_size_15"
+            android:background="@mipmap/offinactive"
+            android:layout_toRightOf="@+id/on"
+            android:layout_centerHorizontal="true"/>
+
+
+    </LinearLayout>
 
 
 </RelativeLayout>

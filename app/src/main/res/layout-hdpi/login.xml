@@ -51,14 +51,14 @@
         android:layout_below="@+id/username"
         android:layout_marginLeft="@dimen/padding_16"
         android:layout_marginRight="@dimen/padding_16"
-        android:layout_marginTop="@dimen/padding_20"
         android:background="@drawable/edittextshape"
         android:ems="10"
+        android:padding="@dimen/padding_8"
+        android:textSize="@dimen/text_size_12"
         android:hint="@string/password"
         android:inputType="textPassword"
         android:maxLines="1"
-        android:padding="@dimen/padding_8"
-        android:textSize="@dimen/text_size_12"
+        android:layout_marginTop="@dimen/padding_20"
         android:textColor="@color/white"
         android:textColorHint="@color/hint"/>
 

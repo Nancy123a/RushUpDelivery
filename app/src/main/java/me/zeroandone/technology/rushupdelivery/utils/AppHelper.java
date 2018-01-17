@@ -17,6 +17,9 @@ import com.amazonaws.regions.Regions;
 import me.zeroandone.technology.rushupdelivery.model.DriverLocationRequest;
 import me.zeroandone.technology.rushupdelivery.model.TokenRequest;
 import me.zeroandone.technology.rushupdelivery.objects.DeliveryRequest;
+import me.zeroandone.technology.rushupdelivery.objects.DeliveryStatus;
+import me.zeroandone.technology.rushupdelivery.objects.DriverStatus;
+import me.zeroandone.technology.rushupdelivery.objects.DriverStatusRequest;
 
 
 public class AppHelper{
@@ -162,6 +165,23 @@ public class AppHelper{
         }).start();
     }
 
+    public static void UpdateStatusofDriver(final DriverStatus status){
+        if(AppHelper.getRushUpClient()!=null) {
+            new Thread(new Runnable() {
+                public void run() {
+                    try {
+                        Log.d("HeroJongi"," Update driver status success");
+                        AppHelper.getRushUpClient().driverStatusPut(new DriverStatusRequest(status));
+                    }
+                    catch (Exception ex) {
+                        Log.d("HeroJongi","Error in token",ex);
+                    }
+                }
+            }).start();
+        }
+    }
+
+
     public static void sendDriverLocation(final Location location) {
         new Thread(new Runnable() {
             public void run() {
@@ -178,6 +198,23 @@ public class AppHelper{
             }
         }).start();
     }
+
+    public static void UpdateDriverStatus(final DriverStatus status){
+        new Thread(new Runnable() {
+            public void run() {
+                if (status != null) {
+                    try {
+                        DriverStatusRequest driverStatusRequest=new DriverStatusRequest(status);
+                        getRushUpClient().driverStatusPut(driverStatusRequest);
+                        Log.d("HeroJongi", "Driver Sttus updated");
+                    } catch (Exception ex) {
+                        Log.d("HeroJongi", "Driver Location post error " + ex.getMessage());
+                    }
+                }
+            }
+        }).start();
+    }
+
 
     public static void assignDeliveryToDriver(final DeliveryRequest deliveryRequest){
         new Thread(new Runnable() {

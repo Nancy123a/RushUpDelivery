@@ -2,9 +2,11 @@ package me.zeroandone.technology.rushupdelivery;
 
 import android.Manifest;
 import android.annotation.TargetApi;
+import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
+import android.content.res.Resources;
 import android.location.Location;
 
 import com.google.android.gms.location.LocationListener;
@@ -23,7 +25,10 @@ import android.support.v7.widget.RecyclerView;
 import android.util.DisplayMetrics;
 import android.util.Log;
 import android.view.View;
+import android.widget.Button;
+import android.widget.FrameLayout;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -45,21 +50,26 @@ import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.LatLngBounds;
 import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
+import com.wunderlist.slidinglayer.SlidingLayer;
 
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
+import de.hdodenhof.circleimageview.CircleImageView;
 import me.zeroandone.technology.rushupdelivery.adapter.SettingsAdapter;
 import me.zeroandone.technology.rushupdelivery.interfaces.RushUpDeliverySettings;
 import me.zeroandone.technology.rushupdelivery.model.Driver;
 import me.zeroandone.technology.rushupdelivery.objects.DeliveryRequest;
+import me.zeroandone.technology.rushupdelivery.objects.DriverStatus;
+import me.zeroandone.technology.rushupdelivery.objects.DriverStatusRequest;
 import me.zeroandone.technology.rushupdelivery.objects.PushType;
 import me.zeroandone.technology.rushupdelivery.objects.Settings;
 import me.zeroandone.technology.rushupdelivery.utils.AppHelper;
 import me.zeroandone.technology.rushupdelivery.utils.Application;
 import me.zeroandone.technology.rushupdelivery.utils.DrawPolylineVolley;
+import me.zeroandone.technology.rushupdelivery.utils.DriverStatusSharedPreference;
 import me.zeroandone.technology.rushupdelivery.utils.InternalStorage;
 import me.zeroandone.technology.rushupdelivery.utils.Utils;
 import me.zeroandone.technology.rushupdelivery.widget.BalanceRecyclerView;
@@ -78,18 +88,24 @@ public class InsideApp extends AppCompatActivity implements RushUpDeliverySettin
     RecyclerView settings_recycler_view;
     CognitoUserDetails details;
     String Username, Phonenumber;
+    LinearLayout options;
+    DriverStatusSharedPreference driverStatusSharedPreference;
     public static final int Access_Location = 70;
     LocationListener locationListener=this;
     Marker Driver;
+    FrameLayout frameLayout;
     DrawPolylineVolley drawPolyline;
     Marker PickupMarker,DropOffMarker;
     DeliveryRequest deliveryRequest;
     RushUpDeliverySettings rushUpDeliverySettings=this;
+    SlidingLayer bottomMenu;
+    Button off,on;
+    TextView pickupname,pickupaddress,Boy_photoname;
+    CircleImageView boy_photo;
+
 
     // Location updates intervals in sec
-    private static int UPDATE_INTERVAL = 10000; // 10 sec
-    private static int FATEST_INTERVAL = 2000; // 5 sec
- //   private static int DISPLACEMENT = 2; // 10 meters
+    private static int UPDATE_INTERVAL = 60*1000; // 1min
 
 
     private Location mLastLocation;
@@ -126,6 +142,32 @@ public class InsideApp extends AppCompatActivity implements RushUpDeliverySettin
         historyRecycleView = (HistoryRecycleView) findViewById(R.id.historyRecycleView);
         balanceRecyclerView = (BalanceRecyclerView) findViewById(R.id.balanceRecycleView);
         settings_recycler_view = (RecyclerView) findViewById(R.id.settings_recycle_view);
+        bottomMenu=(SlidingLayer) findViewById(R.id.slidingLayer2);
+        options=(LinearLayout) findViewById(R.id.relative);
+        frameLayout=(FrameLayout) findViewById(R.id.maplayout);
+        off=(Button) findViewById(R.id.off);
+        on=(Button) findViewById(R.id.on);
+        pickupaddress=(TextView) findViewById(R.id.addresspickup);
+        pickupname=(TextView) findViewById(R.id.pickupname);
+        boy_photo=(CircleImageView) findViewById(R.id.boy_photo);
+        Boy_photoname=(TextView) findViewById(R.id.driver_xxphoto);
+
+        driverStatusSharedPreference=new DriverStatusSharedPreference(this);
+
+        if(driverStatusSharedPreference.getStatus()!=null && !driverStatusSharedPreference.getStatus().equalsIgnoreCase("")){
+            if(driverStatusSharedPreference.getStatus().equalsIgnoreCase("on")){
+                activeButton(on);
+                inactiveButton(off);
+            }
+            else {
+                activeButton(off);
+                inactiveButton(on);
+            }
+        }
+        else{
+            activeButton(off);
+            inactiveButton(on);
+        }
 
 
         if (AppHelper.getPool() != null && AppHelper.getPool().getCognitoUserPool().getCurrentUser() != null) {
@@ -142,6 +184,8 @@ public class InsideApp extends AppCompatActivity implements RushUpDeliverySettin
         settings_close.setOnClickListener(this);
         history_close.setOnClickListener(this);
         balance_close.setOnClickListener(this);
+        off.setOnClickListener(this);
+        on.setOnClickListener(this);
 
         if (Utils.checkPlayServices(InsideApp.this)) {
 
@@ -213,7 +257,14 @@ public class InsideApp extends AppCompatActivity implements RushUpDeliverySettin
                 this.deliveryRequest=deliveryRequest;
              // plot the pins
                 if(deliveryRequest!=null) {
-                    PlotPins(deliveryRequest);
+                    Log.d("HeroJongi ","Read settings ");
+                    if(deliveryRequest.getPickupLocation()!=null && deliveryRequest.getDropoffLocation()!=null) {
+                        PlotPins(deliveryRequest);
+                        showBottomMenu(deliveryRequest);
+                    }
+                    if(deliveryRequest.getDriver()!=null){
+                        Log.d("HeroJongi","Driver Status "+deliveryRequest.getDriver().getDriver_status());
+                    }
                 }
             }
         }
@@ -243,6 +294,18 @@ public class InsideApp extends AppCompatActivity implements RushUpDeliverySettin
     @Override
     public void onClick(View v) {
         switch (v.getId()) {
+            case R.id.on:
+               AppHelper.UpdateStatusofDriver(DriverStatus.on);
+               driverStatusSharedPreference.saveStatus("on");
+               activeButton(on);
+               inactiveButton(off);
+                break;
+            case R.id.off:
+                AppHelper.UpdateStatusofDriver(DriverStatus.off);
+                driverStatusSharedPreference.saveStatus("off");
+                activeButton(off);
+                inactiveButton(on);
+                break;
             case R.id.settings:
                 homelayout.setVisibility(View.GONE);
                 settings_menu.setVisibility(View.VISIBLE);
@@ -274,31 +337,51 @@ public class InsideApp extends AppCompatActivity implements RushUpDeliverySettin
         }
     }
 
+    public void activeButton(Button button){
+        LinearLayout.LayoutParams params = (LinearLayout.LayoutParams) button.getLayoutParams();
+        params.width =(int) convertDpToPixel(90,this);
+        params.height=(int) convertDpToPixel(90,this);
+        button.setLayoutParams(params);
+    }
+
+    public void inactiveButton(Button button){
+        LinearLayout.LayoutParams params = (LinearLayout.LayoutParams) button.getLayoutParams();
+        params.width =(int) convertDpToPixel(50,this);
+        params.height=(int) convertDpToPixel(50,this);
+        button.setLayoutParams(params);
+    }
+
+    public static float convertDpToPixel(float dp, Context context){
+        Resources resources = context.getResources();
+        DisplayMetrics metrics = resources.getDisplayMetrics();
+        float px = dp * ((float)metrics.densityDpi / DisplayMetrics.DENSITY_DEFAULT);
+        return px;
+    }
     public void setAdapter() {
         List<Settings> settings_list = new ArrayList<>();
-        settings_list.add(new Settings("My account", null, Settings.HEADER));
-        settings_list.add(new Settings(null, "First Name", Settings.OPTION));
-        settings_list.add(new Settings(null, "Last Name", Settings.OPTION));
-        settings_list.add(new Settings(null, "Mobile number", Settings.OPTION));
-        settings_list.add(new Settings(null, "Email", Settings.OPTION));
-        settings_list.add(new Settings(null, "Password", Settings.OPTION));
-        settings_list.add(new Settings(null, "Notification Sound", Settings.Notification));
-        settings_list.add(new Settings("More Information", null, Settings.HEADER));
-        settings_list.add(new Settings(null, "Support", Settings.OPTION));
-        settings_list.add(new Settings(null, "Privacy Policy", Settings.OPTION));
-        settings_list.add(new Settings(null, "Terms of service", Settings.OPTION));
-        settings_list.add(new Settings(null, "Licenses", Settings.OPTION));
-        settings_list.add(new Settings("Account actions", null, Settings.HEADER));
+        settings_list.add(new Settings(getResources().getString(R.string.myaccount), null, Settings.HEADER));
+        settings_list.add(new Settings(null, getResources().getString(R.string.first_name), Settings.OPTION));
+        settings_list.add(new Settings(null,  getResources().getString(R.string.lastname), Settings.OPTION));
+        settings_list.add(new Settings(null,  getResources().getString(R.string.mobile), Settings.OPTION));
+        settings_list.add(new Settings(null, getResources().getString(R.string.email), Settings.OPTION));
+        settings_list.add(new Settings(null, getResources().getString(R.string.password), Settings.OPTION));
+        settings_list.add(new Settings(null, getResources().getString(R.string.notification), Settings.Notification));
+        settings_list.add(new Settings(getResources().getString(R.string.more_info), null, Settings.HEADER));
+        settings_list.add(new Settings(null, getResources().getString(R.string.support), Settings.OPTION));
+        settings_list.add(new Settings(null, getResources().getString(R.string.privacy_policy), Settings.OPTION));
+        settings_list.add(new Settings(null, getResources().getString(R.string.terms), Settings.OPTION));
+        settings_list.add(new Settings(null,getResources().getString(R.string.license) , Settings.OPTION));
+        settings_list.add(new Settings(getResources().getString(R.string.account_actions), null, Settings.HEADER));
         if (details != null && details.getAttributes().getAttributes().get("email_verified").equalsIgnoreCase("false")) {
-            settings_list.add(new Settings(null, "Verify Email", Settings.OPTION));
+            settings_list.add(new Settings(null, getResources().getString(R.string.verify_email), Settings.OPTION));
         }
         if (details != null && details.getAttributes().getAttributes().get("phone_number_verified").equalsIgnoreCase("false")) {
-            settings_list.add(new Settings(null, "Verify Phone Number", Settings.OPTION));
+            settings_list.add(new Settings(null, getResources().getString(R.string.verify_phone), Settings.OPTION));
         }
-        settings_list.add(new Settings(null, "Clear History", Settings.OPTION));
-        settings_list.add(new Settings(null, "Log Out", Settings.OPTION));
-        settings_list.add(new Settings(null, "Add Account", Settings.OPTION));
-        settings_list.add(new Settings(null, "Licenses", Settings.OPTION));
+        settings_list.add(new Settings(null, getResources().getString(R.string.clear_history), Settings.OPTION));
+        settings_list.add(new Settings(null, getResources().getString(R.string.logout), Settings.OPTION));
+        settings_list.add(new Settings(null, getResources().getString(R.string.add_account), Settings.OPTION));
+        settings_list.add(new Settings(null, getResources().getString(R.string.licenses), Settings.OPTION));
         SettingsAdapter adapter = new SettingsAdapter(this, settings_list);
         LinearLayoutManager linearLayoutManager = new LinearLayoutManager(this, OrientationHelper.VERTICAL, false);
         settings_recycler_view.setLayoutManager(linearLayoutManager);
@@ -316,7 +399,7 @@ public class InsideApp extends AppCompatActivity implements RushUpDeliverySettin
                 DropDriverOnMap(location.getLatitude(), location.getLongitude(),true);
             } else {
                 Driver.setPosition(new LatLng(location.getLatitude(), location.getLongitude()));
-                ZoomtoMyCurrentLocation(location.getLatitude(), location.getLongitude());
+                ZoomCameraToBothPins();
             }
         }
     }
@@ -457,6 +540,7 @@ public class InsideApp extends AppCompatActivity implements RushUpDeliverySettin
         }));
     }
 
+
     @Override
     public void SaveActiveDelivery(DeliveryRequest deliveryRequest) {
         this.deliveryRequest=deliveryRequest;
@@ -481,6 +565,39 @@ public class InsideApp extends AppCompatActivity implements RushUpDeliverySettin
             }
             ZoomCameraToBothPins();
             APICallToDrawPolyline();
+        }
+    }
+
+    @Override
+    public void showOptions() {
+        options.setVisibility(View.VISIBLE);
+        bottomMenu.setVisibility(View.GONE);
+        bottomMenu.openLayer(false);
+        bottomMenu.setSlidingEnabled(false);
+    }
+
+    @Override
+    public void showBottomMenu(DeliveryRequest deliveryRequest) {
+         options.setVisibility(View.GONE);
+         bottomMenu.setVisibility(View.VISIBLE);
+         bottomMenu.openLayer(true);
+         bottomMenu.setSlidingEnabled(false);
+         FillUpBottomMenu(deliveryRequest);
+    }
+
+    public void FillUpBottomMenu(DeliveryRequest deliveryRequest){
+        if(deliveryRequest!=null) {
+            if(deliveryRequest.getPickupName()!=null && !deliveryRequest.getPickupName().equalsIgnoreCase("")) {
+                pickupname.setText(deliveryRequest.getPickupName());
+                boy_photo.setVisibility(View.GONE);
+                Boy_photoname.setVisibility(View.VISIBLE);
+                char firstletter = Character.toUpperCase(deliveryRequest.getPickupName().charAt(0));
+                Boy_photoname.setText(String.valueOf(firstletter));
+            }
+            if(deliveryRequest.getPickupLocation()!=null && deliveryRequest.getPickupLocation().getName()!=null && !deliveryRequest.getPickupLocation().getName().equalsIgnoreCase("")) {
+                pickupaddress.setText(deliveryRequest.getPickupLocation().getName());
+                }
+
         }
     }
 
@@ -519,27 +636,17 @@ public class InsideApp extends AppCompatActivity implements RushUpDeliverySettin
 
     private void ZoomCameraToBothPins() {
         if(map!=null) {
-            LatLngBounds.Builder builder = new LatLngBounds.Builder();
-            if(PickupMarker!=null) {
-                builder.include(PickupMarker.getPosition());
-            }
-            if(DropOffMarker!=null) {
-                builder.include(DropOffMarker.getPosition());
-            }
-            if(Driver!=null) {
-                builder.include(Driver.getPosition());
-            }
-            LatLngBounds bounds = builder.build();
-
-            DisplayMetrics displayMetrics = new DisplayMetrics();
-            getWindowManager().getDefaultDisplay().getMetrics(displayMetrics);
-
-            int width = displayMetrics.widthPixels - 140;
-            int height = displayMetrics.heightPixels;
-            int padding = (int) (width * 0.20); // offset from edges of the map 10% of screen
-
-            CameraUpdate cu = CameraUpdateFactory.newLatLngBounds(bounds, width, height, padding);
-            map.animateCamera(cu);
+         LatLngBounds.Builder builder = new LatLngBounds.Builder();
+          if(PickupMarker!=null) {
+           builder.include(PickupMarker.getPosition());
+           }
+           if(DropOffMarker!=null) {
+            builder.include(DropOffMarker.getPosition());
+          }
+          if(Driver!=null) {
+           builder.include(Driver.getPosition());
+           }
+            map.moveCamera(CameraUpdateFactory.newLatLngBounds(builder.build(), 300));
         }
     }
 

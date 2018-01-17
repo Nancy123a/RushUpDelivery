@@ -3,9 +3,7 @@
     <string name="RushUp">RushUp</string>
     <string name="the_app_that">The app that</string>
     <string name="always_delievers">Always Delivers</string>
-    <string name="phonenumber_email">Email / Phone number</string>
     <string name="password">Password</string>
-    <string name="forget_password">Forget your login details? <u> Get help signing in.</u></string>
     <string name="login">Login</string>
     <string name="step1">Step One</string>
     <string name="setup_your_profile">Setup your profile</string>
@@ -43,4 +41,22 @@
     <string name="new_password">New Password</string>
     <string name="verification_code">Verification Code</string>
     <string name="Next">Next</string>
+    <string name="first_name">First Name</string>
+    <string name="myaccount">My account</string>
+    <string name="lastname">Last Name</string>
+    <string name="mobile">Mobile number</string>
+    <string name="more_info">More Information</string>
+    <string name="support">Support</string>
+    <string name="privacy_policy">Privacy Policy</string>
+    <string name="terms">Terms of service</string>
+    <string name="license">Licenses</string>
+    <string name="account_actions">Account Actions</string>
+    <string name="verify_email">Verify Email</string>
+    <string name="verify_phone">Verify Phone Number</string>
+    <string name="clear_history">Clear History</string>
+    <string name="logout">Logout</string>
+    <string name="add_account">Add Account</string>
+    <string name="licenses">Licenses</string>
+    <string name="on">On</string>
+    <string name="off">Off</string>
 </resources>

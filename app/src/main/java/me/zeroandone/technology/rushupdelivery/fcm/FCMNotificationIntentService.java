@@ -40,7 +40,7 @@ public class FCMNotificationIntentService extends FirebaseMessagingService {
 
     public void sendNotification(String message,PushType type){
       if(message!=null && !message.equalsIgnoreCase("")){
-
+          Log.d("HeroJongi","onNotification "+type+"  "+message);
           Intent intent =  new Intent(this, MainActivity.class);
           Gson gson = new Gson();
           NotificationCompat.Builder builder = null;

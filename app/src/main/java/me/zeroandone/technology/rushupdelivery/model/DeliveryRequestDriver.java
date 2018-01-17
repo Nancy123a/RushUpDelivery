@@ -20,20 +20,22 @@ import java.io.Serializable;
 
 public class DeliveryRequestDriver implements Serializable{
     @com.google.gson.annotations.SerializedName("driver_location")
-    private DeliveryRequestDriverDriverLocation driverLocation = null;
+    private DriverLocationRequest driverLocation = null;
     @com.google.gson.annotations.SerializedName("identity_id")
     private String identityId = null;
     @com.google.gson.annotations.SerializedName("phone")
     private String phone = null;
     @com.google.gson.annotations.SerializedName("username")
     private String username = null;
+    @com.google.gson.annotations.SerializedName("driver_status")
+    private String driver_status = null;
 
     /**
      * Gets driverLocation
      *
      * @return driverLocation
      **/
-    public DeliveryRequestDriverDriverLocation getDriverLocation() {
+    public DriverLocationRequest getDriverLocation() {
         return driverLocation;
     }
 
@@ -42,7 +44,7 @@ public class DeliveryRequestDriver implements Serializable{
      *
      * @param driverLocation the new value
      */
-    public void setDriverLocation(DeliveryRequestDriverDriverLocation driverLocation) {
+    public void setDriverLocation(DriverLocationRequest driverLocation) {
         this.driverLocation = driverLocation;
     }
 
@@ -99,5 +101,14 @@ public class DeliveryRequestDriver implements Serializable{
     public void setUsername(String username) {
         this.username = username;
     }
+
+    public String getDriver_status() {
+        return driver_status;
+    }
+
+    public void setDriver_status(String driver_status) {
+        this.driver_status = driver_status;
+    }
+
 
 }

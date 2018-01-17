@@ -23,6 +23,7 @@ import me.zeroandone.technology.rushupdelivery.model.DriverLocationRequest;
 import me.zeroandone.technology.rushupdelivery.model.PushRequest;
 import me.zeroandone.technology.rushupdelivery.model.TokenRequest;
 import me.zeroandone.technology.rushupdelivery.objects.DeliveryRequest;
+import me.zeroandone.technology.rushupdelivery.objects.DriverStatusRequest;
 
 @com.amazonaws.mobileconnectors.apigateway.annotation.Service(endpoint = "https://j9rgxxut6b.execute-api.eu-west-1.amazonaws.com/prod")
 public interface RushupClient {
@@ -44,6 +45,9 @@ public interface RushupClient {
     @com.amazonaws.mobileconnectors.apigateway.annotation.Operation(path = "/contact", method = "POST")
     ContactSyncResponse contactPost(
             ContactSyncRequest body);
+
+    @com.amazonaws.mobileconnectors.apigateway.annotation.Operation(path = "/driver/status", method = "PUT")
+    void driverStatusPut(DriverStatusRequest body);
 
     /**
      *
