@@ -48,13 +48,17 @@ public class DeliveryRequest implements Serializable{
     boolean isRushie_PickUp;
     @com.google.gson.annotations.SerializedName("isrushiedropoff")
     boolean isRushie_DropOff;
-    @com.google.gson.annotations.SerializedName("pickupphonenumber")
-    private String PickUpPhonenumber;
+    @com.google.gson.annotations.SerializedName("identity_id")
+    private String identity_id;
+    @com.google.gson.annotations.SerializedName("to_code")
+    private String  to_code;
+    @com.google.gson.annotations.SerializedName("from_code")
+    private String from_code;
 
     public DeliveryRequest() {
     }
 
-    public DeliveryRequest(String id, BigDecimal deliveryDate, DeliveryRequestDriver driver, DeliveryRequestPickupLocation pickupLocation, String dropoffName, String pickupName, String from, String to, DeliveryRequestPickupLocation dropoffLocation, DeliveryStatus delivery_status, int page, boolean isRushie_PickUp, boolean isRushie_DropOff, String pickUpPhonenumber) {
+    public DeliveryRequest(String id, BigDecimal deliveryDate, DeliveryRequestDriver driver, DeliveryRequestPickupLocation pickupLocation, String dropoffName, String pickupName, String from, String to, DeliveryRequestPickupLocation dropoffLocation, DeliveryStatus delivery_status, int page, boolean isRushie_PickUp, boolean isRushie_DropOff, String pickUpPhonenumber,String from_code,String to_code) {
         this.id = id;
         this.deliveryDate = deliveryDate;
         this.driver = driver;
@@ -68,8 +72,11 @@ public class DeliveryRequest implements Serializable{
         this.page = page;
         this.isRushie_PickUp = isRushie_PickUp;
         this.isRushie_DropOff = isRushie_DropOff;
-        PickUpPhonenumber = pickUpPhonenumber;
+        identity_id = pickUpPhonenumber;
+        this.from_code=from_code;
+        this.to_code=to_code;
     }
+
 
     public String getId() {
         return id;
@@ -245,12 +252,12 @@ public class DeliveryRequest implements Serializable{
         isRushie_DropOff = rushie_DropOff;
     }
 
-    public String getPickUpPhonenumber() {
-        return PickUpPhonenumber;
+    public String getIdentity_id() {
+        return identity_id;
     }
 
-    public void setPickUpPhonenumber(String pickUpPhonenumber) {
-        PickUpPhonenumber = pickUpPhonenumber;
+    public void setIdentity_id(String identity_id) {
+        this.identity_id = identity_id;
     }
 
     public DeliveryRequestDriver getDriver() {
@@ -259,6 +266,22 @@ public class DeliveryRequest implements Serializable{
 
     public void setDriver(DeliveryRequestDriver driver) {
         this.driver = driver;
+    }
+
+    public String getTo_code() {
+        return to_code;
+    }
+
+    public void setTo_code(String to_code) {
+        this.to_code = to_code;
+    }
+
+    public String getFrom_code() {
+        return from_code;
+    }
+
+    public void setFrom_code(String from_code) {
+        this.from_code = from_code;
     }
 
     @Override
@@ -277,7 +300,9 @@ public class DeliveryRequest implements Serializable{
                 ", page=" + page +
                 ", isRushie_PickUp=" + isRushie_PickUp +
                 ", isRushie_DropOff=" + isRushie_DropOff +
-                ", PickUpPhonenumber='" + PickUpPhonenumber + '\'' +
+                ", identity_id='" + identity_id + '\'' +
+                ", to_code='" + to_code + '\'' +
+                ", from_code='" + from_code + '\'' +
                 '}';
     }
 }

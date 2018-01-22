@@ -309,9 +309,11 @@
         android:layout_width="match_parent"
         android:layout_height="190dp"
         android:elevation="2dip"
+        slidingLayer:offsetDistance="190dp"
         android:layout_alignParentBottom="true"
         slidingLayer:changeStateOnTap="false"
         slidingLayer:stickTo="bottom">
+
         <RelativeLayout
             android:id="@+id/mainlayout"
             android:layout_width="match_parent"
@@ -350,6 +352,7 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:gravity="left"
+                    android:text="Lebanese International University (LIU) Beirut, Lebanon"
                     android:layout_below="@+id/pickupname"
                     android:textSize="@dimen/text_size_10"
                     android:textColor="@color/violet"/>
@@ -407,31 +410,60 @@
                 android:textSize="@dimen/text_size_12"
                 android:layout_centerHorizontal="true"
                 android:textStyle="bold"
-                android:layout_above="@+id/insertcode"
+                android:layout_above="@+id/insertcode_layout"
                 android:textColor="@color/violet"
                 android:text="@string/fragile_package"
-                android:layout_marginBottom="@dimen/padding_10"/>
+                android:layout_marginBottom="@dimen/padding_5"/>
+
+            <RelativeLayout
+                android:id="@+id/insertcode_layout"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_centerHorizontal="true"
+                android:layout_alignParentBottom="true"
+                android:layout_marginBottom="@dimen/padding_20">
 
             <TextView
                 android:id="@+id/insertcode"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:textStyle="bold"
-                android:layout_marginBottom="@dimen/padding_20"
                 android:textColor="@color/violet"
                 android:text="@string/insert_nbcode"
-                android:layout_alignParentBottom="true"
                 android:paddingLeft="@dimen/padding_60"
                 android:paddingRight="@dimen/padding_60"
                 android:paddingBottom="@dimen/padding_5"
                 android:paddingTop="@dimen/padding_5"
                 android:textSize="@dimen/text_size_12"
-                android:background="@drawable/menu_button"
-                android:layout_centerHorizontal="true"/>
+                android:background="@drawable/menu_button"/>
+
+                <EditText
+                    android:id="@+id/edittext_insertcode"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:paddingBottom="@dimen/padding_5"
+                    android:paddingTop="@dimen/padding_5"
+                    android:hint="@string/insert_nbcode"
+                    android:paddingRight="@dimen/padding_60"
+                    android:paddingLeft="@dimen/padding_60"
+                    android:textCursorDrawable="@drawable/cursorshape"
+                    android:visibility="gone"
+                    android:textSize="@dimen/text_size_12"
+                    android:inputType="number"
+                    android:textColor="@color/black"
+                    android:gravity="center"
+                    android:textStyle="bold"
+                    android:background="@drawable/menu_button"/>
+
+            </RelativeLayout>
+
+
 
         </RelativeLayout>
 
      </com.wunderlist.slidinglayer.SlidingLayer>
+
+
 
     <LinearLayout
         android:id="@+id/relative"

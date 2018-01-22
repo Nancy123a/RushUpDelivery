@@ -10,5 +10,8 @@ public interface RushUpDeliverySettings {
     public void PlotPins(DeliveryRequest deliveryRequest);
     public void showOptions();
     public void showBottomMenu(DeliveryRequest deliveryRequest);
+    public void CheckPickUpCode(boolean isWrong);
+    public void CheckDropoffCode(boolean isWrong);
+    public void FillUpBottomMenu(DeliveryRequest deliveryRequest,boolean isPickUp);
 
 }

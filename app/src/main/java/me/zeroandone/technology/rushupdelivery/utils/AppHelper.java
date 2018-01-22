@@ -14,8 +14,11 @@ import com.amazonaws.mobileconnectors.cognitoidentityprovider.CognitoDevice;
 import com.amazonaws.mobileconnectors.cognitoidentityprovider.CognitoUserSession;
 import com.amazonaws.regions.Regions;
 
+import me.zeroandone.technology.rushupdelivery.interfaces.RushUpDeliverySettings;
+import me.zeroandone.technology.rushupdelivery.model.DeliveryStatusRequest;
 import me.zeroandone.technology.rushupdelivery.model.DriverLocationRequest;
 import me.zeroandone.technology.rushupdelivery.model.TokenRequest;
+import me.zeroandone.technology.rushupdelivery.objects.DeliveryPickUpDropoff;
 import me.zeroandone.technology.rushupdelivery.objects.DeliveryRequest;
 import me.zeroandone.technology.rushupdelivery.objects.DeliveryStatus;
 import me.zeroandone.technology.rushupdelivery.objects.DriverStatus;
@@ -223,10 +226,44 @@ public class AppHelper{
                     Log.d("HeroJongi"," assignDeliveryToDriver "+deliveryRequest.getId());
                     getRushUpClient().deliveryDeliveryIdAssignPut(deliveryRequest.getId());
                 }catch (Exception ex) {
-                    Log.e("HeroJongi","Fail status update",ex);
+                    Log.d("HeroJongi","Fail status update",ex);
                 }
             }
         }).start();
     }
+
+    public  static void CheckCode(final DeliveryRequest deliveryRequest, final String code , final DeliveryStatus status, final boolean isPickup, final RushUpDeliverySettings rushUpDeliverySettings){
+        new Thread(new Runnable() {
+            public void run() {
+                try {
+                    Log.d("HeroJongi "," its correct");
+                    String Status=String.valueOf(status);
+                    DeliveryPickUpDropoff deliveryPickUpDropoff=new DeliveryPickUpDropoff(code,Status);
+                    getRushUpClient().deliveryDeliveryIdPickupdropoffPut(deliveryRequest.getId(),deliveryPickUpDropoff);
+                    if(rushUpDeliverySettings!=null) {
+                        if (isPickup) {
+                            rushUpDeliverySettings.CheckPickUpCode(false);
+                        } else {
+                            rushUpDeliverySettings.CheckDropoffCode(false);
+                        }
+                    }
+                }catch (Exception ex) {
+                    Log.d("HeroJongi "," its wrong "+ex.getMessage());
+                   if(ex.getMessage().contains("Wrong Code")){
+                       Log.d("HeroJongi "," its wrong");
+                    if(rushUpDeliverySettings!=null){
+                        if(isPickup){
+                            rushUpDeliverySettings.CheckPickUpCode(true);
+                        }
+                        else{
+                           rushUpDeliverySettings.CheckDropoffCode(true);
+                        }
+                    }
+                   }
+                }
+            }
+        }).start();
+    }
+
 
 }

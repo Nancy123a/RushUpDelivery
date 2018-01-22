@@ -59,4 +59,7 @@
     <string name="licenses">Licenses</string>
     <string name="on">On</string>
     <string name="off">Off</string>
+    <string name="please_insert_code">Please insert code number</string>
+    <string name="error_code">Wrong code number</string>
+
 </resources>

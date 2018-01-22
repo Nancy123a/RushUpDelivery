@@ -44,7 +44,8 @@
             android:layout_below="@+id/dropoff"
             android:layout_centerHorizontal="true"
             android:gravity="center"
-            android:text="@string/dropoff_address"
+            android:layout_marginRight="@dimen/padding_20"
+            android:layout_marginLeft="@dimen/padding_20"
             android:textColor="@color/orange"
             android:textSize="@dimen/text_size_20" />
 
@@ -66,7 +67,8 @@
             android:layout_centerHorizontal="true"
             android:gravity="center"
             android:textColor="@color/green"
-            android:text="@string/pickup_address"
+            android:layout_marginRight="@dimen/padding_20"
+            android:layout_marginLeft="@dimen/padding_20"
             android:textSize="@dimen/text_size_20" />
 
 

@@ -22,6 +22,7 @@ import me.zeroandone.technology.rushupdelivery.model.DeliveryStatusRequest;
 import me.zeroandone.technology.rushupdelivery.model.DriverLocationRequest;
 import me.zeroandone.technology.rushupdelivery.model.PushRequest;
 import me.zeroandone.technology.rushupdelivery.model.TokenRequest;
+import me.zeroandone.technology.rushupdelivery.objects.DeliveryPickUpDropoff;
 import me.zeroandone.technology.rushupdelivery.objects.DeliveryRequest;
 import me.zeroandone.technology.rushupdelivery.objects.DriverStatusRequest;
 
@@ -113,6 +114,19 @@ public interface RushupClient {
     @com.amazonaws.mobileconnectors.apigateway.annotation.Operation(path = "/driver/token", method = "POST")
     void driverTokenPost(
             TokenRequest body);
+
+    /**
+     *
+     *
+     * @param deliveryId
+     * @param body
+     * @return void
+     */
+    @com.amazonaws.mobileconnectors.apigateway.annotation.Operation(path = "/delivery/{delivery_id}/pickupdropoff", method = "PUT")
+    void deliveryDeliveryIdPickupdropoffPut(
+            @com.amazonaws.mobileconnectors.apigateway.annotation.Parameter(name = "delivery_id", location = "path")
+                    String deliveryId,
+            DeliveryPickUpDropoff body);
 
     /**
      *

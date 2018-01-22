@@ -2,6 +2,7 @@ package me.zeroandone.technology.rushupdelivery;
 
 import android.Manifest;
 import android.annotation.TargetApi;
+import android.app.Dialog;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
@@ -24,8 +25,13 @@ import android.support.v7.widget.OrientationHelper;
 import android.support.v7.widget.RecyclerView;
 import android.util.DisplayMetrics;
 import android.util.Log;
+import android.view.KeyEvent;
 import android.view.View;
+import android.view.animation.Animation;
+import android.view.animation.AnimationUtils;
+import android.view.inputmethod.EditorInfo;
 import android.widget.Button;
+import android.widget.EditText;
 import android.widget.FrameLayout;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
@@ -62,6 +68,7 @@ import me.zeroandone.technology.rushupdelivery.adapter.SettingsAdapter;
 import me.zeroandone.technology.rushupdelivery.interfaces.RushUpDeliverySettings;
 import me.zeroandone.technology.rushupdelivery.model.Driver;
 import me.zeroandone.technology.rushupdelivery.objects.DeliveryRequest;
+import me.zeroandone.technology.rushupdelivery.objects.DeliveryStatus;
 import me.zeroandone.technology.rushupdelivery.objects.DriverStatus;
 import me.zeroandone.technology.rushupdelivery.objects.DriverStatusRequest;
 import me.zeroandone.technology.rushupdelivery.objects.PushType;
@@ -72,6 +79,7 @@ import me.zeroandone.technology.rushupdelivery.utils.DrawPolylineVolley;
 import me.zeroandone.technology.rushupdelivery.utils.DriverStatusSharedPreference;
 import me.zeroandone.technology.rushupdelivery.utils.InternalStorage;
 import me.zeroandone.technology.rushupdelivery.utils.Utils;
+import me.zeroandone.technology.rushupdelivery.utils.isPickUp;
 import me.zeroandone.technology.rushupdelivery.widget.BalanceRecyclerView;
 import me.zeroandone.technology.rushupdelivery.widget.HistoryRecycleView;
 
@@ -81,14 +89,16 @@ public class InsideApp extends AppCompatActivity implements RushUpDeliverySettin
     private SupportMapFragment mapFragment;
     private GoogleMap map;
     RelativeLayout homelayout, settings_menu, history_menu, balance_menu;
-    TextView settings, history, balance, user_name;
+    TextView settings, history, balance, user_name,insert_code,package_pickup;
     ImageView settings_close, history_close, balance_close, user_image;
+    EditText insert_code_edittext;
     HistoryRecycleView historyRecycleView;
     BalanceRecyclerView balanceRecyclerView;
     RecyclerView settings_recycler_view;
     CognitoUserDetails details;
     String Username, Phonenumber;
     LinearLayout options;
+    isPickUp isPickUp;
     DriverStatusSharedPreference driverStatusSharedPreference;
     public static final int Access_Location = 70;
     LocationListener locationListener=this;
@@ -124,6 +134,7 @@ public class InsideApp extends AppCompatActivity implements RushUpDeliverySettin
         Application.getInstance().setRushUpDeliverySettings(rushUpDeliverySettings);
         drawPolyline = new DrawPolylineVolley(this);
         deliveryRequest=new DeliveryRequest();
+        isPickUp=new isPickUp(this);
 
 
         mapFragment = ((SupportMapFragment) getSupportFragmentManager().findFragmentById(R.id.map));
@@ -151,11 +162,14 @@ public class InsideApp extends AppCompatActivity implements RushUpDeliverySettin
         pickupname=(TextView) findViewById(R.id.pickupname);
         boy_photo=(CircleImageView) findViewById(R.id.boy_photo);
         Boy_photoname=(TextView) findViewById(R.id.driver_xxphoto);
+        insert_code=(TextView) findViewById(R.id.insertcode);
+        insert_code_edittext=(EditText) findViewById(R.id.edittext_insertcode);
+        package_pickup=(TextView) findViewById(R.id.package_pickup);
 
         driverStatusSharedPreference=new DriverStatusSharedPreference(this);
 
         if(driverStatusSharedPreference.getStatus()!=null && !driverStatusSharedPreference.getStatus().equalsIgnoreCase("")){
-            if(driverStatusSharedPreference.getStatus().equalsIgnoreCase("on")){
+            if(driverStatusSharedPreference.getStatus().equalsIgnoreCase("on") || driverStatusSharedPreference.getStatus().equalsIgnoreCase("occupied")){
                 activeButton(on);
                 inactiveButton(off);
             }
@@ -186,6 +200,7 @@ public class InsideApp extends AppCompatActivity implements RushUpDeliverySettin
         balance_close.setOnClickListener(this);
         off.setOnClickListener(this);
         on.setOnClickListener(this);
+        insert_code.setOnClickListener(this);
 
         if (Utils.checkPlayServices(InsideApp.this)) {
 
@@ -194,6 +209,34 @@ public class InsideApp extends AppCompatActivity implements RushUpDeliverySettin
 
             createLocationRequest();
         }
+
+        insert_code_edittext.setOnEditorActionListener(new TextView.OnEditorActionListener() {
+            @Override
+            public boolean onEditorAction(TextView textView, int i, KeyEvent keyEvent) {
+                if (i == EditorInfo.IME_ACTION_DONE) {
+                    Log.d("HeroJongi","editText"+insert_code_edittext.getText().toString());
+                    if ( !insert_code_edittext.getText().toString().equalsIgnoreCase("")) {
+                      if(isPickUp.getisPickUp()) {
+                          Log.d("HeroJongi","ItsPickup");
+                          AppHelper.CheckCode(deliveryRequest,insert_code_edittext.getText().toString(), DeliveryStatus.with_delivery, true, rushUpDeliverySettings);
+                      }
+                      else{
+                          Log.d("HeroJongi","ItsDropOffup");
+                          AppHelper.CheckCode(deliveryRequest,insert_code_edittext.getText().toString(),DeliveryStatus.delivered,false,rushUpDeliverySettings);
+                      }
+                    }
+                    else{
+                        // hide kwyboard
+                        Log.d("HeroJongi","editText is empty "+insert_code_edittext.getText().toString());
+
+                        insert_code_edittext.setError(getResources().getString(R.string.please_insert_code));
+                    }
+                }
+
+                return false;
+            }
+        });
+
     }
 
     protected synchronized void buildGoogleApiClient() {
@@ -259,12 +302,18 @@ public class InsideApp extends AppCompatActivity implements RushUpDeliverySettin
                 if(deliveryRequest!=null) {
                     Log.d("HeroJongi ","Read settings ");
                     if(deliveryRequest.getPickupLocation()!=null && deliveryRequest.getDropoffLocation()!=null) {
+                        options.setVisibility(View.GONE);
                         PlotPins(deliveryRequest);
                         showBottomMenu(deliveryRequest);
+                        if(isPickUp.getisPickUp()){
+                            FillUpBottomMenu(deliveryRequest,true);
+                        }
+                        else{
+                            FillUpBottomMenu(deliveryRequest,false);
+                        }
                     }
-                    if(deliveryRequest.getDriver()!=null){
-                        Log.d("HeroJongi","Driver Status "+deliveryRequest.getDriver().getDriver_status());
-                    }
+
+
                 }
             }
         }
@@ -294,6 +343,11 @@ public class InsideApp extends AppCompatActivity implements RushUpDeliverySettin
     @Override
     public void onClick(View v) {
         switch (v.getId()) {
+            case R.id.insertcode:
+                insert_code.setVisibility(View.GONE);
+                insert_code_edittext.setVisibility(View.VISIBLE);
+
+                break;
             case R.id.on:
                AppHelper.UpdateStatusofDriver(DriverStatus.on);
                driverStatusSharedPreference.saveStatus("on");
@@ -436,8 +490,11 @@ public class InsideApp extends AppCompatActivity implements RushUpDeliverySettin
         if (intent != null) {
             if (intent.getSerializableExtra("delivery_update") != null) {
                 DeliveryRequest deliveryRequest=(DeliveryRequest)intent.getSerializableExtra("delivery_update");
-                if(deliveryRequest!=null){
-                    Utils.showDriverDialog(InsideApp.this,deliveryRequest,rushUpDeliverySettings);
+                if(deliveryRequest!=null) {
+                    Dialog dialog=  Utils.showDriverDialog(InsideApp.this, deliveryRequest, rushUpDeliverySettings,driverStatusSharedPreference);
+                    if(dialog!=null){
+                        Utils.DeclareHandler(InsideApp.this,dialog,deliveryRequest);
+                    }
                 }
             }
         }
@@ -529,9 +586,13 @@ public class InsideApp extends AppCompatActivity implements RushUpDeliverySettin
                 switch (pushType) {
                     case delivery_update:
                        // show Dialog
-                        DeliveryRequest deliveryRequest=(DeliveryRequest)object;
-                       if(deliveryRequest!=null) {
-                           Utils.showDriverDialog(InsideApp.this, deliveryRequest, rushUpDeliverySettings);
+                        DeliveryRequest deliveryRequests=(DeliveryRequest)object;
+                        deliveryRequest=deliveryRequests;
+                        if(deliveryRequest!=null) {
+                           Dialog dialog=  Utils.showDriverDialog(InsideApp.this, deliveryRequests, rushUpDeliverySettings,driverStatusSharedPreference);
+                           if(dialog!=null){
+                               Utils.DeclareHandler(InsideApp.this,dialog,deliveryRequests);
+                           }
                        }
                         break;
                 }
@@ -582,22 +643,122 @@ public class InsideApp extends AppCompatActivity implements RushUpDeliverySettin
          bottomMenu.setVisibility(View.VISIBLE);
          bottomMenu.openLayer(true);
          bottomMenu.setSlidingEnabled(false);
-         FillUpBottomMenu(deliveryRequest);
+         isPickUp.saveisPickup(true);
     }
 
-    public void FillUpBottomMenu(DeliveryRequest deliveryRequest){
-        if(deliveryRequest!=null) {
-            if(deliveryRequest.getPickupName()!=null && !deliveryRequest.getPickupName().equalsIgnoreCase("")) {
-                pickupname.setText(deliveryRequest.getPickupName());
-                boy_photo.setVisibility(View.GONE);
-                Boy_photoname.setVisibility(View.VISIBLE);
-                char firstletter = Character.toUpperCase(deliveryRequest.getPickupName().charAt(0));
-                Boy_photoname.setText(String.valueOf(firstletter));
-            }
-            if(deliveryRequest.getPickupLocation()!=null && deliveryRequest.getPickupLocation().getName()!=null && !deliveryRequest.getPickupLocation().getName().equalsIgnoreCase("")) {
-                pickupaddress.setText(deliveryRequest.getPickupLocation().getName());
+    @Override
+    public void CheckPickUpCode(final  boolean isWrong) {
+        runOnUiThread(new Thread(new Runnable() {
+            public void run() {
+                if (isWrong) {
+                    Log.d("HeroJongi "," Check pick up wrong");
+                    // show error and vibrate
+                    insert_code_edittext.setError(getResources().getString(R.string.error_code));
+                    Animation shake = AnimationUtils.loadAnimation(InsideApp.this, R.anim.shake);
+                    insert_code_edittext.startAnimation(shake);
+                } else {
+                    // show drop off menu
+                    Log.d("HeroJongi "," Check pick up not wrong");
+                    isPickUp.saveisPickup(false);
+                    package_pickup.setText(getResources().getString(R.string.package_dropoff));
+                    if (deliveryRequest != null) {
+                        FillUpBottomMenu(deliveryRequest, false);
+                        insert_code_edittext.setText("");
+                        insert_code_edittext.setVisibility(View.GONE);
+                        insert_code.setVisibility(View.VISIBLE);
+                    }
                 }
+            }
+        }));
+    }
 
+    @Override
+    public void CheckDropoffCode(final boolean isWrong) {
+        runOnUiThread(new Thread(new Runnable() {
+            public void run() {
+                if (isWrong) {
+                    //show error and vibrate
+                    insert_code_edittext.setError(getResources().getString(R.string.error_code));
+                    Animation shake = AnimationUtils.loadAnimation(InsideApp.this, R.anim.shake);
+                    insert_code_edittext.startAnimation(shake);
+                } else {
+                    //reset
+                    isPickUp.saveisPickup(false);
+                    bottomMenu.setVisibility(View.GONE);
+                    options.setVisibility(View.VISIBLE);
+                    clearDelivery();
+                    package_pickup.setText(getResources().getString(R.string.package_pickup));
+                    insert_code_edittext.setText("");
+                    insert_code_edittext.setVisibility(View.GONE);
+                    insert_code.setVisibility(View.VISIBLE);
+                }
+            }
+        }));
+    }
+
+    public void clearDelivery(){
+        if(deliveryRequest!=null){
+            DeliveryRequest processHistory=new DeliveryRequest(null,null,null,null,"","",Phonenumber,"",null,null,0,false,false,"","","");
+            deliveryRequest=processHistory;
+            SaveActiveDelivery(deliveryRequest);
+
+            RemovePickUpPin();
+            RemoveDropOffPin();
+            RemoveDriverPin();
+            if(drawPolyline!=null) {
+                drawPolyline.RemovePolyline();
+            }
+            PickupMarker=null;
+            DropOffMarker=null;
+            Driver=null;
+        }
+    }
+
+    public void RemoveDriverPin(){
+        if(Driver!=null){
+            Driver.remove();
+        }
+    }
+
+    public void RemovePickUpPin(){
+        if(PickupMarker!=null){
+            PickupMarker.remove();
+        }
+    }
+
+    public void RemoveDropOffPin(){
+        if(DropOffMarker!=null){
+            DropOffMarker.remove();
+        }
+    }
+
+    @Override
+    public void FillUpBottomMenu(DeliveryRequest deliveryRequest,boolean isPickUp){
+        if(deliveryRequest!=null) {
+            if(isPickUp) {
+                if (deliveryRequest.getPickupName() != null && !deliveryRequest.getPickupName().equalsIgnoreCase("")) {
+                    pickupname.setText(deliveryRequest.getPickupName());
+                    boy_photo.setVisibility(View.GONE);
+                    Boy_photoname.setVisibility(View.VISIBLE);
+                    char firstletter = Character.toUpperCase(deliveryRequest.getPickupName().charAt(0));
+                    Boy_photoname.setText(String.valueOf(firstletter));
+                }
+                if (deliveryRequest.getPickupLocation() != null && deliveryRequest.getPickupLocation().getName() != null && !deliveryRequest.getPickupLocation().getName().equalsIgnoreCase("")) {
+                    pickupaddress.setText(deliveryRequest.getPickupLocation().getName());
+                }
+            }
+            else{
+                if (deliveryRequest.getDropoffName()!= null && !deliveryRequest.getDropoffName().equalsIgnoreCase("")) {
+                    pickupname.setText(deliveryRequest.getDropoffName());
+                    boy_photo.setVisibility(View.GONE);
+                    Boy_photoname.setVisibility(View.VISIBLE);
+                    char firstletter = Character.toUpperCase(deliveryRequest.getDropoffName().charAt(0));
+                    Boy_photoname.setText(String.valueOf(firstletter));
+                }
+                if (deliveryRequest.getDropoffLocation() != null && deliveryRequest.getDropoffLocation().getName() != null && !deliveryRequest.getDropoffLocation().getName().equalsIgnoreCase("")) {
+                    pickupaddress.setText(deliveryRequest.getDropoffLocation().getName());
+                }
+            }
         }
     }
 
@@ -646,7 +807,7 @@ public class InsideApp extends AppCompatActivity implements RushUpDeliverySettin
           if(Driver!=null) {
            builder.include(Driver.getPosition());
            }
-            map.moveCamera(CameraUpdateFactory.newLatLngBounds(builder.build(), 300));
+            map.moveCamera(CameraUpdateFactory.newLatLngBounds(builder.build(), 200));
         }
     }
 

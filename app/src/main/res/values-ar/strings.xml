@@ -52,4 +52,6 @@
     <string name="licenses">تراخيص</string>
     <string name="on">تشغيل</string>
     <string name="off">توقيف</string>
+    <string name="please_insert_code">الرجاء إدخال رقم الرمز</string>
+    <string name="error_code">رقم الرمز خاطئ</string>
 </resources>

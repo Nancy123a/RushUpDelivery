@@ -317,7 +317,7 @@
 
             <TextView
                 android:id="@+id/package_pickup"
-                android:layout_width="115dp"
+                android:layout_width="130dp"
                 android:layout_height="wrap_content"
                 android:text="@string/package_pickup"
                 android:layout_centerHorizontal="true"
@@ -328,7 +328,7 @@
 
             <RelativeLayout
                 android:id="@+id/description"
-                android:layout_width="115dp"
+                android:layout_width="130dp"
                 android:layout_height="wrap_content"
                 android:layout_centerHorizontal="true"
                 android:layout_below="@+id/package_pickup">
@@ -404,28 +404,52 @@
                 android:textSize="@dimen/text_size_15"
                 android:layout_centerHorizontal="true"
                 android:textStyle="bold"
-                android:layout_above="@+id/insertcode"
+                android:layout_above="@+id/insertcode_layout"
                 android:textColor="@color/violet"
                 android:text="@string/fragile_package"
                 android:layout_marginBottom="@dimen/padding_10"/>
 
-            <TextView
-                android:id="@+id/insertcode"
+            <RelativeLayout
+                android:id="@+id/insertcode_layout"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:textStyle="bold"
-                android:layout_marginBottom="@dimen/padding_20"
-                android:textColor="@color/violet"
-                android:text="@string/insert_nbcode"
+                android:layout_centerHorizontal="true"
                 android:layout_alignParentBottom="true"
-                android:paddingLeft="@dimen/padding_60"
-                android:paddingRight="@dimen/padding_60"
-                android:paddingBottom="@dimen/padding_5"
-                android:paddingTop="@dimen/padding_5"
-                android:textSize="@dimen/text_size_15"
-                android:background="@drawable/menu_button"
-                android:layout_centerHorizontal="true"/>
+                android:layout_marginBottom="@dimen/padding_20">
 
+                <TextView
+                    android:id="@+id/insertcode"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:textStyle="bold"
+                    android:textColor="@color/violet"
+                    android:text="@string/insert_nbcode"
+                    android:paddingLeft="@dimen/padding_60"
+                    android:paddingRight="@dimen/padding_60"
+                    android:paddingBottom="@dimen/padding_5"
+                    android:paddingTop="@dimen/padding_5"
+                    android:textSize="@dimen/text_size_15"
+                    android:background="@drawable/menu_button"/>
+
+                <EditText
+                    android:id="@+id/edittext_insertcode"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:paddingBottom="@dimen/padding_5"
+                    android:paddingTop="@dimen/padding_5"
+                    android:hint="@string/insert_nbcode"
+                    android:paddingRight="@dimen/padding_60"
+                    android:paddingLeft="@dimen/padding_60"
+                    android:textCursorDrawable="@drawable/cursorshape"
+                    android:textSize="@dimen/text_size_15"
+                    android:textColor="@color/black"
+                    android:inputType="number"
+                    android:visibility="gone"
+                    android:textStyle="bold"
+                    android:gravity="center"
+                    android:background="@drawable/menu_button"/>
+
+            </RelativeLayout>
         </RelativeLayout>
     </com.wunderlist.slidinglayer.SlidingLayer>
     <LinearLayout

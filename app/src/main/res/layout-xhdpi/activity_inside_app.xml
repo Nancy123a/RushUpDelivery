@@ -321,21 +321,21 @@
 
             <TextView
                 android:id="@+id/package_pickup"
-                android:layout_width="115dp"
+                android:layout_width="130dp"
                 android:layout_height="wrap_content"
-                android:text="@string/package_pickup"
                 android:layout_centerHorizontal="true"
-                android:textColor="@color/violet"
-                android:textSize="@dimen/text_size_15"
+                android:layout_marginBottom="@dimen/padding_10"
                 android:layout_marginTop="@dimen/padding_10"
-                android:layout_marginBottom="@dimen/padding_10"/>
+                android:text="@string/package_pickup"
+                android:textColor="@color/violet"
+                android:textSize="@dimen/text_size_15" />
 
             <RelativeLayout
                 android:id="@+id/description"
-                android:layout_width="115dp"
+                android:layout_width="130dp"
                 android:layout_height="wrap_content"
-                android:layout_centerHorizontal="true"
-                android:layout_below="@+id/package_pickup">
+                android:layout_below="@+id/package_pickup"
+                android:layout_centerHorizontal="true">
 
                 <TextView
                     android:id="@+id/pickupname"
@@ -344,16 +344,16 @@
                     android:gravity="center"
                     android:textColor="@color/violet"
                     android:textSize="@dimen/text_size_15"
-                    android:textStyle="bold"/>
+                    android:textStyle="bold" />
 
                 <TextView
                     android:id="@+id/addresspickup"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:gravity="left"
                     android:layout_below="@+id/pickupname"
-                    android:textSize="@dimen/text_size_12"
-                    android:textColor="@color/violet"/>
+                    android:gravity="left"
+                    android:textColor="@color/violet"
+                    android:textSize="@dimen/text_size_12" />
 
 
             </RelativeLayout>
@@ -362,17 +362,17 @@
                 android:id="@+id/delivery_boy_photo"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_toLeftOf="@+id/description"
+                android:layout_below="@+id/package_pickup"
                 android:layout_marginRight="@dimen/padding_30"
-                android:layout_below="@+id/package_pickup">
+                android:layout_toLeftOf="@+id/description">
 
                 <de.hdodenhof.circleimageview.CircleImageView
                     android:id="@+id/boy_photo"
                     android:layout_width="60dp"
                     android:layout_height="60dp"
-                    android:src="@color/violet"
                     android:layout_alignParentLeft="true"
-                    android:layout_centerHorizontal="true" />
+                    android:layout_centerHorizontal="true"
+                    android:src="@color/violet" />
 
                 <TextView
                     android:id="@+id/driver_xxphoto"
@@ -380,10 +380,10 @@
                     android:layout_height="60dp"
                     android:background="@drawable/greycircle"
                     android:gravity="center"
-                    android:visibility="gone"
                     android:textAlignment="center"
                     android:textColor="@color/white"
-                    android:textSize="@dimen/text_size_20"/>
+                    android:textSize="@dimen/text_size_20"
+                    android:visibility="gone" />
 
 
             </RelativeLayout>
@@ -392,44 +392,69 @@
                 android:id="@+id/call"
                 android:layout_width="60dp"
                 android:layout_height="60dp"
-                android:src="@mipmap/call"
-                android:scaleType="fitXY"
-                android:layout_centerVertical="true"
-                android:layout_toRightOf="@+id/description"
-                android:layout_marginLeft="@dimen/padding_20"
                 android:layout_below="@+id/package_pickup"
+                android:layout_centerVertical="true"
+                android:layout_marginLeft="@dimen/padding_20"
+                android:layout_marginStart="@dimen/padding_20"
                 android:layout_toEndOf="@+id/description"
-                android:layout_marginStart="@dimen/padding_20" />
+                android:layout_toRightOf="@+id/description"
+                android:scaleType="fitXY"
+                android:src="@mipmap/call" />
 
 
             <TextView
                 android:id="@+id/fragile_package"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:textSize="@dimen/text_size_15"
+                android:layout_above="@+id/insertcode_layout"
                 android:layout_centerHorizontal="true"
-                android:textStyle="bold"
-                android:layout_above="@+id/insertcode"
-                android:textColor="@color/violet"
+                android:layout_marginBottom="@dimen/padding_10"
                 android:text="@string/fragile_package"
-                android:layout_marginBottom="@dimen/padding_10"/>
+                android:textColor="@color/violet"
+                android:textSize="@dimen/text_size_15"
+                android:textStyle="bold" />
+
+        <RelativeLayout
+            android:id="@+id/insertcode_layout"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_centerHorizontal="true"
+            android:layout_alignParentBottom="true"
+            android:layout_marginBottom="@dimen/padding_20">
 
             <TextView
                 android:id="@+id/insertcode"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:textStyle="bold"
-                android:layout_marginBottom="@dimen/padding_20"
                 android:textColor="@color/violet"
                 android:text="@string/insert_nbcode"
-                android:layout_alignParentBottom="true"
                 android:paddingLeft="@dimen/padding_60"
                 android:paddingRight="@dimen/padding_60"
                 android:paddingBottom="@dimen/padding_5"
                 android:paddingTop="@dimen/padding_5"
                 android:textSize="@dimen/text_size_15"
-                android:background="@drawable/menu_button"
-                android:layout_centerHorizontal="true"/>
+                android:background="@drawable/menu_button"/>
+
+            <EditText
+                android:id="@+id/edittext_insertcode"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:paddingBottom="@dimen/padding_5"
+                android:paddingTop="@dimen/padding_5"
+                android:hint="@string/insert_nbcode"
+                android:paddingRight="@dimen/padding_60"
+                android:paddingLeft="@dimen/padding_60"
+                android:inputType="number"
+                android:textCursorDrawable="@drawable/cursorshape"
+                android:textSize="@dimen/text_size_12"
+                android:textColor="@color/black"
+                android:visibility="gone"
+                android:textStyle="bold"
+                android:gravity="center"
+                android:background="@drawable/menu_button"/>
+
+        </RelativeLayout>
 
         </RelativeLayout>
 

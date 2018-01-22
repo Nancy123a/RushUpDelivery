@@ -13,15 +13,39 @@
  * permissions and limitations under the License.
  */
 
-package me.zeroandone.technology.rushupdelivery.model;
+package me.zeroandone.technology.rushupdelivery.objects;
 
 
-public class DeliveryStatusRequest {
+import java.io.Serializable;
+
+public class DeliveryPickUpDropoff implements Serializable{
+    @com.google.gson.annotations.SerializedName("code")
+    private String code = null;
     @com.google.gson.annotations.SerializedName("delivery_status")
     private String deliveryStatus = null;
 
-    public DeliveryStatusRequest(String deliveryStatus) {
+
+    public DeliveryPickUpDropoff(String code, String deliveryStatus) {
+        this.code = code;
         this.deliveryStatus = deliveryStatus;
+    }
+
+    /**
+     * Gets code
+     *
+     * @return code
+     **/
+    public String getCode() {
+        return code;
+    }
+
+    /**
+     * Sets the value of code.
+     *
+     * @param code the new value
+     */
+    public void setCode(String code) {
+        this.code = code;
     }
 
     /**

@@ -29,6 +29,8 @@ public class DeliveryRequestDriver implements Serializable{
     private String username = null;
     @com.google.gson.annotations.SerializedName("driver_status")
     private String driver_status = null;
+    @com.google.gson.annotations.SerializedName("delivery_count")
+    private String  delivery_count;
 
     /**
      * Gets driverLocation
@@ -110,5 +112,11 @@ public class DeliveryRequestDriver implements Serializable{
         this.driver_status = driver_status;
     }
 
+    public String getDelivery_count() {
+        return delivery_count;
+    }
 
+    public void setDelivery_count(String delivery_count) {
+        this.delivery_count = delivery_count;
+    }
 }
