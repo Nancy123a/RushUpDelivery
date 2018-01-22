@@ -27,7 +27,7 @@
         android:layout_alignParentTop="true"
         android:layout_centerHorizontal="true"
         android:layout_marginTop="25dp"
-        android:background="@mipmap/bg3">
+        android:background="@drawable/shape">
 
         <ImageView
             android:id="@+id/dropoff"

@@ -149,8 +149,8 @@ public class Utils {
              final TextView time=(TextView) dialog.findViewById(R.id.time);
              String Dropoff_Address=deliveryRequest.getDropoffName()+" \n "+deliveryRequest.getDropoffLocation().getName().replaceAll("[\\t\\n\\r]+", " ");
              String PickUp_Address=deliveryRequest.getPickupName()+" \n "+deliveryRequest.getPickupLocation().getName().replaceAll("[\\t\\n\\r]+", " ");
-             dropoff_address.setText(Dropoff_Address);
-             pickup_address.setText(PickUp_Address);
+             dropoff_address.setText(PickUp_Address);
+             pickup_address.setText(Dropoff_Address);
 
              new CountDownTimer(60*1000, 1000) {
 

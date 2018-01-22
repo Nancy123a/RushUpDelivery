@@ -20,5 +20,6 @@
     <color name="orange">#eca466</color>
     <color name="green">#64d3b3</color>
     <color name="trans_hint">#F2939393</color>
-
+    <color name="dialog_color">#D9D31F1D</color>
+    <color name="dialog_sec">#D9811D2B</color>
 </resources>

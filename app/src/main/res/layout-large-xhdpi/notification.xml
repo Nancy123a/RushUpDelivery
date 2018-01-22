@@ -23,11 +23,11 @@
 
     <RelativeLayout
         android:layout_width="400dp"
-        android:layout_height="600dp"
+        android:layout_height="wrap_content"
         android:layout_alignParentTop="true"
         android:layout_centerHorizontal="true"
         android:layout_marginTop="45dp"
-        android:background="@mipmap/bg3">
+        android:background="@drawable/shape">
 
         <ImageView
             android:id="@+id/dropoff"
@@ -95,6 +95,7 @@
             android:layout_below="@+id/accept_delivery"
             android:layout_centerHorizontal="true"
             android:layout_marginTop="@dimen/padding_30"
+            android:layout_marginBottom="@dimen/padding_20"
             android:background="@drawable/button"
             android:gravity="center"
             android:paddingBottom="@dimen/padding_5"
