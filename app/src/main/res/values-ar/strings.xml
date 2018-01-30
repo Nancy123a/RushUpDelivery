@@ -54,4 +54,7 @@
     <string name="off">توقيف</string>
     <string name="please_insert_code">الرجاء إدخال رقم الرمز</string>
     <string name="error_code">رقم الرمز خاطئ</string>
+    <string name="new_delivery">لديك طلب تسليم جديد من</string>
+    <string name="cancel">إلغاء</string>
+    <string name="update">تحديث</string>
 </resources>

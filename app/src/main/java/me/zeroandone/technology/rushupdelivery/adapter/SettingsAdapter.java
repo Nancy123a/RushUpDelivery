@@ -7,6 +7,7 @@ import android.support.v7.widget.SwitchCompat;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.CompoundButton;
 import android.widget.ImageView;
 import android.widget.TextView;
 
@@ -14,15 +15,18 @@ import java.util.List;
 
 import me.zeroandone.technology.rushupdelivery.R;
 import me.zeroandone.technology.rushupdelivery.objects.Settings;
+import me.zeroandone.technology.rushupdelivery.utils.NotificationSound;
 
 public class SettingsAdapter  extends RecyclerView.Adapter<RecyclerView.ViewHolder>{
 
     List<Settings> settings;
     Context _context;
+    NotificationSound notificationSound;
 
     public SettingsAdapter(Context context, List<Settings> settings) {
         this.settings = settings;
         this._context = context;
+        notificationSound=new NotificationSound(context);
     }
 
     @Override
@@ -70,7 +74,15 @@ public class SettingsAdapter  extends RecyclerView.Adapter<RecyclerView.ViewHold
 
     private void configureOptionView(OptionView vh1, final int position) {
         vh1.option.setText(settings.get(position).getOptions());
+        vh1.view.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                String option = settings.get(position).getOptions();
+                if(option.equalsIgnoreCase(_context.getResources().getString(R.string.first_name))){
 
+                }
+            }
+        });
     }
 
     private void configureHeaderView(HeaderView vh1, int position) {
@@ -79,6 +91,18 @@ public class SettingsAdapter  extends RecyclerView.Adapter<RecyclerView.ViewHold
 
     private void configureNotificationView(NotificationView vh1, int position) {
         vh1.notification.setText(settings.get(position).getOptions());
+        if(notificationSound.getNotificationsound()){
+            vh1.onoff.setChecked(true);
+        }
+        else{
+            vh1.onoff.setChecked(false);
+        }
+        vh1.onoff.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+            @Override
+            public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+                notificationSound.saveNotificationsound(isChecked);
+            }
+        });
     }
 
     @Override

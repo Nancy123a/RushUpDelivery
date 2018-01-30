@@ -61,5 +61,7 @@
     <string name="off">Off</string>
     <string name="please_insert_code">Please insert code number</string>
     <string name="error_code">Wrong code number</string>
-
+    <string name="new_delivery">You have new delivery request from</string>
+    <string name="cancel">Cancel</string>
+     <string name="update">Update</string>
 </resources>

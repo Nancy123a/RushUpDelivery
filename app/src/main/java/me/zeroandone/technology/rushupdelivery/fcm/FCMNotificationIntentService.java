@@ -27,11 +27,13 @@ import me.zeroandone.technology.rushupdelivery.objects.DeliveryRequest;
 import me.zeroandone.technology.rushupdelivery.objects.PushType;
 import me.zeroandone.technology.rushupdelivery.utils.Application;
 import me.zeroandone.technology.rushupdelivery.utils.NotificationIDs;
+import me.zeroandone.technology.rushupdelivery.utils.NotificationSound;
 import me.zeroandone.technology.rushupdelivery.utils.Utils;
 
 public class FCMNotificationIntentService extends FirebaseMessagingService {
     public static final String LOG_TAG="FCMNotificationIntent";
     NotificationIDs notificationIDs;
+    NotificationSound notificationSound;
     public FCMNotificationIntentService() {
         super();
     }
@@ -51,6 +53,7 @@ public class FCMNotificationIntentService extends FirebaseMessagingService {
           Log.d("HeroJongi","onNotification "+type+"  "+message);
 
           notificationIDs=new NotificationIDs(FCMNotificationIntentService.this);
+          notificationSound=new NotificationSound(FCMNotificationIntentService.this);
 
           Intent intent =  new Intent(this, MainActivity.class);
           Gson gson = new Gson();
@@ -68,8 +71,11 @@ public class FCMNotificationIntentService extends FirebaseMessagingService {
                       intent.putExtra("delivery_update",deliveryRequest);
                       pIntent = PendingIntent.getActivity(this, new Random().nextInt(), intent, PendingIntent.FLAG_CANCEL_CURRENT);
                       builder = new NotificationCompat.Builder(this).setSmallIcon(R.mipmap.logo).setContentTitle(getResources().getString(R.string.app_name))
-                              .setContentText("You have new delivery request from: " + deliveryRequest.getPickupName()).setAutoCancel(true).setColor(getResources().getColor(R.color.colorPrimary))
-                              .setSound(alarmSound).setContentIntent(pIntent);
+                              .setContentText(getResources().getString(R.string.new_delivery)+" " + deliveryRequest.getPickupName()).setAutoCancel(true).setColor(getResources().getColor(R.color.colorPrimary))
+                              .setContentIntent(pIntent);
+                      if(notificationSound.getNotificationsound()){
+                          builder.setSound(alarmSound);
+                      }
                       if (Application.getInstance() != null && Application.getInstance().getRushUpDeliverySettings() != null) {
                           Application.getInstance().getRushUpDeliverySettings().onNotificationRecieved(PushType.delivery_update, deliveryRequest);
                       }

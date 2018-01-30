@@ -106,8 +106,6 @@
             android:textColor="@color/colorAccent"
             android:textSize="@dimen/text_size_12" />
 
-        =
-
 
     </RelativeLayout>
 </RelativeLayout>
