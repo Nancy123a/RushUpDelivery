@@ -54,29 +54,29 @@
 
         <TextView
             android:id="@+id/pickup_point"
-            android:layout_width="wrap_content"
+            android:layout_width="70dp"
             android:layout_height="wrap_content"
-            android:gravity="center"
+            android:gravity="start"
             android:textSize="@dimen/text_size_12"
             android:text="@string/pickup_point"/>
 
         <TextView
             android:id="@+id/delivery_point"
-            android:layout_width="wrap_content"
+            android:layout_width="70dp"
             android:layout_height="wrap_content"
             android:layout_alignParentRight="true"
-            android:gravity="center"
+            android:gravity="end"
             android:textSize="@dimen/text_size_12"
             android:text="@string/dropoff_point"
             android:layout_alignParentEnd="true" />
 
         <TextView
             android:id="@+id/otherinfo"
-            android:layout_width="wrap_content"
+            android:layout_width="70dp"
             android:layout_height="wrap_content"
             android:text="@string/date_time_price"
             android:layout_centerInParent="true"
-            android:gravity="start"
+            android:gravity="center"
             android:textSize="@dimen/text_size_12"
             android:layout_marginLeft="@dimen/padding_20"
             android:layout_marginStart="@dimen/padding_20" />

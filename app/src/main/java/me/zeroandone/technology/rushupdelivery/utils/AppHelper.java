@@ -190,7 +190,6 @@ public class AppHelper{
         new Thread(new Runnable() {
             public void run() {
                 if (location != null) {
-                    Log.d("HeroJongi ", "Location " + location.getLongitude() + "  " + location.getLongitude());
                     try {
                         DriverLocationRequest driver = new DriverLocationRequest(String.valueOf(location.getLatitude()), String.valueOf(location.getLongitude()));
                         getRushUpClient().driverLocationPut(driver);

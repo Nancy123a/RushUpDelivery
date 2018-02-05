@@ -431,7 +431,7 @@ public class InsideApp extends AppCompatActivity implements RushUpDeliverySettin
                 try {
                     Log.d("HeroJongi","Delivery Success ");
                    final DriverDeliveryHistory driverDeliveryHistory=AppHelper.getRushUpClient().driverHistoryGet();
-                   if(driverDeliveryHistory!=null ){
+                   if(driverDeliveryHistory!=null && driverDeliveryHistory.getDriver_history()!=null){
                         runOnUiThread(new Thread(new Runnable() {
                          public void run() {
                              historyProgressBar.setVisibility(View.GONE);
