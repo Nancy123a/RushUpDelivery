@@ -21,6 +21,7 @@ import me.zeroandone.technology.rushupdelivery.model.TokenRequest;
 import me.zeroandone.technology.rushupdelivery.objects.DeliveryPickUpDropoff;
 import me.zeroandone.technology.rushupdelivery.objects.DeliveryRequest;
 import me.zeroandone.technology.rushupdelivery.objects.DeliveryStatus;
+import me.zeroandone.technology.rushupdelivery.objects.DriverDeliveryHistory;
 import me.zeroandone.technology.rushupdelivery.objects.DriverStatus;
 import me.zeroandone.technology.rushupdelivery.objects.DriverStatusRequest;
 
@@ -224,9 +225,9 @@ public class AppHelper{
             public void run() {
                 try {
                     Log.d("HeroJongi"," assignDeliveryToDriver "+deliveryRequest.getId());
-                    getRushUpClient().deliveryDeliveryIdAssignPut(deliveryRequest.getId());
+                  getRushUpClient().deliveryDeliveryIdAssignPut(deliveryRequest.getId());
                 }catch (Exception ex) {
-                    Log.d("HeroJongi","Fail status update",ex);
+                    Log.e("HeroJongi","Fail status update",ex);
                 }
             }
         }).start();

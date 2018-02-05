@@ -27,7 +27,7 @@ public class CloudLogicAPIFactory {
         final CloudLogicAPIConfiguration[] apis = new CloudLogicAPIConfiguration[] {
                 new CloudLogicAPIConfiguration("rushup",
                                               "",
-                                              "https://j9rgxxut6b.execute-api.eu-west-1.amazonaws.com/prod",
+                                              "https://p9q3m0eqg1.execute-api.eu-west-1.amazonaws.com/prod/",
                                               new String[] {
                                                   "/token",
                                                   "/ping",

@@ -22,11 +22,13 @@ import me.zeroandone.technology.rushupdelivery.model.DeliveryStatusRequest;
 import me.zeroandone.technology.rushupdelivery.model.DriverLocationRequest;
 import me.zeroandone.technology.rushupdelivery.model.PushRequest;
 import me.zeroandone.technology.rushupdelivery.model.TokenRequest;
+import me.zeroandone.technology.rushupdelivery.objects.DeliveryHistoryDriverResponse;
 import me.zeroandone.technology.rushupdelivery.objects.DeliveryPickUpDropoff;
 import me.zeroandone.technology.rushupdelivery.objects.DeliveryRequest;
+import me.zeroandone.technology.rushupdelivery.objects.DriverDeliveryHistory;
 import me.zeroandone.technology.rushupdelivery.objects.DriverStatusRequest;
 
-@com.amazonaws.mobileconnectors.apigateway.annotation.Service(endpoint = "https://j9rgxxut6b.execute-api.eu-west-1.amazonaws.com/prod")
+@com.amazonaws.mobileconnectors.apigateway.annotation.Service(endpoint = "https://p9q3m0eqg1.execute-api.eu-west-1.amazonaws.com/prod/")
 public interface RushupClient {
 
 
@@ -104,6 +106,15 @@ public interface RushupClient {
     @com.amazonaws.mobileconnectors.apigateway.annotation.Operation(path = "/driver/location", method = "PUT")
     void driverLocationPut(
             DriverLocationRequest body);
+
+
+    /**
+     *
+     *
+     * @return void
+     */
+    @com.amazonaws.mobileconnectors.apigateway.annotation.Operation(path = "/driver/history", method = "GET")
+    DriverDeliveryHistory driverHistoryGet();
 
     /**
      *

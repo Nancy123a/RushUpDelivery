@@ -25,7 +25,7 @@ public class DeliveryRequest implements Serializable{
     @com.google.gson.annotations.SerializedName("id")
     private String id;
     @com.google.gson.annotations.SerializedName("delivery_date")
-    private BigDecimal deliveryDate = null;
+    private Long deliveryDate = null;
     @com.google.gson.annotations.SerializedName("driver")
     private DeliveryRequestDriver driver = null;
     @com.google.gson.annotations.SerializedName("pickup_location")
@@ -55,10 +55,11 @@ public class DeliveryRequest implements Serializable{
     @com.google.gson.annotations.SerializedName("from_code")
     private String from_code;
 
+
     public DeliveryRequest() {
     }
 
-    public DeliveryRequest(String id, BigDecimal deliveryDate, DeliveryRequestDriver driver, DeliveryRequestPickupLocation pickupLocation, String dropoffName, String pickupName, String from, String to, DeliveryRequestPickupLocation dropoffLocation, DeliveryStatus delivery_status, int page, boolean isRushie_PickUp, boolean isRushie_DropOff, String pickUpPhonenumber,String from_code,String to_code) {
+    public DeliveryRequest(String id, Long deliveryDate, DeliveryRequestDriver driver, DeliveryRequestPickupLocation pickupLocation, String dropoffName, String pickupName, String from, String to, DeliveryRequestPickupLocation dropoffLocation, DeliveryStatus delivery_status, int page, boolean isRushie_PickUp, boolean isRushie_DropOff, String pickUpPhonenumber,String from_code,String to_code) {
         this.id = id;
         this.deliveryDate = deliveryDate;
         this.driver = driver;
@@ -91,7 +92,7 @@ public class DeliveryRequest implements Serializable{
      *
      * @return deliveryDate
      **/
-    public BigDecimal getDeliveryDate() {
+    public Long getDeliveryDate() {
         return deliveryDate;
     }
 
@@ -100,7 +101,7 @@ public class DeliveryRequest implements Serializable{
      *
      * @param deliveryDate the new value
      */
-    public void setDeliveryDate(BigDecimal deliveryDate) {
+    public void setDeliveryDate(Long deliveryDate) {
         this.deliveryDate = deliveryDate;
     }
 

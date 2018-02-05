@@ -64,4 +64,5 @@
     <string name="new_delivery">You have new delivery request from</string>
     <string name="cancel">Cancel</string>
      <string name="update">Update</string>
+     <string name="no_result">No results found</string>
 </resources>

@@ -48,7 +48,7 @@
         <RelativeLayout
             android:id="@+id/homelayout"
             android:layout_width="match_parent"
-            android:layout_height="match_parent">
+            android:layout_height="match_parent" >
 
             <ImageView
                 android:id="@+id/userimage"
@@ -188,8 +188,8 @@
                 android:id="@+id/history_menu"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
-                android:visibility="gone"
-                android:background="@color/trans_white">
+                android:background="@color/trans_white"
+                android:visibility="gone">
 
                 <ImageView
                     android:id="@+id/history_close"
@@ -231,6 +231,34 @@
                     android:scrollbarSize="@dimen/padding_5"
                     android:scrollbarThumbVertical="@color/black"
                     android:scrollbars="vertical" />
+
+                <RelativeLayout
+                    android:id="@+id/no_history"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:layout_below="@+id/fourth_line">
+
+
+                    <ProgressBar
+                        android:id="@+id/historyProgressBar"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_centerInParent="true"
+                        android:visibility="gone"
+                        android:indeterminateTint="@color/black"
+                        android:layout_centerHorizontal="true" />
+
+                    <TextView
+                        android:id="@+id/no_history_found"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_centerInParent="true"
+                        android:textColor="@color/black"
+                        android:textSize="@dimen/text_size_15"
+                        android:visibility="gone"
+                        android:text="@string/no_result"/>
+
+                </RelativeLayout>
 
             </RelativeLayout>
 
@@ -309,7 +337,6 @@
         android:layout_width="match_parent"
         android:layout_height="190dp"
         android:elevation="2dip"
-        slidingLayer:offsetDistance="190dp"
         android:layout_alignParentBottom="true"
         slidingLayer:changeStateOnTap="false"
         slidingLayer:stickTo="bottom">

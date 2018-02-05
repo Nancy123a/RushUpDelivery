@@ -37,6 +37,7 @@ import android.widget.EditText;
 import android.widget.FrameLayout;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
+import android.widget.ProgressBar;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -63,14 +64,17 @@ import com.wunderlist.slidinglayer.SlidingLayer;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 import de.hdodenhof.circleimageview.CircleImageView;
+import me.zeroandone.technology.rushupdelivery.adapter.HistoryAdapter;
 import me.zeroandone.technology.rushupdelivery.adapter.SettingsAdapter;
 import me.zeroandone.technology.rushupdelivery.interfaces.RushUpDeliverySettings;
 import me.zeroandone.technology.rushupdelivery.model.Driver;
 import me.zeroandone.technology.rushupdelivery.objects.DeliveryRequest;
 import me.zeroandone.technology.rushupdelivery.objects.DeliveryStatus;
+import me.zeroandone.technology.rushupdelivery.objects.DriverDeliveryHistory;
 import me.zeroandone.technology.rushupdelivery.objects.DriverStatus;
 import me.zeroandone.technology.rushupdelivery.objects.DriverStatusRequest;
 import me.zeroandone.technology.rushupdelivery.objects.PushType;
@@ -83,7 +87,6 @@ import me.zeroandone.technology.rushupdelivery.utils.InternalStorage;
 import me.zeroandone.technology.rushupdelivery.utils.Utils;
 import me.zeroandone.technology.rushupdelivery.utils.isPickUp;
 import me.zeroandone.technology.rushupdelivery.widget.BalanceRecyclerView;
-import me.zeroandone.technology.rushupdelivery.widget.HistoryRecycleView;
 
 
 public class InsideApp extends AppCompatActivity implements RushUpDeliverySettings, OnMapReadyCallback, View.OnClickListener, GoogleApiClient.ConnectionCallbacks, GoogleApiClient.OnConnectionFailedListener, LocationListener {
@@ -92,10 +95,10 @@ public class InsideApp extends AppCompatActivity implements RushUpDeliverySettin
     private GoogleMap map;
     private static final int PERMISSION_PHONE_CALL = 200;
     RelativeLayout homelayout, settings_menu, history_menu, balance_menu;
-    TextView settings, history, balance, user_name, insert_code, package_pickup;
+    TextView settings, history, balance, user_name, insert_code, package_pickup,no_history_found;
     ImageView settings_close, history_close, balance_close, user_image;
     EditText insert_code_edittext;
-    HistoryRecycleView historyRecycleView;
+    RecyclerView historyRecycleView;
     BalanceRecyclerView balanceRecyclerView;
     RecyclerView settings_recycler_view;
     CognitoUserDetails details;
@@ -117,6 +120,8 @@ public class InsideApp extends AppCompatActivity implements RushUpDeliverySettin
     TextView pickupname, pickupaddress, Boy_photoname;
     CircleImageView boy_photo;
     String phoneNumber;
+    HistoryAdapter historyAdapter;
+    ProgressBar historyProgressBar;
 
 
     // Location updates intervals in sec
@@ -155,7 +160,7 @@ public class InsideApp extends AppCompatActivity implements RushUpDeliverySettin
         user_image = (ImageView) findViewById(R.id.userimage);
         user_name = (TextView) findViewById(R.id.username);
         balance_menu = (RelativeLayout) findViewById(R.id.balance_menu);
-        historyRecycleView = (HistoryRecycleView) findViewById(R.id.historyRecycleView);
+        historyRecycleView = (RecyclerView) findViewById(R.id.historyRecycleView);
         balanceRecyclerView = (BalanceRecyclerView) findViewById(R.id.balanceRecycleView);
         settings_recycler_view = (RecyclerView) findViewById(R.id.settings_recycle_view);
         bottomMenu = (SlidingLayer) findViewById(R.id.slidingLayer2);
@@ -171,6 +176,8 @@ public class InsideApp extends AppCompatActivity implements RushUpDeliverySettin
         insert_code_edittext = (EditText) findViewById(R.id.edittext_insertcode);
         package_pickup = (TextView) findViewById(R.id.package_pickup);
         call = (ImageView) findViewById(R.id.call);
+        historyProgressBar=(ProgressBar) findViewById(R.id.historyProgressBar);
+        no_history_found=(TextView) findViewById(R.id.no_history_found);
 
         driverStatusSharedPreference = new DriverStatusSharedPreference(this);
 
@@ -392,7 +399,8 @@ public class InsideApp extends AppCompatActivity implements RushUpDeliverySettin
             case R.id.history:
                 homelayout.setVisibility(View.GONE);
                 history_menu.setVisibility(View.VISIBLE);
-                historyRecycleView.setAdapter(historyRecycleView);
+                // api call
+                getHistory();
                 break;
             case R.id.settings_close:
                 homelayout.setVisibility(View.VISIBLE);
@@ -411,9 +419,46 @@ public class InsideApp extends AppCompatActivity implements RushUpDeliverySettin
                 balance_menu.setVisibility(View.VISIBLE);
                 balanceRecyclerView.setAdapter(balanceRecyclerView);
                 break;
-
-
         }
+    }
+
+    public void getHistory(){
+        if(historyAdapter==null) {
+            historyProgressBar.setVisibility(View.VISIBLE);
+        }
+        new Thread(new Runnable() {
+            public void run() {
+                try {
+                    Log.d("HeroJongi","Delivery Success ");
+                   final DriverDeliveryHistory driverDeliveryHistory=AppHelper.getRushUpClient().driverHistoryGet();
+                   if(driverDeliveryHistory!=null ){
+                        runOnUiThread(new Thread(new Runnable() {
+                         public void run() {
+                             historyProgressBar.setVisibility(View.GONE);
+                             if(driverDeliveryHistory.getDriver_history().size()>0) {
+                                 if (historyAdapter == null) {
+                                     no_history_found.setVisibility(View.GONE);
+                                     historyAdapter = new HistoryAdapter(driverDeliveryHistory.getDriver_history(), InsideApp.this, rushUpDeliverySettings);
+                                     LinearLayoutManager linearLayoutManager = new LinearLayoutManager(InsideApp.this, OrientationHelper.VERTICAL, false);
+                                     historyRecycleView.setLayoutManager(linearLayoutManager);
+                                     historyRecycleView.setItemAnimator(new DefaultItemAnimator());
+                                     historyRecycleView.setAdapter(historyAdapter);
+                                 } else {
+                                     historyAdapter.RefreshItems(driverDeliveryHistory.getDriver_history());
+                                 }
+                             }
+                             else{
+                                 no_history_found.setVisibility(View.VISIBLE);
+                             }
+                            }
+                        }));
+                    }
+
+                }catch (Exception ex) {
+                    Log.e("HeroJongi","Fail status update",ex);
+                }
+            }
+        }).start();
     }
 
     public void activeButton(Button button) {

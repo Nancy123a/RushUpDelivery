@@ -57,4 +57,5 @@
     <string name="new_delivery">لديك طلب تسليم جديد من</string>
     <string name="cancel">إلغاء</string>
     <string name="update">تحديث</string>
+    <string name="no_result">لم يتم العثور على نتائج</string>
 </resources>

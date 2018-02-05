@@ -8,8 +8,8 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginTop="@dimen/padding_50"
-        android:layout_marginRight="@dimen/padding_100"
-        android:layout_marginLeft="@dimen/padding_100">
+        android:layout_marginRight="@dimen/padding_30"
+        android:layout_marginLeft="@dimen/padding_30">
         <View
             android:id="@+id/firstpoint"
             android:layout_width="10dp"
@@ -48,40 +48,40 @@
         android:layout_height="wrap_content"
         android:layout_below="@+id/completeline"
         android:layout_marginTop="@dimen/padding_15"
-        android:layout_marginLeft="@dimen/padding_80"
-        android:layout_marginRight="@dimen/padding_80"
-        android:layout_marginBottom="@dimen/padding_50">
+        android:layout_marginLeft="@dimen/padding_30"
+        android:layout_marginRight="@dimen/padding_30"
+        android:layout_marginBottom="@dimen/padding_15">
 
         <TextView
             android:id="@+id/pickup_point"
-            android:layout_width="wrap_content"
+            android:layout_width="90dp"
             android:layout_height="wrap_content"
-            android:gravity="center"
-            android:textSize="@dimen/text_size_15"
+            android:gravity="start"
+            android:textSize="@dimen/text_size_10"
             android:text="@string/pickup_point"/>
 
         <TextView
             android:id="@+id/delivery_point"
-            android:layout_width="wrap_content"
+            android:layout_width="90dp"
             android:layout_height="wrap_content"
             android:layout_alignParentRight="true"
-            android:gravity="center"
-            android:textSize="@dimen/text_size_15"
+            android:gravity="end"
+            android:textSize="@dimen/text_size_10"
             android:text="@string/dropoff_point"
             android:layout_alignParentEnd="true" />
 
         <TextView
             android:id="@+id/otherinfo"
-            android:layout_width="wrap_content"
+            android:layout_width="100dp"
             android:layout_height="wrap_content"
             android:text="@string/date_time_price"
             android:layout_centerInParent="true"
-            android:gravity="start"
-            android:textSize="@dimen/text_size_15"
+            android:gravity="center"
+            android:textSize="@dimen/text_size_10"
             android:layout_marginLeft="@dimen/padding_20"
             android:layout_marginStart="@dimen/padding_20" />
 
- </RelativeLayout>
+    </RelativeLayout>
 
     <RelativeLayout
         android:layout_width="wrap_content"
@@ -89,15 +89,14 @@
         android:layout_alignParentRight="true"
         android:layout_below="@+id/completeline"
         android:layout_marginTop="@dimen/padding_10"
-        android:layout_marginLeft="@dimen/padding_10"
-        android:layout_marginRight="@dimen/padding_30"
+        android:layout_marginRight="@dimen/padding_5"
         android:layout_alignParentEnd="true">
-    <ImageView
-        android:layout_width="20dp"
-        android:layout_height="wrap_content"
-        android:tint="@color/trans_hint"
-        android:layout_alignParentTop="true"
-        android:src="@mipmap/right" />
+        <ImageView
+            android:layout_width="18dp"
+            android:layout_height="wrap_content"
+            android:tint="@color/trans_hint"
+            android:layout_alignParentTop="true"
+            android:src="@mipmap/right" />
     </RelativeLayout>
 
 </RelativeLayout>
