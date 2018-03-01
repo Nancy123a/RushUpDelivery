@@ -1,0 +1,142 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:id="@+id/snackbar"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@mipmap/bg3">
+
+
+    <ImageView
+        android:id="@+id/logo"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_centerHorizontal="true"
+        android:elevation="@dimen/padding_10"
+        android:layout_marginBottom="@dimen/padding_5"
+        android:layout_marginTop="@dimen/padding_20"
+        android:src="@mipmap/logoheader" />
+
+    <TextView
+        android:id="@+id/steptwo"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/logo"
+        android:layout_centerHorizontal="true"
+        android:text="@string/step3"
+        android:textAlignment="center"
+        android:textAllCaps="true"
+        android:textColor="@color/dark_red"
+        android:textSize="@dimen/text_size_15"
+        android:textStyle="bold" />
+
+    <TextView
+        android:id="@+id/profile"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/steptwo"
+        android:layout_centerHorizontal="true"
+        android:elevation="@dimen/padding_10"
+        android:text="@string/verification_code"
+        android:textAlignment="center"
+        android:textAllCaps="true"
+        android:textColor="@color/white"
+        android:textSize="@dimen/text_size_15" />
+
+    <ImageView
+        android:id="@+id/imageView"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentStart="true"
+        android:layout_marginLeft="@dimen/padding_16"
+        android:layout_marginStart="@dimen/padding_16"
+        android:layout_marginTop="@dimen/padding_20"
+        android:background="@mipmap/close" />
+
+
+    <ImageView
+        android:id="@+id/ivLoading"
+        android:layout_width="150dp"
+        android:layout_height="150dp"
+        android:layout_centerHorizontal="true"
+        android:src="@drawable/rotatecircle"
+        android:layout_centerVertical="true" />
+
+    <LinearLayout
+        android:id="@+id/locationMarker"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center"
+        android:gravity="center"
+        android:layout_centerInParent="true"
+        android:elevation="@dimen/padding_10"
+        android:orientation="vertical" >
+
+        <TextView
+            android:id="@+id/pickup_dropoff"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/code_sent"
+            android:textAlignment="center"
+            android:textColor="@color/white"
+            android:textSize="@dimen/text_size_15"/>
+
+    </LinearLayout>
+
+    <EditText
+        android:id="@+id/code"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/ivLoading"
+        android:layout_centerHorizontal="true"
+        android:layout_marginRight="@dimen/padding_16"
+        android:layout_marginLeft="@dimen/padding_16"
+        android:layout_marginTop="@dimen/padding_40"
+        android:background="@drawable/edittextshape"
+        android:ems="10"
+        android:padding="@dimen/padding_8"
+        android:textSize="@dimen/text_size_15"
+        android:hint="@string/enter_code"
+        android:inputType="number"
+        android:maxLines="1"
+        android:paddingLeft="@dimen/padding_30"
+        android:paddingRight="10dp"
+        android:textColor="@color/white"
+        android:textColorHint="@color/hint" />
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/code"
+        android:layout_marginTop="@dimen/padding_20">
+
+        <TextView
+            android:id="@+id/resend_code"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:gravity="center"
+            android:layout_centerHorizontal="true"
+            android:background="@android:color/transparent"
+            android:text="@string/sent_verf"
+            android:textColor="@color/white"
+            android:layout_marginTop="@dimen/padding_20"
+            android:textSize="@dimen/text_size_12" />
+
+        <com.wang.avi.AVLoadingIndicatorView
+            android:id="@+id/indicator"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            style="@style/AVLoadingIndicatorView"
+            app:indicatorName="BallPulseIndicator"
+            app:indicatorColor="@color/white"
+            android:visibility="gone"
+            android:layout_marginTop="@dimen/padding_5"
+            android:layout_marginLeft="@dimen/padding_10"
+            android:layout_toRightOf="@+id/resend_code"
+            />
+
+
+    </RelativeLayout>
+
+    </RelativeLayout>

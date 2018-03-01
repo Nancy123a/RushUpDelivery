@@ -8,11 +8,16 @@ import com.amazonaws.mobile.api.idrevskyx266.RushupClient;
 import com.amazonaws.mobile.auth.core.IdentityManager;
 import com.amazonaws.mobile.auth.userpools.CognitoUserPoolsSignInProvider;
 import com.amazonaws.mobile.config.AWSConfiguration;
+import com.amazonaws.mobile.content.ContentDownloadPolicy;
+import com.amazonaws.mobile.content.ContentItem;
+import com.amazonaws.mobile.content.ContentProgressListener;
 import com.amazonaws.mobile.content.UserFileManager;
 import com.amazonaws.mobileconnectors.apigateway.ApiClientFactory;
 import com.amazonaws.mobileconnectors.cognitoidentityprovider.CognitoDevice;
 import com.amazonaws.mobileconnectors.cognitoidentityprovider.CognitoUserSession;
 import com.amazonaws.regions.Regions;
+
+import java.io.File;
 
 import me.zeroandone.technology.rushupdelivery.interfaces.RushUpDeliverySettings;
 import me.zeroandone.technology.rushupdelivery.model.DeliveryStatusRequest;
@@ -263,6 +268,80 @@ public class AppHelper{
                 }
             }
         }).start();
+    }
+
+
+
+    public static void uploadDownloadPicture(final boolean upload, final Context context, final File file, IdentityManager identityManager, final RushUpDeliverySettings rushUpSettings){
+        final String identityId = identityManager.getCachedUserID();
+        final String prefix =  S3_PREFIX_PRIVATE + identityId + "/";
+        new UserFileManager.Builder()
+                .withContext(context)
+                .withIdentityManager(IdentityManager.getDefaultIdentityManager())
+                .withS3ObjectDirPrefix(prefix)
+                .withLocalBasePath(context.getFilesDir().getAbsolutePath())
+                .withAWSConfiguration(new AWSConfiguration(context))
+                .build(new UserFileManager.BuilderResultHandler() {
+                    @Override
+                    public void onComplete( UserFileManager userFileManager) {
+                        if(upload){
+                            Log.d("HeroJongi","on Upload");
+                            uploadPicture(userFileManager,file,rushUpSettings);
+                        }
+                        else{
+                            // download
+                            Log.d("HeroJongi","on Download");
+                            downloadPicture(userFileManager,rushUpSettings);
+                        }
+                    }
+                });
+
+    }
+
+    public static void uploadPicture(final UserFileManager userFileManager, File file, final RushUpDeliverySettings rushUpSettings){
+        if(userFileManager!=null && file!=null){
+            userFileManager.uploadContent(file, file.getName(), new ContentProgressListener() {
+                @Override
+                public void onSuccess(ContentItem contentItem) {
+                    Log.d("HeroJongi"," upload on success");
+                    downloadPicture(userFileManager,rushUpSettings);
+                }
+
+                @Override
+                public void onProgressUpdate(String filePath, boolean isWaiting, long bytesCurrent, long bytesTotal) {
+                }
+
+                @Override
+                public void onError(String filePath, Exception ex) {
+                    Log.d("HeroJongi","Picture upload on error");
+                }
+            });
+        }
+    }
+
+    public static void downloadPicture(UserFileManager userFileManager,final RushUpDeliverySettings rushUpSettings){
+        if(userFileManager!=null && rushUpSettings!=null) {
+            userFileManager.getContent("driverPicture",0,
+                    ContentDownloadPolicy.DOWNLOAD_IF_NEWER_EXIST, true, new ContentProgressListener() {
+                        @Override
+                        public void onSuccess(ContentItem contentItem) {
+                            Log.d("HeroJongi","on Download success ");
+                            if(contentItem!=null && contentItem.getFile()!=null){
+                                rushUpSettings.displayPicture(contentItem.getFile());
+                            }
+                        }
+
+                        @Override
+                        public void onProgressUpdate(String filePath, boolean isWaiting, long bytesCurrent, long bytesTotal) {
+
+                        }
+
+                        @Override
+                        public void onError(String filePath, Exception ex) {
+                            Log.d("HeroJongi","download on error "+ex.getMessage());
+                        }
+                    });
+        }
     }
 
 

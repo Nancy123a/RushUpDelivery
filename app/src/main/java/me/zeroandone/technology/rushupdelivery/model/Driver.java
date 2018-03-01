@@ -26,12 +26,19 @@ public class Driver implements Serializable{
     private String phone = null;
     @com.google.gson.annotations.SerializedName("username")
     private String username = null;
+    @com.google.gson.annotations.SerializedName("score")
+    private String score = null;
 
-    public Driver(DriverLocationRequest driverLocation, String identityId, String phone, String username) {
+
+    public Driver() {
+    }
+
+    public Driver(DriverLocationRequest driverLocation, String identityId, String phone, String username,String score) {
         this.driverLocation = driverLocation;
         this.identityId = identityId;
         this.phone = phone;
         this.username = username;
+        this.score = score;
     }
 
     public DriverLocationRequest getDriverLocation() {
@@ -96,6 +103,14 @@ public class Driver implements Serializable{
         this.username = username;
     }
 
+    public String getScore() {
+        return score;
+    }
+
+    public void setScore(String score) {
+        this.score = score;
+    }
+
     @Override
     public String toString() {
         return "Driver{" +
@@ -103,6 +118,7 @@ public class Driver implements Serializable{
                 ", identityId='" + identityId + '\'' +
                 ", phone='" + phone + '\'' +
                 ", username='" + username + '\'' +
+                ", score='" + score + '\'' +
                 '}';
     }
 }

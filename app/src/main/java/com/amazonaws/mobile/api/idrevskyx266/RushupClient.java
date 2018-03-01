@@ -18,7 +18,9 @@ package com.amazonaws.mobile.api.idrevskyx266;
 
 import me.zeroandone.technology.rushupdelivery.model.ContactSyncRequest;
 import me.zeroandone.technology.rushupdelivery.model.ContactSyncResponse;
+import me.zeroandone.technology.rushupdelivery.model.DeliveryRequestDriver;
 import me.zeroandone.technology.rushupdelivery.model.DeliveryStatusRequest;
+import me.zeroandone.technology.rushupdelivery.model.Driver;
 import me.zeroandone.technology.rushupdelivery.model.DriverLocationRequest;
 import me.zeroandone.technology.rushupdelivery.model.PushRequest;
 import me.zeroandone.technology.rushupdelivery.model.TokenRequest;
@@ -139,6 +141,15 @@ public interface RushupClient {
                     String deliveryId,
             DeliveryPickUpDropoff body);
 
+
+    /**
+     *
+     *
+     * @return void
+     */
+    @com.amazonaws.mobileconnectors.apigateway.annotation.Operation(path = "/driver/code/checkcode", method = "POST")
+    Driver driverCodeUsernamePost(Driver driver);
+
     /**
      *
      *
@@ -146,7 +157,7 @@ public interface RushupClient {
      * @return void
      */
     @com.amazonaws.mobileconnectors.apigateway.annotation.Operation(path = "/driver/{driver_id}", method = "GET")
-    void driverDriverIdGet(
+    Driver driverDriverIdGet(
             @com.amazonaws.mobileconnectors.apigateway.annotation.Parameter(name = "driver_id", location = "path")
                     String driverId);
 

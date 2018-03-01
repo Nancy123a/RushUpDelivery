@@ -19,8 +19,6 @@ import com.amazonaws.mobile.auth.core.StartupAuthResultHandler;
 import com.amazonaws.mobile.auth.core.signin.AuthException;
 import com.crashlytics.android.Crashlytics;
 import io.fabric.sdk.android.Fabric;
-import me.zeroandone.technology.rushupdelivery.dialogs.Registration;
-import me.zeroandone.technology.rushupdelivery.dialogs.UserLogin;
 import me.zeroandone.technology.rushupdelivery.objects.DeliveryRequest;
 import me.zeroandone.technology.rushupdelivery.utils.Utils;
 
@@ -42,16 +40,9 @@ public class MainActivity extends AppCompatActivity implements StartupAuthResult
 
 
         final IdentityManager identityManager = IdentityManager.getDefaultIdentityManager();
-
-        //Clear all existing logins , just for debugging purpose
-//        final CognitoCachingCredentialsProvider credentialsProvider = identityManager.getUnderlyingProvider();
-//        credentialsProvider.clearCredentials();
-
         identityManager.resumeSession(this,this,1000);
-
-
-
     }
+
     @Override
     public void onBackPressed() {
         //make some alert for the user
@@ -93,8 +84,9 @@ public class MainActivity extends AppCompatActivity implements StartupAuthResult
     }
 
     public void OpenSignInActivity() {
-       Intent intent=new Intent(this,UserLogin.class);
-       putIntent(intent,getIntent());
-       startActivity(intent);
+        Intent intent=new Intent(MainActivity.this,UserLogin.class).setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+        putIntent(intent,getIntent());
+        startActivity(intent);
+        finish();
     }
 }

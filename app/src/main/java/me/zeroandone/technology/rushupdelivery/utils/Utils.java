@@ -5,11 +5,16 @@ import android.app.Activity;
 import android.app.Dialog;
 import android.app.NotificationManager;
 import android.content.Context;
+import android.content.Intent;
+import android.graphics.Bitmap;
 import android.graphics.Color;
 import android.graphics.Typeface;
 import android.graphics.drawable.ColorDrawable;
+import android.net.Uri;
 import android.os.CountDownTimer;
 import android.os.Handler;
+import android.provider.MediaStore;
+import android.text.InputType;
 import android.util.Log;
 import android.view.Gravity;
 import android.view.View;
@@ -17,18 +22,24 @@ import android.view.Window;
 import android.view.WindowManager;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.GooglePlayServicesUtil;
 
+import java.io.ByteArrayOutputStream;
+import java.io.IOException;
+import java.io.InputStream;
 import java.util.List;
 import java.util.Map;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import me.zeroandone.technology.rushupdelivery.R;
+import me.zeroandone.technology.rushupdelivery.Registration;
+import me.zeroandone.technology.rushupdelivery.interfaces.PickerInterface;
 import me.zeroandone.technology.rushupdelivery.interfaces.RushUpDeliverySettings;
 import me.zeroandone.technology.rushupdelivery.objects.DeliveryRequest;
 import me.zeroandone.technology.rushupdelivery.objects.DeliveryStatus;
@@ -41,7 +52,6 @@ public class Utils {
 
     public static Handler handlers;
     public static Runnable runnables;
-
 
     public Handler getHandler() {
         return handlers;
@@ -118,118 +128,126 @@ public class Utils {
      * Method to verify google play services on the device
      * */
     public static boolean checkPlayServices(Context context) {
-        int resultCode = GooglePlayServicesUtil.isGooglePlayServicesAvailable(context);
-        if (resultCode != ConnectionResult.SUCCESS) {
-            if (GooglePlayServicesUtil.isUserRecoverableError(resultCode)) {
-                GooglePlayServicesUtil.getErrorDialog(resultCode,(Activity)context, PLAY_SERVICES_RESOLUTION_REQUEST).show();
-            } else {
+        if(context!=null) {
+            int resultCode = GooglePlayServicesUtil.isGooglePlayServicesAvailable(context);
+            if (resultCode != ConnectionResult.SUCCESS) {
+                if (GooglePlayServicesUtil.isUserRecoverableError(resultCode)) {
+                    GooglePlayServicesUtil.getErrorDialog(resultCode, (Activity) context, PLAY_SERVICES_RESOLUTION_REQUEST).show();
+                } else {
 
+                }
+                return false;
             }
-            return false;
         }
         return true;
     }
 
     public static Dialog showDriverDialog(Context context, final DeliveryRequest deliveryRequest, final RushUpDeliverySettings rushUpDeliverySettings, final DriverStatusSharedPreference driverStatusSharedPreference){
         Dialog dialog=null;
-         if(rushUpDeliverySettings!=null && deliveryRequest!=null && deliveryRequest.getPickupLocation()!=null && deliveryRequest.getPickupLocation().getName()!=null
-                 && !deliveryRequest.getPickupLocation().getName().equalsIgnoreCase("") && !deliveryRequest.getDropoffLocation().getName().equalsIgnoreCase("")
-                 && deliveryRequest.getPickupName()!=null && deliveryRequest.getDropoffName()!=null){
+        if(context!=null) {
+            if (rushUpDeliverySettings != null && deliveryRequest != null && deliveryRequest.getPickupLocation() != null && deliveryRequest.getPickupLocation().getName() != null
+                    && !deliveryRequest.getPickupLocation().getName().equalsIgnoreCase("") && !deliveryRequest.getDropoffLocation().getName().equalsIgnoreCase("")
+                    && deliveryRequest.getPickupName() != null && deliveryRequest.getDropoffName() != null) {
 
-             dialog = new Dialog(context, android.R.style.Theme_Translucent_NoTitleBar);
-             dialog.requestWindowFeature(Window.FEATURE_NO_TITLE);
-             dialog.setContentView(R.layout.notification);
-             WindowManager.LayoutParams lp = new WindowManager.LayoutParams();
-             lp.copyFrom(dialog.getWindow().getAttributes());
-             lp.height = WindowManager.LayoutParams.WRAP_CONTENT;
-             lp.gravity = Gravity.CENTER;
-             dialog.getWindow().setAttributes(lp);
-             dialog.show();
-             final Dialog finalDialog = dialog;
-             TextView dropoff_address=(TextView) dialog.findViewById(R.id.dropoff_address);
-             TextView pickup_address=(TextView) dialog.findViewById(R.id.pickup_address);
-             TextView acceptdelivery=(TextView) dialog.findViewById(R.id.accept_delivery);
-             TextView decline_delivery=(TextView)dialog.findViewById(R.id.decline_delivery);
-             final TextView time=(TextView) dialog.findViewById(R.id.time);
-             String Dropoff_Address=deliveryRequest.getDropoffName()+" \n "+deliveryRequest.getDropoffLocation().getName().replaceAll("[\\t\\n\\r]+", " ");
-             String PickUp_Address=deliveryRequest.getPickupName()+" \n "+deliveryRequest.getPickupLocation().getName().replaceAll("[\\t\\n\\r]+", " ");
-             dropoff_address.setText(PickUp_Address);
-             pickup_address.setText(Dropoff_Address);
+                dialog = new Dialog(context, android.R.style.Theme_Translucent_NoTitleBar);
+                dialog.requestWindowFeature(Window.FEATURE_NO_TITLE);
+                dialog.setContentView(R.layout.notification);
+                WindowManager.LayoutParams lp = new WindowManager.LayoutParams();
+                lp.copyFrom(dialog.getWindow().getAttributes());
+                lp.height = WindowManager.LayoutParams.WRAP_CONTENT;
+                lp.gravity = Gravity.CENTER;
+                dialog.getWindow().setAttributes(lp);
+                dialog.show();
+                final Dialog finalDialog = dialog;
+                TextView dropoff_address = (TextView) dialog.findViewById(R.id.dropoff_address);
+                TextView pickup_address = (TextView) dialog.findViewById(R.id.pickup_address);
+                TextView acceptdelivery = (TextView) dialog.findViewById(R.id.accept_delivery);
+                TextView decline_delivery = (TextView) dialog.findViewById(R.id.decline_delivery);
+                final TextView time = (TextView) dialog.findViewById(R.id.time);
+                String Dropoff_Address = deliveryRequest.getDropoffName() + " \n " + deliveryRequest.getDropoffLocation().getName().replaceAll("[\\t\\n\\r]+", " ");
+                String PickUp_Address = deliveryRequest.getPickupName() + " \n " + deliveryRequest.getPickupLocation().getName().replaceAll("[\\t\\n\\r]+", " ");
+                dropoff_address.setText(PickUp_Address);
+                pickup_address.setText(Dropoff_Address);
 
-             new CountDownTimer(60*1000, 1000) {
+                new CountDownTimer(60 * 1000, 1000) {
 
-                 public void onTick(long millisUntilFinished) {
-                     String ms=(millisUntilFinished / 1000)+" sec";
-                     time.setText(ms);
-                     //here you can have your logic to set text to edittext
-                 }
+                    public void onTick(long millisUntilFinished) {
+                        String ms = (millisUntilFinished / 1000) + " sec";
+                        time.setText(ms);
+                        //here you can have your logic to set text to edittext
+                    }
 
-                 public void onFinish() {
-                 }
+                    public void onFinish() {
+                    }
 
-             }.start();
+                }.start();
 
-             acceptdelivery.setOnClickListener(new View.OnClickListener() {
-                 @Override
-                 public void onClick(View v) {
-                 finalDialog.dismiss();
-                 rushUpDeliverySettings.PlotPins(deliveryRequest);
-                 rushUpDeliverySettings.SaveActiveDelivery(deliveryRequest);
-                 rushUpDeliverySettings.showBottomMenu(deliveryRequest);
-                 rushUpDeliverySettings. FillUpBottomMenu(deliveryRequest,true);
-                 // save state to assign
-                 AppHelper.assignDeliveryToDriver(deliveryRequest);
-                 // change state of user to occupied
-                 AppHelper.UpdateStatusofDriver(DriverStatus.occupied);
+                acceptdelivery.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        finalDialog.dismiss();
+                        rushUpDeliverySettings.PlotPins(deliveryRequest);
+                        rushUpDeliverySettings.SaveActiveDelivery(deliveryRequest);
+                        rushUpDeliverySettings.showBottomMenu(deliveryRequest);
+                        rushUpDeliverySettings.FillUpBottomMenu(deliveryRequest, true);
+                        // save state to assign
+                        AppHelper.assignDeliveryToDriver(deliveryRequest);
+                        // change state of user to occupied
+                        AppHelper.UpdateStatusofDriver(DriverStatus.occupied);
 
-                 driverStatusSharedPreference.saveStatus("occupied");
+                        driverStatusSharedPreference.saveStatus("occupied");
 
-                 }
-             });
+                    }
+                });
 
-             decline_delivery.setOnClickListener(new View.OnClickListener() {
-                 @Override
-                 public void onClick(View v) {
-                     finalDialog.dismiss();
-                     rushUpDeliverySettings.showOptions();
-                 }
-             });
+                decline_delivery.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        finalDialog.dismiss();
+                        rushUpDeliverySettings.showOptions();
+                    }
+                });
 
-         }
+            }
+        }
          return dialog;
     }
 
     public static void DeclareHandler(final Context context, final Dialog dialog, final Object object){
         final NotificationIDs notificationIDs=new NotificationIDs(context);
         Handler handler=new Handler();
-        Utils.setHandler(handler);
-        Runnable runnable=new Runnable() {
-            @Override
-            public void run() {
-                Log.d("HeroJongi","onTime");
-                if(object instanceof DeliveryRequest) {
-                    if (dialog != null) {
-                        Log.d("HeroJongi", "on Reciever Side");
-                        dialog.dismiss();
-                        RemoveNotification(context, "driver_request");
+        if(context!=null) {
+            Utils.setHandler(handler);
+            Runnable runnable = new Runnable() {
+                @Override
+                public void run() {
+                    Log.d("HeroJongi", "onTime");
+                    if (object instanceof DeliveryRequest) {
+                        if (dialog != null) {
+                            Log.d("HeroJongi", "on Reciever Side");
+                            dialog.dismiss();
+                            RemoveNotification(context, "driver_request");
+                        }
                     }
                 }
-            }
-        };
-        handler.postDelayed(runnable,60*1000);
-        Utils.setRunnable(runnable);
+            };
+            handler.postDelayed(runnable, 60 * 1000);
+            Utils.setRunnable(runnable);
+        }
     }
 
 
     public static void RemoveNotification(Context context,String pushtype){
-        NotificationIDs notificationIDs=new NotificationIDs(context);
-        List<Map<String,String>> map=notificationIDs.getValuesFromSharedPreference(pushtype);
-        for(Map<String,String>map1:map){
-            Log.d("HeroJongi","Val "+map1.get("value")+map1.get("key"));
-        }
-        if(map.size()>0) {
-            cancelNotification(context, Integer.valueOf(map.get(0).get("value")));
-            notificationIDs.DeleteFromNotificationIds(map.get(0).get("value"));
+        if(context!=null) {
+            NotificationIDs notificationIDs = new NotificationIDs(context);
+            List<Map<String, String>> map = notificationIDs.getValuesFromSharedPreference(pushtype);
+            for (Map<String, String> map1 : map) {
+                Log.d("HeroJongi", "Val " + map1.get("value") + map1.get("key"));
+            }
+            if (map.size() > 0) {
+                cancelNotification(context, Integer.valueOf(map.get(0).get("value")));
+                notificationIDs.DeleteFromNotificationIds(map.get(0).get("value"));
+            }
         }
     }
 
@@ -243,5 +261,290 @@ public class Utils {
         String API_KEY = context.getResources().getString(R.string.google_maps_key);
         return DIRECTION_API + originLat + "," + originLon + "&destination=" + destinationLat + "," + destinationLon + "&key=" + API_KEY;
     }
+
+    public static void startImagePicker(final Context context, final PickerInterface pickerDialog) {
+        if (pickerDialog != null && context!=null) {
+            final Dialog dialog = new Dialog(context, android.R.style.Theme_Translucent_NoTitleBar);
+            dialog.requestWindowFeature(Window.FEATURE_NO_TITLE);
+            dialog.setContentView(R.layout.image_picker_dialog);
+            WindowManager.LayoutParams lp = new WindowManager.LayoutParams();
+            lp.copyFrom(dialog.getWindow().getAttributes());
+            lp.width = WindowManager.LayoutParams.WRAP_CONTENT;
+            lp.height = WindowManager.LayoutParams.WRAP_CONTENT;
+            lp.gravity = Gravity.CENTER;
+            dialog.getWindow().setAttributes(lp);
+            dialog.getWindow().setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
+            dialog.show();
+            Button gallery = (Button) dialog.findViewById(R.id.gallery);
+            Button camera = (Button) dialog.findViewById(R.id.cameradialog);
+            ImageView close = (ImageView) dialog.findViewById(R.id.close);
+            close.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+                    if (dialog != null && dialog.isShowing()) {
+                        dialog.dismiss();
+                    }
+                }
+            });
+            camera.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+                    Intent intent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
+                    pickerDialog.OnCameraClicked(intent);
+                    dialog.dismiss();
+                }
+            });
+            gallery.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+                    Intent intent = new Intent(Intent.ACTION_PICK, android.provider.MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
+                    pickerDialog.OnGalleryClicked(intent);
+                    dialog.dismiss();
+                }
+            });
+        }
+
+    }
+
+    public static void writeBitmaptoInternalStorage(Context context,byte[] byteArray){
+        if(context!=null && byteArray!=null) {
+            try {
+                InternalStorage.writeBitmap(context, byteArray, "driverPicture");
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        }
+    }
+
+    public static void BitmapOperation(Context context,Bitmap bitmap){
+        if(context!=null && bitmap!=null) {
+            byte[] byteArray = getByteArray(bitmap);
+            writeBitmaptoInternalStorage(context, byteArray);
+        }
+    }
+
+    public static byte[] getByteArray(Bitmap bitmap){
+        ByteArrayOutputStream stream = new ByteArrayOutputStream();
+        bitmap.compress(Bitmap.CompressFormat.JPEG, 100, stream);
+        return stream.toByteArray();
+
+    }
+
+    public static byte[] readBytes(Uri uri, Context context) throws IOException {
+        // this dynamically extends to take the bytes you read
+        InputStream inputStream = context.getContentResolver().openInputStream(uri);
+        ByteArrayOutputStream byteBuffer = new ByteArrayOutputStream();
+
+        // this is storage overwritten on each iteration with bytes
+        int bufferSize = 1024;
+        byte[] buffer = new byte[bufferSize];
+
+        // we need to know how may bytes were read to write them to the byteBuffer
+        int len = 0;
+        while ((len = inputStream.read(buffer)) != -1) {
+            byteBuffer.write(buffer, 0, len);
+        }
+
+        // and then we can return your byte array.
+        return byteBuffer.toByteArray();
+    }
+
+    public static boolean isEmailValid(String email) {
+        String expression = "^[\\w\\.-]+@([\\w\\-]+\\.)+[A-Z]{2,4}$";
+        Pattern pattern = Pattern.compile(expression, Pattern.CASE_INSENSITIVE);
+        Matcher matcher = pattern.matcher(email);
+        return matcher.matches();
+    }
+
+    public static void UpdateDialog(final Context context, final String attribute, final String attributeName, final RushUpDeliverySettings settings, String att_value) {
+      if(context!=null){
+          final Dialog dialog = new Dialog(context, android.R.style.Theme_Translucent_NoTitleBar);
+          dialog.requestWindowFeature(Window.FEATURE_NO_TITLE);
+          dialog.setContentView(R.layout.update_attribute_dialog);
+          WindowManager.LayoutParams lp = new WindowManager.LayoutParams();
+          lp.copyFrom(dialog.getWindow().getAttributes());
+          lp.height = WindowManager.LayoutParams.WRAP_CONTENT;
+          lp.gravity = Gravity.CENTER;
+          dialog.getWindow().setAttributes(lp);
+          dialog.getWindow().setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
+          dialog.show();
+          final TextView attribute_name = (TextView) dialog.findViewById(R.id.attribute_name);
+          final EditText attribute_value = (EditText) dialog.findViewById(R.id.attribute_value);
+          if (att_value != null) {
+              if (att_value.equalsIgnoreCase(context.getResources().getString(R.string.verification_code))) {
+                  attribute_value.setHint(att_value);
+              } else {
+                  attribute_value.setText(att_value);
+              }
+          }
+          Button update = (Button) dialog.findViewById(R.id.update);
+          attribute_name.setText(attributeName);
+          Button cancel = (Button) dialog.findViewById(R.id.cancel);
+          if (att_value != null) {
+              if (att_value.equalsIgnoreCase(context.getResources().getString(R.string.verification_code))) {
+                  update.setText(context.getResources().getString(R.string.done));
+              } else {
+                  update.setText(context.getResources().getString(R.string.update));
+              }
+          }
+          if (attribute.equalsIgnoreCase("email")) {
+              if (attributeName.equalsIgnoreCase(context.getResources().getString(R.string.verify_email))) {
+                  attribute_value.setInputType(InputType.TYPE_CLASS_NUMBER);
+                  settings.openVerifyPhoneEmail(dialog,"email");
+              } else {
+                  attribute_value.setInputType(InputType.TYPE_CLASS_TEXT | InputType.TYPE_TEXT_VARIATION_EMAIL_ADDRESS);
+              }
+          }
+          if (attribute.equalsIgnoreCase("phone_number")) {
+              if (attributeName.equalsIgnoreCase(context.getResources().getString(R.string.verify_phone))) {
+                  attribute_value.setInputType(InputType.TYPE_CLASS_NUMBER);
+                  settings.openVerifyPhoneEmail(dialog,"phone_number");
+              } else {
+                  attribute_value.setInputType(InputType.TYPE_CLASS_PHONE);
+              }
+          }
+          if (attribute.equalsIgnoreCase("given_name") || attribute.equalsIgnoreCase("family_name")) {
+              attribute_value.setInputType(InputType.TYPE_CLASS_TEXT);
+          }
+          cancel.setOnClickListener(new View.OnClickListener() {
+              @Override
+              public void onClick(View view) {
+                  dialog.dismiss();
+              }
+          });
+          update.setOnClickListener(new View.OnClickListener() {
+              @Override
+              public void onClick(View v) {
+                  if(settings!=null){
+                      String value = attribute_value.getText().toString();
+                      if (attribute.equalsIgnoreCase("given_name")) {
+                          if (value == null || value.equalsIgnoreCase("")) {
+                              attribute_value.setError(context.getResources().getString(R.string.first_name_error));
+
+                          } else {
+                              attribute_value.setError(null);
+                              settings.UpdateAttribute(attribute, value, dialog);
+                          }
+                      }
+                      if (attribute.equalsIgnoreCase("email")) {
+                          if (attributeName.equalsIgnoreCase(context.getResources().getString(R.string.verify_email))) {
+
+                              if (value == null || value.equalsIgnoreCase("")) {
+                                  attribute_value.setError(context.getResources().getString(R.string.error_code));
+                              } else {
+                                  settings.Verify_Email_Password("email", value, dialog);
+                              }
+                          } else {
+                              if (value == null || value.equalsIgnoreCase("")) {
+                                  attribute_value.setError(context.getResources().getString(R.string.email_error));
+                              } else if (!Utils.isEmailValid(value)) {
+                                  attribute_value.setError(context.getResources().getString(R.string.email_not_valid));
+                              } else {
+                                  attribute_value.setError(null);
+                                  settings.UpdateAttribute(attribute, value, dialog);
+                              }
+                          }
+                      }
+                      else if (attribute.equalsIgnoreCase("phone_number")) {
+                          if (attributeName.equalsIgnoreCase(context.getResources().getString(R.string.verify_phone))) {
+                              if (value == null || value.equalsIgnoreCase("")) {
+                                  attribute_value.setError(context.getResources().getString(R.string.error_code));
+                              } else {
+                                  settings.Verify_Email_Password("phone_number", value, dialog);
+                              }
+                          } else {
+                              if (value == null || value.equalsIgnoreCase("")) {
+                                  attribute_value.setError(context.getResources().getString(R.string.phone_error));
+
+                              } else if (!Utils.isValidMobileNumber(value)) {
+                                  attribute_value.setError(context.getResources().getString(R.string.phone_valid));
+
+                              } else {
+                                  attribute_value.setError(null);
+                                  settings.UpdateAttribute(attribute, value, dialog);
+                              }
+                          }
+                      }
+                      else if (attribute.equalsIgnoreCase("family_name")) {
+                          if (value == null || value.equalsIgnoreCase("")) {
+                              attribute_value.setError(context.getResources().getString(R.string.lastname_error));
+
+                          } else {
+                              attribute_value.setError(null);
+                              settings.UpdateAttribute(attribute, value, dialog);
+                          }
+                      }
+
+                  }
+              }
+          });
+      }
+    }
+    public static boolean isValidMobileNumber(String phone) {
+        String expression = "^[+][0-9]{7,18}$";
+
+        Pattern pattern = Pattern.compile(expression);
+        Matcher matcher = pattern.matcher(phone);
+        return matcher.matches();
+
+    }
+
+    public static void ChangePasswordDialog(final Context context, final RushUpDeliverySettings settings) {
+        final Dialog dialog = new Dialog(context, android.R.style.Theme_Translucent_NoTitleBar);
+        dialog.requestWindowFeature(Window.FEATURE_NO_TITLE);
+        dialog.setContentView(R.layout.change_password);
+        WindowManager.LayoutParams lp = new WindowManager.LayoutParams();
+        lp.copyFrom(dialog.getWindow().getAttributes());
+        lp.height = WindowManager.LayoutParams.WRAP_CONTENT;
+        lp.gravity = Gravity.CENTER;
+        dialog.getWindow().setAttributes(lp);
+        dialog.getWindow().setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
+        dialog.show();
+        final EditText old_password = (EditText) dialog.findViewById(R.id.old_password);
+        final EditText new_password = (EditText) dialog.findViewById(R.id.new_password);
+        Button update = (Button) dialog.findViewById(R.id.update);
+        Button cancel = (Button) dialog.findViewById(R.id.cancel);
+        cancel.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                dialog.dismiss();
+            }
+        });
+        update.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                String OLdPassword = old_password.getText().toString();
+                String NewPassword = new_password.getText().toString();
+                if (checkPassword(context, old_password, new_password, OLdPassword, NewPassword)) {
+                    settings.ChangePassword(NewPassword, OLdPassword, dialog);
+                }
+            }
+        });
+    }
+
+    private static boolean checkPassword(Context context, EditText oldpass, EditText newpass, String oldPass, String newPass) {
+        if(context!=null) {
+            if (oldPass == null || oldPass.equalsIgnoreCase("")) {
+                oldpass.setError(context.getResources().getString(R.string.password_error));
+                return false;
+            } else if (!Utils.isPasswordValid(oldPass)) {
+                oldpass.setError(context.getResources().getString(R.string.password_valid));
+                return false;
+            } else {
+                oldpass.setError(null);
+            }
+            if (newPass == null || newPass.equalsIgnoreCase("")) {
+                newpass.setError(context.getResources().getString(R.string.password_error));
+                return false;
+            } else if (!Utils.isPasswordValid(newPass)) {
+                newpass.setError(context.getResources().getString(R.string.password_valid));
+                return false;
+            } else {
+                newpass.setError(null);
+            }
+        }
+        return true;
+    }
+
 
 }

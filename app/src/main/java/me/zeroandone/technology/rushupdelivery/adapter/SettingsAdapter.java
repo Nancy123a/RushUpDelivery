@@ -11,21 +11,29 @@ import android.widget.CompoundButton;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import com.amazonaws.mobileconnectors.cognitoidentityprovider.CognitoUserDetails;
+
 import java.util.List;
 
 import me.zeroandone.technology.rushupdelivery.R;
+import me.zeroandone.technology.rushupdelivery.interfaces.RushUpDeliverySettings;
 import me.zeroandone.technology.rushupdelivery.objects.Settings;
 import me.zeroandone.technology.rushupdelivery.utils.NotificationSound;
+import me.zeroandone.technology.rushupdelivery.utils.Utils;
 
 public class SettingsAdapter  extends RecyclerView.Adapter<RecyclerView.ViewHolder>{
 
     List<Settings> settings;
     Context _context;
     NotificationSound notificationSound;
+    RushUpDeliverySettings rushUpDeliverySettings;
+    CognitoUserDetails cognitoUserDetails;
 
-    public SettingsAdapter(Context context, List<Settings> settings) {
+    public SettingsAdapter(Context context, List<Settings> settings,RushUpDeliverySettings rushUpDeliverySettings,CognitoUserDetails cognitoUserDetails) {
         this.settings = settings;
         this._context = context;
+        this.rushUpDeliverySettings=rushUpDeliverySettings;
+        this.cognitoUserDetails=cognitoUserDetails;
         notificationSound=new NotificationSound(context);
     }
 
@@ -79,10 +87,90 @@ public class SettingsAdapter  extends RecyclerView.Adapter<RecyclerView.ViewHold
             public void onClick(View v) {
                 String option = settings.get(position).getOptions();
                 if(option.equalsIgnoreCase(_context.getResources().getString(R.string.first_name))){
-
+                    Utils.UpdateDialog(_context, "given_name", _context.getResources().getString(R.string.first_name), rushUpDeliverySettings,cognitoUserDetails.getAttributes().getAttributes().get("given_name"));
                 }
+                else if (option.equalsIgnoreCase(_context.getResources().getString(R.string.verify_phone))) {
+                    Utils.UpdateDialog(_context, "phone_number", _context.getResources().getString(R.string.verify_phone), rushUpDeliverySettings, "Verification Code");
+                } else if (option.equalsIgnoreCase(_context.getResources().getString(R.string.logout))) {
+                    rushUpDeliverySettings.Signout();
+                }
+                if (option.equalsIgnoreCase(_context.getResources().getString(R.string.verify_email))) {
+                    Utils.UpdateDialog(_context, "email", _context.getResources().getString(R.string.verify_email), rushUpDeliverySettings, "Verification Code");
+                }
+                else if (option.equalsIgnoreCase(_context.getResources().getString(R.string.lastname))) {
+                    Utils.UpdateDialog(_context, "family_name", _context.getResources().getString(R.string.lastname),rushUpDeliverySettings, cognitoUserDetails.getAttributes().getAttributes().get("family_name"));
+                } else if (option.equalsIgnoreCase(_context.getResources().getString(R.string.mobile))) {
+                    Utils.UpdateDialog(_context, "phone_number", _context.getResources().getString(R.string.mobile), rushUpDeliverySettings, cognitoUserDetails.getAttributes().getAttributes().get("phone_number"));
+                } else if (option.equalsIgnoreCase(_context.getResources().getString(R.string.email))) {
+                    Utils.UpdateDialog(_context, "email", _context.getResources().getString(R.string.email),rushUpDeliverySettings, cognitoUserDetails.getAttributes().getAttributes().get("email"));
+                } else if (option.equalsIgnoreCase(_context.getResources().getString(R.string.password))) {
+                    Utils.ChangePasswordDialog(_context, rushUpDeliverySettings);
+                }
+
             }
         });
+    }
+
+    public void AddVerifyEmail() {
+        if (indexOfPhoneEmail(settings, "Verify Email") == -1) {
+            int position = indexOfAccount(settings, _context.getResources().getString(R.string.account_actions));
+            settings.add(position + 1, new Settings(null, "Verify Email", Settings.OPTION));
+            notifyItemInserted(position + 1);
+        }
+
+    }
+
+    public void AddVerifyPhoneNumber() {
+        if (indexOfPhoneEmail(settings,_context.getResources().getString(R.string.verify_phone)) == -1) {
+            int position = indexOfPhoneEmail(settings,_context.getResources().getString(R.string.verify_email));
+            if (position != -1) {
+                settings.add(position + 1, new Settings(null, _context.getResources().getString(R.string.verify_phone), Settings.OPTION));
+                notifyItemInserted(position + 1);
+            } else {
+                int position2 = indexOfAccount(settings, _context.getResources().getString(R.string.account_actions));
+                settings.add(position2 + 1, new Settings(null, _context.getResources().getString(R.string.verify_phone), Settings.OPTION));
+                notifyItemInserted(position2 + 1);
+            }
+        }
+
+    }
+
+    public void RemoveVerifyPhoneNumber() {
+        int position = indexOfPhoneEmail(settings, "Verify Phone Number");
+        if (position != -1) {
+            settings.remove(position);
+            notifyItemRemoved(position);
+        }
+    }
+
+    public void RemoveVerifyEmail() {
+        int position = indexOfPhoneEmail(settings, "Verify Email");
+        if (position != -1) {
+            settings.remove(position);
+            notifyItemRemoved(position);
+        }
+    }
+
+    public static int indexOfPhoneEmail(final List<Settings> menuItems, final String what) {
+        final int size = menuItems.size();
+        for (int i = 0; i < size; i++) {
+            final String label = menuItems.get(i).getOptions();
+            if (label != null && label.equals(what)) {
+                return i;
+            }
+        }
+        return -1;
+    }
+
+    public static int indexOfAccount(final List<Settings> menuItems, final String what) {
+        final int size = menuItems.size();
+        for (int i = 0; i < size; i++) {
+            final String label = menuItems.get(i).getTitle();
+            if (label != null && label.equals(what)) {
+                return i;
+            }
+        }
+        return -1;
     }
 
     private void configureHeaderView(HeaderView vh1, int position) {

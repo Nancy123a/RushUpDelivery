@@ -129,54 +129,54 @@
         android:id="@+id/code"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_centerHorizontal="true"
         android:layout_below="@+id/insertcode"
-        android:layout_marginTop="@dimen/padding_16"
+        android:layout_centerHorizontal="true"
+        android:layout_marginTop="15dp"
         android:orientation="horizontal">
 
-    <EditText
-        android:id="@+id/number1"
-        android:layout_width="30dp"
-        android:layout_height="30dp"
-        android:background="@drawable/edittextshape"
-        android:padding="@dimen/padding_1"
-        android:gravity="center"
-        android:textColor="@color/white"
-        android:layout_marginRight="@dimen/padding_16"
-        android:inputType="number"/>
+        <EditText
+            android:id="@+id/number1"
+            android:layout_width="30dp"
+            android:layout_height="30dp"
+            android:layout_marginRight="@dimen/padding_16"
+            android:background="@drawable/edittextshape"
+            android:gravity="center"
+            android:inputType="number"
+            android:padding="@dimen/padding_1"
+            android:textColor="@color/white" />
 
         <EditText
             android:id="@+id/number2"
             android:layout_width="30dp"
             android:layout_height="30dp"
-            android:background="@drawable/edittextshape"
-            android:padding="@dimen/padding_1"
-            android:gravity="center"
-            android:textColor="@color/white"
             android:layout_marginRight="@dimen/padding_16"
-            android:inputType="number"/>
+            android:background="@drawable/edittextshape"
+            android:gravity="center"
+            android:inputType="number"
+            android:padding="@dimen/padding_1"
+            android:textColor="@color/white" />
 
         <EditText
             android:id="@+id/number3"
             android:layout_width="30dp"
             android:layout_height="30dp"
-            android:background="@drawable/edittextshape"
-            android:padding="@dimen/padding_1"
-            android:gravity="center"
-            android:textColor="@color/white"
             android:layout_marginRight="@dimen/padding_16"
-            android:inputType="number"/>
+            android:background="@drawable/edittextshape"
+            android:gravity="center"
+            android:inputType="number"
+            android:padding="@dimen/padding_1"
+            android:textColor="@color/white" />
 
         <EditText
             android:id="@+id/number4"
             android:layout_width="30dp"
             android:layout_height="30dp"
-            android:background="@drawable/edittextshape"
-            android:padding="@dimen/padding_1"
-            android:gravity="center"
-            android:textColor="@color/white"
             android:layout_marginRight="@dimen/padding_16"
-            android:inputType="number"/>
+            android:background="@drawable/edittextshape"
+            android:gravity="center"
+            android:inputType="number"
+            android:padding="@dimen/padding_1"
+            android:textColor="@color/white" />
 
     </LinearLayout>
 
