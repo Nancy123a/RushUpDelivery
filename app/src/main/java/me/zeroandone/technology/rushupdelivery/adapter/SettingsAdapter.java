@@ -86,10 +86,7 @@ public class SettingsAdapter  extends RecyclerView.Adapter<RecyclerView.ViewHold
             @Override
             public void onClick(View v) {
                 String option = settings.get(position).getOptions();
-                if(option.equalsIgnoreCase(_context.getResources().getString(R.string.first_name))){
-                    Utils.UpdateDialog(_context, "given_name", _context.getResources().getString(R.string.first_name), rushUpDeliverySettings,cognitoUserDetails.getAttributes().getAttributes().get("given_name"));
-                }
-                else if (option.equalsIgnoreCase(_context.getResources().getString(R.string.verify_phone))) {
+                if (option.equalsIgnoreCase(_context.getResources().getString(R.string.verify_phone))) {
                     Utils.UpdateDialog(_context, "phone_number", _context.getResources().getString(R.string.verify_phone), rushUpDeliverySettings, "Verification Code");
                 } else if (option.equalsIgnoreCase(_context.getResources().getString(R.string.logout))) {
                     rushUpDeliverySettings.Signout();
@@ -97,9 +94,7 @@ public class SettingsAdapter  extends RecyclerView.Adapter<RecyclerView.ViewHold
                 if (option.equalsIgnoreCase(_context.getResources().getString(R.string.verify_email))) {
                     Utils.UpdateDialog(_context, "email", _context.getResources().getString(R.string.verify_email), rushUpDeliverySettings, "Verification Code");
                 }
-                else if (option.equalsIgnoreCase(_context.getResources().getString(R.string.lastname))) {
-                    Utils.UpdateDialog(_context, "family_name", _context.getResources().getString(R.string.lastname),rushUpDeliverySettings, cognitoUserDetails.getAttributes().getAttributes().get("family_name"));
-                } else if (option.equalsIgnoreCase(_context.getResources().getString(R.string.mobile))) {
+                 else if (option.equalsIgnoreCase(_context.getResources().getString(R.string.mobile))) {
                     Utils.UpdateDialog(_context, "phone_number", _context.getResources().getString(R.string.mobile), rushUpDeliverySettings, cognitoUserDetails.getAttributes().getAttributes().get("phone_number"));
                 } else if (option.equalsIgnoreCase(_context.getResources().getString(R.string.email))) {
                     Utils.UpdateDialog(_context, "email", _context.getResources().getString(R.string.email),rushUpDeliverySettings, cognitoUserDetails.getAttributes().getAttributes().get("email"));

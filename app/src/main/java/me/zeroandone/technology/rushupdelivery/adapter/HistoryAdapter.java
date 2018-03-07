@@ -5,6 +5,7 @@ import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import java.text.DateFormat;
@@ -39,7 +40,7 @@ public class HistoryAdapter extends RecyclerView.Adapter<HistoryAdapter.HistoryV
     }
 
     @Override
-    public void onBindViewHolder(HistoryAdapter.HistoryViewHolder holder, int position) {
+    public void onBindViewHolder(HistoryAdapter.HistoryViewHolder holder, final int position) {
         DeliveryRequest deliveryRequest=result.get(position);
         if(deliveryRequest!=null){
             if(deliveryRequest.getPickupLocation()!=null && deliveryRequest.getPickupLocation().getName()!=null){
@@ -57,6 +58,14 @@ public class HistoryAdapter extends RecyclerView.Adapter<HistoryAdapter.HistoryV
                 String completeDate=date+" \n "+time;
                 holder.otherifo.setText(completeDate);
             }
+            holder.go.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    if(rushUpDeliverySettings!=null){
+                        rushUpDeliverySettings.onBalanceHistoryRowClicked(result.get(position),true);
+                    }
+                }
+            });
         }
     }
 
@@ -68,11 +77,13 @@ public class HistoryAdapter extends RecyclerView.Adapter<HistoryAdapter.HistoryV
     public class HistoryViewHolder extends RecyclerView.ViewHolder {
         View View;
         TextView pickup_point,delivery_point,otherifo;
+        RelativeLayout go;
         public HistoryViewHolder(View view) {
             super(view);
             pickup_point=(TextView) view.findViewById(R.id.pickup_point);
             delivery_point=(TextView) view.findViewById(R.id.delivery_point);
             otherifo=(TextView) view.findViewById(R.id.otherinfo);
+            go=(RelativeLayout) view.findViewById(R.id.go);
             View = view;
         }
     }

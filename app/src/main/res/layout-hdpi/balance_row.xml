@@ -1,78 +1,81 @@
-<?xml version="1.0" encoding="utf-8"?>
-<RelativeLayout
-    xmlns:android="http://schemas.android.com/apk/res/android"
+<?xml version="1.0" encoding="utf-8" ?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:orientation="vertical"
     android:layout_width="match_parent"
     android:layout_height="wrap_content">
 
     <RelativeLayout
-        android:id="@+id/line"
-        android:layout_width="match_parent"
+        android:id="@+id/completeline"
+        android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_centerHorizontal="true"
-        android:layout_marginTop="@dimen/padding_50"
-        android:layout_marginRight="@dimen/padding_40"
-        android:layout_marginLeft="@dimen/padding_40">
+        android:layout_marginTop="@dimen/padding_30"
+        android:layout_marginRight="@dimen/padding_30"
+        android:layout_marginLeft="@dimen/padding_30">
 
         <View
             android:id="@+id/firstpoint"
-            android:layout_width="8dp"
-            android:layout_height="8dp"
+            android:layout_width="10dp"
+            android:layout_height="10dp"
             android:background="@drawable/smallpoint" />
+
+
 
         <View
-            android:id="@+id/secondpoint"
-            android:layout_width="8dp"
-            android:layout_height="8dp"
+            android:id="@+id/thirdpoint"
+            android:layout_width="10dp"
+            android:layout_height="10dp"
             android:layout_alignParentRight="true"
-            android:background="@drawable/smallpoint" />
-
+            android:background="@drawable/smallpoint"
+            android:layout_alignParentEnd="true" />
 
         <View
             android:layout_width="match_parent"
             android:layout_height="2dp"
-            android:layout_marginTop="4dp"
-            android:background="@color/black" />
-
-
+            android:background="@color/black"
+            android:layout_toRightOf="@+id/firstpoint"
+            android:layout_toLeftOf="@+id/thirdpoint"
+            android:layout_marginTop="@dimen/padding_5"
+            android:layout_toEndOf="@+id/firstpoint" />
     </RelativeLayout>
 
     <RelativeLayout
         android:id="@+id/information"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_below="@+id/line"
+        android:layout_below="@+id/completeline"
         android:layout_marginTop="@dimen/padding_15"
         android:layout_marginLeft="@dimen/padding_30"
-        android:layout_marginRight="@dimen/padding_20"
+        android:layout_marginRight="@dimen/padding_30"
         android:layout_marginBottom="@dimen/padding_15">
 
         <TextView
             android:id="@+id/pickup_point"
-            android:layout_width="50dp"
+            android:layout_width="140dp"
             android:layout_height="wrap_content"
-            android:gravity="center"
-            android:textAlignment="center"
-            android:textSize="@dimen/text_size_12"
-            android:text="@string/pickup_delivery"/>
+            android:gravity="start"
+            android:textSize="@dimen/text_size_10"
+            android:text="@string/pickup_point"/>
 
         <TextView
             android:id="@+id/dollars"
-            android:layout_width="50dp"
+            android:layout_width="80dp"
             android:layout_height="wrap_content"
-            android:gravity="center"
-            android:textAlignment="center"
             android:layout_alignParentRight="true"
-            android:textSize="@dimen/text_size_12"
-            android:text="@string/dollars"/>
+            android:gravity="end"
+            android:textSize="@dimen/text_size_10"
+            android:text="@string/dollars"
+            android:layout_alignParentEnd="true" />
+
 
     </RelativeLayout>
 
     <RelativeLayout
+        android:id="@+id/go"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_alignParentRight="true"
-        android:layout_below="@+id/line"
-        android:layout_marginLeft="@dimen/padding_20"
+        android:layout_below="@+id/completeline"
+        android:layout_marginTop="@dimen/padding_10"
         android:layout_marginRight="@dimen/padding_5"
         android:layout_alignParentEnd="true">
         <ImageView
@@ -82,7 +85,5 @@
             android:layout_alignParentTop="true"
             android:src="@mipmap/right" />
     </RelativeLayout>
-
-
 
 </RelativeLayout>

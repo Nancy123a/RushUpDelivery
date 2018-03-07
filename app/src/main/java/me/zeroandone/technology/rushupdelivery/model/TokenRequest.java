@@ -16,9 +16,15 @@
 package me.zeroandone.technology.rushupdelivery.model;
 
 
-public class TokenRequest {
+import java.io.Serializable;
+
+public class TokenRequest implements Serializable {
     @com.google.gson.annotations.SerializedName("token")
-    private String token = null;
+    private String token;
+
+    public TokenRequest(String token) {
+        this.token = token;
+    }
 
     /**
      * Gets token

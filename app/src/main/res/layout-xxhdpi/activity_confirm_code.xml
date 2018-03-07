@@ -78,6 +78,7 @@
             android:layout_height="wrap_content"
             android:text="@string/code_sent"
             android:textAlignment="center"
+            android:gravity="center"
             android:textColor="@color/white"
             android:textSize="@dimen/text_size_15"/>
 

@@ -11,22 +11,21 @@ import android.content.res.Resources;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.location.Location;
-
 import com.amazonaws.mobile.auth.core.IdentityManager;
+import com.amazonaws.mobile.auth.core.SignInStateChangeListener;
 import com.amazonaws.mobileconnectors.cognitoidentityprovider.CognitoUserAttributes;
 import com.amazonaws.mobileconnectors.cognitoidentityprovider.CognitoUserCodeDeliveryDetails;
 import com.amazonaws.mobileconnectors.cognitoidentityprovider.handlers.GenericHandler;
 import com.amazonaws.mobileconnectors.cognitoidentityprovider.handlers.UpdateAttributesHandler;
 import com.amazonaws.mobileconnectors.cognitoidentityprovider.handlers.VerificationHandler;
 import com.google.android.gms.location.LocationListener;
-
 import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
-import android.support.annotation.RequiresApi;
 import android.support.v4.app.ActivityCompat;
+import android.support.v4.app.FragmentManager;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.DefaultItemAnimator;
@@ -49,8 +48,6 @@ import android.widget.ProgressBar;
 import android.widget.RatingBar;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
-import android.widget.Toast;
-
 import com.amazonaws.mobileconnectors.cognitoidentityprovider.CognitoUserDetails;
 import com.amazonaws.mobileconnectors.cognitoidentityprovider.handlers.GetDetailsHandler;
 import com.google.android.gms.common.ConnectionResult;
@@ -63,30 +60,30 @@ import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.OnMapReadyCallback;
 import com.google.android.gms.maps.SupportMapFragment;
 import com.google.android.gms.maps.model.BitmapDescriptorFactory;
-import com.google.android.gms.maps.model.CameraPosition;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.LatLngBounds;
 import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
 import com.wunderlist.slidinglayer.SlidingLayer;
-
 import java.io.File;
-import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.Comparator;
+import java.util.Date;
 import java.util.List;
-
 import de.hdodenhof.circleimageview.CircleImageView;
+import me.zeroandone.technology.rushupdelivery.adapter.BalanceAdapter;
 import me.zeroandone.technology.rushupdelivery.adapter.HistoryAdapter;
 import me.zeroandone.technology.rushupdelivery.adapter.SettingsAdapter;
+import me.zeroandone.technology.rushupdelivery.dialogs.MapDialog;
 import me.zeroandone.technology.rushupdelivery.interfaces.RushUpDeliverySettings;
 import me.zeroandone.technology.rushupdelivery.model.Driver;
 import me.zeroandone.technology.rushupdelivery.objects.DeliveryRequest;
 import me.zeroandone.technology.rushupdelivery.objects.DeliveryStatus;
+import me.zeroandone.technology.rushupdelivery.objects.DriverBalance;
 import me.zeroandone.technology.rushupdelivery.objects.DriverDeliveryHistory;
 import me.zeroandone.technology.rushupdelivery.objects.DriverStatus;
-import me.zeroandone.technology.rushupdelivery.objects.DriverStatusRequest;
 import me.zeroandone.technology.rushupdelivery.objects.PushType;
 import me.zeroandone.technology.rushupdelivery.objects.Settings;
 import me.zeroandone.technology.rushupdelivery.utils.AppHelper;
@@ -96,21 +93,20 @@ import me.zeroandone.technology.rushupdelivery.utils.DriverStatusSharedPreferenc
 import me.zeroandone.technology.rushupdelivery.utils.InternalStorage;
 import me.zeroandone.technology.rushupdelivery.utils.Utils;
 import me.zeroandone.technology.rushupdelivery.utils.isPickUp;
-import me.zeroandone.technology.rushupdelivery.widget.BalanceRecyclerView;
 
 
-public class InsideApp extends AppCompatActivity implements RushUpDeliverySettings, OnMapReadyCallback, View.OnClickListener, GoogleApiClient.ConnectionCallbacks, GoogleApiClient.OnConnectionFailedListener, LocationListener {
+public class InsideApp extends AppCompatActivity implements RushUpDeliverySettings, SignInStateChangeListener,OnMapReadyCallback, View.OnClickListener, GoogleApiClient.ConnectionCallbacks, GoogleApiClient.OnConnectionFailedListener, LocationListener {
 
     private SupportMapFragment mapFragment;
     private GoogleMap map;
     private static final int PERMISSION_PHONE_CALL = 200;
     RelativeLayout homelayout, settings_menu, history_menu, balance_menu;
-    TextView settings, history, balance, user_name, insert_code, package_pickup,no_history_found,score;
+    TextView settings, history, balance, user_name, insert_code, package_pickup,no_history_found,score,no_balance_found;
     RatingBar ratingBar;
     ImageView settings_close, history_close, balance_close, user_image;
     EditText insert_code_edittext;
     RecyclerView historyRecycleView;
-    BalanceRecyclerView balanceRecyclerView;
+    RecyclerView balanceRecyclerView;
     RecyclerView settings_recycler_view;
     CognitoUserDetails details;
     String Username, Phonenumber;
@@ -134,7 +130,8 @@ public class InsideApp extends AppCompatActivity implements RushUpDeliverySettin
     CircleImageView boy_photo;
     String phoneNumber;
     HistoryAdapter historyAdapter;
-    ProgressBar historyProgressBar;
+    BalanceAdapter balanceAdapter;
+    ProgressBar historyProgressBar,balanceProgressBar;
 
 
     // Location updates intervals in sec
@@ -173,7 +170,7 @@ public class InsideApp extends AppCompatActivity implements RushUpDeliverySettin
         user_name = (TextView) findViewById(R.id.username);
         balance_menu = (RelativeLayout) findViewById(R.id.balance_menu);
         historyRecycleView = (RecyclerView) findViewById(R.id.historyRecycleView);
-        balanceRecyclerView = (BalanceRecyclerView) findViewById(R.id.balanceRecycleView);
+        balanceRecyclerView = (RecyclerView) findViewById(R.id.balanceRecycleView);
         settings_recycler_view = (RecyclerView) findViewById(R.id.settings_recycle_view);
         bottomMenu = (SlidingLayer) findViewById(R.id.slidingLayer2);
         upperMenu=(SlidingLayer) findViewById(R.id.slidingLayer1);
@@ -193,9 +190,8 @@ public class InsideApp extends AppCompatActivity implements RushUpDeliverySettin
         no_history_found=(TextView) findViewById(R.id.no_history_found);
         score=(TextView) findViewById(R.id.score);
         ratingBar=(RatingBar) findViewById(R.id.ratingbar);
-
-        setRatingofDriver(identityManager.getCachedUserID());
-
+        balanceProgressBar=(ProgressBar) findViewById(R.id.balanceProgressBar);
+        no_balance_found=(TextView) findViewById(R.id.no_balance_found);
         driverStatusSharedPreference = new DriverStatusSharedPreference(this);
 
         if (driverStatusSharedPreference.getStatus() != null && !driverStatusSharedPreference.getStatus().equalsIgnoreCase("")) {
@@ -215,6 +211,8 @@ public class InsideApp extends AppCompatActivity implements RushUpDeliverySettin
         if (AppHelper.getPool() != null && AppHelper.getPool().getCognitoUserPool().getCurrentUser() != null) {
             AppHelper.getPool().getCognitoUserPool().getCurrentUser().getDetailsInBackground(detailsHandler);
         }
+
+
 
         if (mapFragment != null) {
             mapFragment.getMapAsync(this);
@@ -266,24 +264,45 @@ public class InsideApp extends AppCompatActivity implements RushUpDeliverySettin
 
     }
 
-    private void setRatingofDriver(final String cachedUserID) {
-        if(cachedUserID!=null && !cachedUserID.equalsIgnoreCase("")){
+    @Override
+    public void setRatingofDriver() {
+        if(identityManager.getCachedUserID()!=null && !identityManager.getCachedUserID().equalsIgnoreCase("")){
             new Thread(new Runnable() {
                 public void run() {
                     try {
-                        Log.d("SPECIAL"," Success get driver rating ");
-                       final Driver driver= AppHelper.getRushUpClient().driverDriverIdGet(cachedUserID);
+                        Log.d("HeroJongi"," Success get driver rating ");
+                        final Driver driver= AppHelper.getRushUpClient().driverDriverIdGet(identityManager.getCachedUserID());
                         runOnUiThread(new Thread(new Runnable() {
                             public void run() {
-                                Log.d("SPECIAL"," Success get driver rating "+driver.getScore());
-                             setRatingBar(driver.getScore());
+                                if(driver!=null && driver.getScore()!=null) {
+                                    setRatingBar(driver.getScore());
+                                }
                             }
                         }));
                     }catch (Exception ex) {
-                        Log.e("SPECIAL","Fail in getting driver rating "+ex.getMessage());
+                        Log.e("HeroJongi","Fail in getting driver rating "+ex.getMessage());
                     }
                 }
             }).start();
+        }
+    }
+
+    @Override
+    public void onBalanceHistoryRowClicked(DeliveryRequest deliveryRequest,boolean isHistory) {
+        if(deliveryRequest!=null){
+            upperMenu.closeLayer(true);
+            if(isHistory){
+                history_menu.setVisibility(View.GONE);
+            }
+            else{
+                balance_menu.setVisibility(View.GONE);
+            }
+            homelayout.setVisibility(View.VISIBLE);
+            FragmentManager fm = getSupportFragmentManager();
+            MapDialog mapDialog= MapDialog.newInstance("Some Title");
+            mapDialog.setStyle(android.app.DialogFragment.STYLE_NO_TITLE, R.style.MyTheme);
+            mapDialog.setDelivery(deliveryRequest);
+            mapDialog.show(fm, "map_dialog");
         }
     }
 
@@ -305,6 +324,7 @@ public class InsideApp extends AppCompatActivity implements RushUpDeliverySettin
 
     GetDetailsHandler detailsHandler = new GetDetailsHandler() {
         public void onSuccess(CognitoUserDetails cognitoUserDetails) {
+            Log.d("HeroJongi", " Here details handler");
             details = cognitoUserDetails;
             Username = AppHelper.getPool().getCognitoUserPool().getCurrentUser().getUserId();
             Phonenumber = cognitoUserDetails.getAttributes().getAttributes().get("phone_number");
@@ -314,29 +334,21 @@ public class InsideApp extends AppCompatActivity implements RushUpDeliverySettin
             if (!settingss.contains("firsttime")) {
                 editor.putBoolean("firsttime", true);
                 editor.apply();
-                try {
-                    String Token = InternalStorage.readFCMToken(InsideApp.this, "FCMToken");
-                    AppHelper.SaveDriverFCMTokenToCloud(Token, Phonenumber);
-                    File file = InternalStorage.returnFile(InsideApp.this, "driverPicture");
-                    Log.d("Herojongi","first time upload "+file);
-                    if (file.length()!=0) {
-                        AppHelper.uploadDownloadPicture(true,InsideApp.this,file,identityManager,rushUpDeliverySettings);
-                    }
-                    else{
-                        AppHelper.uploadDownloadPicture(false,InsideApp.this,null,identityManager,rushUpDeliverySettings);
-                    }
-                } catch (FileNotFoundException e) {
-                    Log.d("HeroJongi", "message 1" + e.getMessage());
-                } catch (IOException e) {
-                    Log.d("HeroJongi", "message 2" + e.getMessage());
-                } catch (ClassNotFoundException e) {
-                    Log.d("HeroJongi", "message 3" + e.getMessage());
+                File file = InternalStorage.returnFile(InsideApp.this, "driverPicture");
+                Log.d("Herojongi", "first time upload " + file);
+                if (file.length() != 0) {
+                    AppHelper.uploadDownloadPicture(true, InsideApp.this, file, identityManager, rushUpDeliverySettings);
+                } else {
+                    AppHelper.uploadDownloadPicture(false, InsideApp.this, null, identityManager, rushUpDeliverySettings);
                 }
-
-            }
-            else{
-                Log.d("HeroJongi"," not first time download");
-                AppHelper.uploadDownloadPicture(false,InsideApp.this,null,identityManager,rushUpDeliverySettings);
+                Log.d("HeroJongi"," check if user login "+identityManager.isUserSignedIn());
+                if(identityManager.isUserSignedIn()){
+                    AppHelper.SaveDriverFCMTokenToCloud(InsideApp.this,Username,rushUpDeliverySettings);
+                }
+            } else {
+                Log.d("HeroJongi", " not first time download");
+                AppHelper.uploadDownloadPicture(false, InsideApp.this, null, identityManager, rushUpDeliverySettings);
+                setRatingofDriver();
             }
             setAdapter();
             IntentsListener();
@@ -344,8 +356,8 @@ public class InsideApp extends AppCompatActivity implements RushUpDeliverySettin
                 String CapUsername = Username.substring(0, 1).toUpperCase() + Username.substring(1);
                 user_name.setText(CapUsername);
             }
-        }
 
+        }
         @Override
         public void onFailure(Exception exception) {
 
@@ -473,7 +485,8 @@ public class InsideApp extends AppCompatActivity implements RushUpDeliverySettin
             case R.id.balance:
                 homelayout.setVisibility(View.GONE);
                 balance_menu.setVisibility(View.VISIBLE);
-                balanceRecyclerView.setAdapter(balanceRecyclerView);
+                // api call
+                getBalance();
                 break;
         }
     }
@@ -485,8 +498,8 @@ public class InsideApp extends AppCompatActivity implements RushUpDeliverySettin
         new Thread(new Runnable() {
             public void run() {
                 try {
-                    Log.d("HeroJongi","Delivery Success ");
                    final DriverDeliveryHistory driverDeliveryHistory=AppHelper.getRushUpClient().driverHistoryGet();
+                    Log.d("HeroJongi","Delivery Success "+driverDeliveryHistory.getDriver_history().size());
                    if(driverDeliveryHistory!=null && driverDeliveryHistory.getDriver_history()!=null){
                         runOnUiThread(new Thread(new Runnable() {
                          public void run() {
@@ -504,8 +517,57 @@ public class InsideApp extends AppCompatActivity implements RushUpDeliverySettin
                                  }
                              }
                              else{
+                                 Log.d("HeroJongi"," no history found ");
                                  no_history_found.setVisibility(View.VISIBLE);
                              }
+                            }
+                        }));
+                    }
+
+                }catch (Exception ex) {
+                    Log.e("HeroJongi","Fail status update",ex);
+                }
+            }
+        }).start();
+    }
+
+    public void getBalance(){
+        if(balanceAdapter==null) {
+            balanceProgressBar.setVisibility(View.VISIBLE);
+        }
+        new Thread(new Runnable() {
+            public void run() {
+                try {
+                    final DriverBalance driverbalance=AppHelper.getRushUpClient().driverBalanceGet();
+                    Log.d("HeroJongi","Delivery Success "+driverbalance.getDriver_balance().size());
+                    if(driverbalance!=null && driverbalance.getDriver_balance()!=null){
+                        runOnUiThread(new Thread(new Runnable() {
+                            public void run() {
+                               balanceProgressBar.setVisibility(View.GONE);
+                                if(driverbalance.getDriver_balance().size()>0) {
+                                    if (balanceAdapter == null) {
+                                        List<DeliveryRequest> Balance=driverbalance.getDriver_balance();
+                                        no_balance_found.setVisibility(View.GONE);
+                                        Collections.sort(Balance, new Comparator<DeliveryRequest>() {
+                                            @Override
+                                            public int compare(DeliveryRequest o1, DeliveryRequest o2) {
+                                                Date dateD=new Date(o2.getDeliveryDate()*1000);
+                                                Date dateY=new Date(o1.getDeliveryDate()*1000);
+                                                return  dateD.compareTo(dateY);
+                                            }
+                                        });
+                                        balanceAdapter = new BalanceAdapter(Balance, InsideApp.this, rushUpDeliverySettings);
+                                        LinearLayoutManager linearLayoutManager = new LinearLayoutManager(InsideApp.this, OrientationHelper.VERTICAL, false);
+                                        balanceRecyclerView.setLayoutManager(linearLayoutManager);
+                                        balanceRecyclerView.setItemAnimator(new DefaultItemAnimator());
+                                        balanceRecyclerView.setAdapter(balanceAdapter);
+                                    } else {
+                                        balanceAdapter.RefreshItems(driverbalance.getDriver_balance());
+                                    }
+                                }
+                                else{
+                                   no_balance_found.setVisibility(View.VISIBLE);
+                                }
                             }
                         }));
                     }
@@ -541,8 +603,6 @@ public class InsideApp extends AppCompatActivity implements RushUpDeliverySettin
     public void setAdapter() {
         List<Settings> settings_list = new ArrayList<>();
         settings_list.add(new Settings(getResources().getString(R.string.myaccount), null, Settings.HEADER));
-        settings_list.add(new Settings(null, getResources().getString(R.string.first_name), Settings.OPTION));
-        settings_list.add(new Settings(null, getResources().getString(R.string.lastname), Settings.OPTION));
         settings_list.add(new Settings(null, getResources().getString(R.string.mobile), Settings.OPTION));
         settings_list.add(new Settings(null, getResources().getString(R.string.email), Settings.OPTION));
         settings_list.add(new Settings(null, getResources().getString(R.string.password), Settings.OPTION));
@@ -1053,4 +1113,13 @@ public class InsideApp extends AppCompatActivity implements RushUpDeliverySettin
     }
 
 
+    @Override
+    public void onUserSignedIn() {
+      Log.d("HeroJongi"," Here "+" on user sign in ");
+    }
+
+    @Override
+    public void onUserSignedOut() {
+        Log.d("HeroJongi"," Here "+" on user sign out ");
+    }
 }

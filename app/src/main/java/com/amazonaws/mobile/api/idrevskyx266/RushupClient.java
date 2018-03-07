@@ -27,6 +27,8 @@ import me.zeroandone.technology.rushupdelivery.model.TokenRequest;
 import me.zeroandone.technology.rushupdelivery.objects.DeliveryHistoryDriverResponse;
 import me.zeroandone.technology.rushupdelivery.objects.DeliveryPickUpDropoff;
 import me.zeroandone.technology.rushupdelivery.objects.DeliveryRequest;
+import me.zeroandone.technology.rushupdelivery.objects.DriverBalance;
+import me.zeroandone.technology.rushupdelivery.objects.DriverCode;
 import me.zeroandone.technology.rushupdelivery.objects.DriverDeliveryHistory;
 import me.zeroandone.technology.rushupdelivery.objects.DriverStatusRequest;
 
@@ -113,10 +115,19 @@ public interface RushupClient {
     /**
      *
      *
-     * @return void
+     * @return DriverDeliveryHistory
      */
     @com.amazonaws.mobileconnectors.apigateway.annotation.Operation(path = "/driver/history", method = "GET")
     DriverDeliveryHistory driverHistoryGet();
+
+    /**
+     *
+     *
+     * @return DriverBalance
+     */
+    @com.amazonaws.mobileconnectors.apigateway.annotation.Operation(path = "/driver/balance", method = "GET")
+    DriverBalance driverBalanceGet();
+
 
     /**
      *
@@ -161,6 +172,16 @@ public interface RushupClient {
             @com.amazonaws.mobileconnectors.apigateway.annotation.Parameter(name = "driver_id", location = "path")
                     String driverId);
 
+    /**
+     *
+     *
+     * @param body
+     * @return void
+     */
+    @com.amazonaws.mobileconnectors.apigateway.annotation.Operation(path = "/driver/group/assign", method = "POST")
+    void driverGroupAssignPost(
+            DriverCode body);
+
 
     /**
      *
@@ -169,6 +190,15 @@ public interface RushupClient {
      */
     @com.amazonaws.mobileconnectors.apigateway.annotation.Operation(path = "/ping", method = "GET")
     void pingGet();
+
+    /**
+     *
+     *
+     * @param body
+     * @return void
+     */
+    @com.amazonaws.mobileconnectors.apigateway.annotation.Operation(path = "/driver/code/checkcode", method = "POST")
+    DriverCode driverCodeCheckcodePost(DriverCode body);
 
     /**
      *

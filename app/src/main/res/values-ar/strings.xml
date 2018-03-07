@@ -84,4 +84,9 @@
     <string name="phone_valid">الرجاء إدخال رقم هاتف صالح يبدأ بالرمز + ورمز البلد</string>
     <string name="lastname_error">الرجاء إدخال اسم العائلة</string>
     <string name="oldpass">كلمة السر القديمة</string>
+    <string name="please_insert_correct_code">يرجى إدخال رقم الكود الصحيح.</string>
+    <string name="username_wrong">الرجاء إدخال اسم المستخدم الصحيح</string>
+    <string name="phonenumber_already_exist">رقم الهاتف موجود سابقا</string>
+    <string name="username_already_exist">اسم المستخدم موجود من قبل.</string>
+    <string name="email_already_exist">البريد الالكتروني موجود سابقا.</string>
 </resources>

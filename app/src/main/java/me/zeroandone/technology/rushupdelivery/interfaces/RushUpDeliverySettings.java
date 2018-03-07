@@ -23,4 +23,6 @@ public interface RushUpDeliverySettings {
     public void Verify_Email_Password(String attribute, String code, Dialog dialog);
     public void ChangePassword(String newpassword, String oldPassword, Dialog dialog);
     public void Signout();
+    public void setRatingofDriver();
+    public void onBalanceHistoryRowClicked(DeliveryRequest deliveryRequest,boolean isHistory);
 }

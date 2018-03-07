@@ -26,6 +26,7 @@ import me.zeroandone.technology.rushupdelivery.model.TokenRequest;
 import me.zeroandone.technology.rushupdelivery.objects.DeliveryPickUpDropoff;
 import me.zeroandone.technology.rushupdelivery.objects.DeliveryRequest;
 import me.zeroandone.technology.rushupdelivery.objects.DeliveryStatus;
+import me.zeroandone.technology.rushupdelivery.objects.DriverCode;
 import me.zeroandone.technology.rushupdelivery.objects.DriverDeliveryHistory;
 import me.zeroandone.technology.rushupdelivery.objects.DriverStatus;
 import me.zeroandone.technology.rushupdelivery.objects.DriverStatusRequest;
@@ -110,7 +111,7 @@ public class AppHelper{
 
     public static void federateWithProvider() {
         if(IdentityManager.getDefaultIdentityManager().getCurrentIdentityProvider() != null)
-           Log.w(LOG_TAG,"Identity Manager already federated , confirm you want to change that");
+           Log.d(LOG_TAG,"Identity Manager already federated , confirm you want to change that");
         getPool().refreshUserSignInState();
         IdentityManager.getDefaultIdentityManager().federateWithProvider(getPool());
     }
@@ -148,31 +149,59 @@ public class AppHelper{
         return formattedString;
     }
 
-    public static RushupClient rushupClient = null;
+
     public static RushupClient getRushUpClient() {
-        if(rushupClient == null) {
             IdentityManager identityManager=IdentityManager.getDefaultIdentityManager();
             ApiClientFactory factory = new ApiClientFactory().credentialsProvider(identityManager.getUnderlyingProvider());
-            rushupClient = factory.build(RushupClient.class);
-        }
-        return rushupClient;
+            return  factory.build(RushupClient.class);
+    }
+
+    public static RushupClient getRushUpClientUnauthenticated() {
+            ApiClientFactory factory = new ApiClientFactory();
+            return factory.build(RushupClient.class);
     }
 
 
-    public static void SaveDriverFCMTokenToCloud(final String tokenValue, final String phonenumber){
-        new Thread(new Runnable() {
-            public void run() {
-                try {
-                    TokenRequest token = new TokenRequest();
-                    token.setToken(tokenValue);
-                    getRushUpClient().driverTokenPost(token);
-                    Log.d("HeroJongi","Success token post");
-                }catch (Exception ex) {
-                    Log.d("HeroJongi","Error in token",ex);
+    public static void SaveDriverFCMTokenToCloud(final Context context, final String Username, final RushUpDeliverySettings rushUpDeliverySettings){
+            // do api call
+            new Thread(new Runnable() {
+                @Override
+                public void run() {
+                    try {
+                        final String Token = InternalStorage.readFCMToken(context,  "FCMToken");
+                        TokenRequest token = new TokenRequest(Token);
+                        RushupClient rushupClient=AppHelper.getRushUpClient();
+                        if (rushupClient != null) {
+                            rushupClient.driverTokenPost(token);
+                            AddDriverToDriversGroup(Username,rushUpDeliverySettings);
+                        }
+                        Log.d("HeroJongi", "Success token post");
+                    } catch (Exception ex) {
+                        Log.d("HeroJongi", "Error in token" + ex.getMessage());
+                    }
                 }
-            }
-        }).start();
+            }).start();
+
     }
+
+    public static void AddDriverToDriversGroup(final String username, final RushUpDeliverySettings rushUpDeliverySettings){
+        new Thread(new Runnable() {
+                @Override
+                public void run() {
+                    try {
+                        DriverCode driverCode = new DriverCode(username, "");
+                        AppHelper.getRushUpClient().driverGroupAssignPost(driverCode);
+                        if(rushUpDeliverySettings!=null) {
+                            rushUpDeliverySettings.setRatingofDriver();
+                        }
+                        Log.d("HeroJongi"," driver code "+username);
+                    } catch (Exception e) {
+                        Log.d("HeroJongi", " Fail add driver to group " + e.getMessage());
+                    }
+                }
+            }).start();
+    }
+
 
     public static void UpdateStatusofDriver(final DriverStatus status){
         if(AppHelper.getRushUpClient()!=null) {

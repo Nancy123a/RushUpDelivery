@@ -403,9 +403,6 @@ public class Utils {
                   attribute_value.setInputType(InputType.TYPE_CLASS_PHONE);
               }
           }
-          if (attribute.equalsIgnoreCase("given_name") || attribute.equalsIgnoreCase("family_name")) {
-              attribute_value.setInputType(InputType.TYPE_CLASS_TEXT);
-          }
           cancel.setOnClickListener(new View.OnClickListener() {
               @Override
               public void onClick(View view) {
@@ -417,15 +414,6 @@ public class Utils {
               public void onClick(View v) {
                   if(settings!=null){
                       String value = attribute_value.getText().toString();
-                      if (attribute.equalsIgnoreCase("given_name")) {
-                          if (value == null || value.equalsIgnoreCase("")) {
-                              attribute_value.setError(context.getResources().getString(R.string.first_name_error));
-
-                          } else {
-                              attribute_value.setError(null);
-                              settings.UpdateAttribute(attribute, value, dialog);
-                          }
-                      }
                       if (attribute.equalsIgnoreCase("email")) {
                           if (attributeName.equalsIgnoreCase(context.getResources().getString(R.string.verify_email))) {
 
@@ -463,15 +451,6 @@ public class Utils {
                                   attribute_value.setError(null);
                                   settings.UpdateAttribute(attribute, value, dialog);
                               }
-                          }
-                      }
-                      else if (attribute.equalsIgnoreCase("family_name")) {
-                          if (value == null || value.equalsIgnoreCase("")) {
-                              attribute_value.setError(context.getResources().getString(R.string.lastname_error));
-
-                          } else {
-                              attribute_value.setError(null);
-                              settings.UpdateAttribute(attribute, value, dialog);
                           }
                       }
 

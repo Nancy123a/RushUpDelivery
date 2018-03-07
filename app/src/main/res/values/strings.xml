@@ -30,6 +30,7 @@
     <string name="dollars">$</string>
     <string name="notification">Notification Sound</string>
     <string name="username_error">Please Enter Username</string>
+    <string name="username_wrong">Please enter your correct username</string>
     <string name="enter_correct_password">Enter Correct Password</string>
     <string name="password_error">Please enter your password</string>
     <string name="first_number">Please enter first number.</string>
@@ -86,4 +87,8 @@
     <string name="forget_login">Forget you login details? <b>Get help signing in.</b></string>
     <string name="first_name_error">Please enter your firstname</string>
     <string name="oldpass">Old Password</string>
+    <string name="please_insert_correct_code">Please insert correct code number</string>
+    <string name="phonenumber_already_exist">Phone number already exist.</string>
+    <string name="username_already_exist">Username already exist.</string>
+    <string name="email_already_exist">Email already exist.</string>
 </resources>

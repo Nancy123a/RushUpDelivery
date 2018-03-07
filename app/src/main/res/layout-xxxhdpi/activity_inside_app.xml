@@ -231,12 +231,6 @@
                     android:scrollbarThumbVertical="@color/black"
                     android:scrollbars="vertical" />
 
-                <RelativeLayout
-                    android:id="@+id/no_history"
-                    android:layout_width="match_parent"
-                    android:layout_height="match_parent"
-                    android:visibility="gone"
-                    android:layout_below="@+id/fourth_line">
 
                     <ProgressBar
                         android:id="@+id/historyProgressBar"
@@ -253,11 +247,11 @@
                         android:layout_height="wrap_content"
                         android:layout_centerInParent="true"
                         android:textColor="@color/black"
-                        android:textSize="@dimen/text_size_15"
                         android:visibility="gone"
+                        android:textSize="@dimen/text_size_15"
                         android:text="@string/no_result"/>
 
-                </RelativeLayout>
+
 
             </RelativeLayout>
 
@@ -265,8 +259,8 @@
                 android:id="@+id/balance_menu"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
-                android:visibility="gone"
-                android:background="@color/trans_white">
+                android:background="@color/trans_white"
+                android:visibility="gone">
 
                 <ImageView
                     android:id="@+id/balance_close"
@@ -295,7 +289,7 @@
                     android:layout_marginTop="@dimen/padding_10"
                     android:background="@android:color/black" />
 
-                <me.zeroandone.technology.rushupdelivery.widget.BalanceRecyclerView
+                <android.support.v7.widget.RecyclerView
                     android:id="@+id/balanceRecycleView"
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
@@ -307,6 +301,25 @@
                     android:scrollbarSize="@dimen/padding_5"
                     android:scrollbarThumbVertical="@color/black"
                     android:scrollbars="vertical" />
+
+                <ProgressBar
+                    android:id="@+id/balanceProgressBar"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_centerInParent="true"
+                    android:visibility="gone"
+                    android:indeterminateTint="@color/black"
+                    android:layout_centerHorizontal="true" />
+
+                <TextView
+                    android:id="@+id/no_balance_found"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_centerInParent="true"
+                    android:textColor="@color/black"
+                    android:visibility="gone"
+                    android:textSize="@dimen/text_size_15"
+                    android:text="@string/no_result"/>
 
             </RelativeLayout>
 

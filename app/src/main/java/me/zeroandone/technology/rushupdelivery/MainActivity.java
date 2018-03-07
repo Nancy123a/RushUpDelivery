@@ -20,11 +20,13 @@ import com.amazonaws.mobile.auth.core.signin.AuthException;
 import com.crashlytics.android.Crashlytics;
 import io.fabric.sdk.android.Fabric;
 import me.zeroandone.technology.rushupdelivery.objects.DeliveryRequest;
+import me.zeroandone.technology.rushupdelivery.utils.FirstTimeOpen;
 import me.zeroandone.technology.rushupdelivery.utils.Utils;
 
 public class MainActivity extends AppCompatActivity implements StartupAuthResultHandler {
     private static final String LOG_TAG = MainActivity.class.getSimpleName();
     TextView rushup,theapp,deliver;
+    FirstTimeOpen firstTimeOpen;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -34,12 +36,12 @@ public class MainActivity extends AppCompatActivity implements StartupAuthResult
         rushup=(TextView) findViewById(R.id.rushup) ;
         theapp=(TextView) findViewById(R.id.theapp);
         deliver=(TextView) findViewById(R.id.theappdev);
+        firstTimeOpen=new FirstTimeOpen(this);
         Utils.setFontTypeOpenSansBold(this,rushup);
         Utils.setFontTypeOpenSansLight(this,theapp);
         Utils.setFontTypeOpenSans(this,deliver);
-
-
         final IdentityManager identityManager = IdentityManager.getDefaultIdentityManager();
+        Log.d("XXXN"," "+identityManager.getCachedUserID());
         identityManager.resumeSession(this,this,1000);
     }
 
@@ -84,9 +86,17 @@ public class MainActivity extends AppCompatActivity implements StartupAuthResult
     }
 
     public void OpenSignInActivity() {
-        Intent intent=new Intent(MainActivity.this,UserLogin.class).setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
-        putIntent(intent,getIntent());
-        startActivity(intent);
-        finish();
+        Intent intent=null;
+        if(!firstTimeOpen.getLogin()) {
+          intent = new Intent(MainActivity.this, Registration.class).setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+       }
+       else {
+            intent = new Intent(MainActivity.this, UserLogin.class).setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+        }
+        if(intent!=null) {
+            putIntent(intent, getIntent());
+            startActivity(intent);
+            finish();
+        }
     }
 }
