@@ -31,6 +31,7 @@ import me.zeroandone.technology.rushupdelivery.objects.DriverBalance;
 import me.zeroandone.technology.rushupdelivery.objects.DriverCode;
 import me.zeroandone.technology.rushupdelivery.objects.DriverDeliveryHistory;
 import me.zeroandone.technology.rushupdelivery.objects.DriverStatusRequest;
+import me.zeroandone.technology.rushupdelivery.objects.date_History;
 
 @com.amazonaws.mobileconnectors.apigateway.annotation.Service(endpoint = "https://p9q3m0eqg1.execute-api.eu-west-1.amazonaws.com/prod/")
 public interface RushupClient {
@@ -115,10 +116,11 @@ public interface RushupClient {
     /**
      *
      *
-     * @return DriverDeliveryHistory
+     * @param
+     * @return void
      */
-    @com.amazonaws.mobileconnectors.apigateway.annotation.Operation(path = "/driver/history", method = "GET")
-    DriverDeliveryHistory driverHistoryGet();
+    @com.amazonaws.mobileconnectors.apigateway.annotation.Operation(path = "/driver/history", method = "POST")
+    DriverDeliveryHistory deliveryHistoryDriverPost(date_History body);
 
     /**
      *

@@ -30,7 +30,7 @@ public class UserLogin extends AppCompatActivity implements SignInStateChangeLis
     AVLoadingIndicatorView indicator;
     EditText username, password;
     String Username, Password;
-    TextView forgetpassword, login,forget_login;
+    TextView  login,forget_login;
     IdentityManager identityManager;
     @Override
     protected void onCreate(Bundle savedInstanceState) {

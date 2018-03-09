@@ -100,8 +100,7 @@ public class ForgetPassword extends DialogFragment {
         email = Email.getText().toString();
         if (VerifyPassword()) {
             Log.d("HeroJongi","Handler call ");
-          CognitoUser user= AppHelper.getPool().getCognitoUserPool().getUser(email);
-          user.forgotPasswordInBackground(forgetPasswordHandler);
+            AppHelper.getPool().getCognitoUserPool().getUser(email).forgotPasswordInBackground(forgetPasswordHandler);
         }
     }
 

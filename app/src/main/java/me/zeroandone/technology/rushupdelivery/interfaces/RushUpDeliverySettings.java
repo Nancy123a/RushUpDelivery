@@ -25,4 +25,5 @@ public interface RushUpDeliverySettings {
     public void Signout();
     public void setRatingofDriver();
     public void onBalanceHistoryRowClicked(DeliveryRequest deliveryRequest,boolean isHistory);
+    public void clearHistory();
 }

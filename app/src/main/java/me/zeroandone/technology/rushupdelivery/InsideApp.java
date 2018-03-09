@@ -13,6 +13,10 @@ import android.graphics.BitmapFactory;
 import android.location.Location;
 import com.amazonaws.mobile.auth.core.IdentityManager;
 import com.amazonaws.mobile.auth.core.SignInStateChangeListener;
+import com.amazonaws.mobile.config.AWSConfiguration;
+import com.amazonaws.mobileconnectors.cognito.CognitoSyncManager;
+import com.amazonaws.mobileconnectors.cognito.Dataset;
+import com.amazonaws.mobileconnectors.cognito.exceptions.DataStorageException;
 import com.amazonaws.mobileconnectors.cognitoidentityprovider.CognitoUserAttributes;
 import com.amazonaws.mobileconnectors.cognitoidentityprovider.CognitoUserCodeDeliveryDetails;
 import com.amazonaws.mobileconnectors.cognitoidentityprovider.handlers.GenericHandler;
@@ -68,6 +72,7 @@ import com.wunderlist.slidinglayer.SlidingLayer;
 import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.Date;
@@ -86,6 +91,7 @@ import me.zeroandone.technology.rushupdelivery.objects.DriverDeliveryHistory;
 import me.zeroandone.technology.rushupdelivery.objects.DriverStatus;
 import me.zeroandone.technology.rushupdelivery.objects.PushType;
 import me.zeroandone.technology.rushupdelivery.objects.Settings;
+import me.zeroandone.technology.rushupdelivery.objects.date_History;
 import me.zeroandone.technology.rushupdelivery.utils.AppHelper;
 import me.zeroandone.technology.rushupdelivery.utils.Application;
 import me.zeroandone.technology.rushupdelivery.utils.DrawPolylineVolley;
@@ -113,6 +119,7 @@ public class InsideApp extends AppCompatActivity implements RushUpDeliverySettin
     LinearLayout options;
     isPickUp isPickUp;
     ImageView call;
+    Dataset dataset_settings;
     SettingsAdapter adapter;
     IdentityManager identityManager;
     DriverStatusSharedPreference driverStatusSharedPreference;
@@ -212,7 +219,9 @@ public class InsideApp extends AppCompatActivity implements RushUpDeliverySettin
             AppHelper.getPool().getCognitoUserPool().getCurrentUser().getDetailsInBackground(detailsHandler);
         }
 
-
+        AWSConfiguration awsConfig = new AWSConfiguration(this);
+        CognitoSyncManager manager = new CognitoSyncManager(this, IdentityManager.getDefaultIdentityManager().getUnderlyingProvider(), awsConfig);
+        dataset_settings = manager.openOrCreateDataset("Settings");
 
         if (mapFragment != null) {
             mapFragment.getMapAsync(this);
@@ -304,6 +313,39 @@ public class InsideApp extends AppCompatActivity implements RushUpDeliverySettin
             mapDialog.setDelivery(deliveryRequest);
             mapDialog.show(fm, "map_dialog");
         }
+    }
+
+    @Override
+    public void clearHistory() {
+        java.util.Date currentTime = Calendar.getInstance().getTime();
+        String date=String.valueOf(currentTime.getTime()).substring(0,10);
+        dataset_settings.put("date",date);
+        dataset_settings.synchronizeOnConnectivity(new Dataset.SyncCallback() {
+            public void onSuccess(Dataset dataset, List list) {
+                Log.d("HeroJongi", "Success on  save date");
+            }
+
+            public boolean onConflict(Dataset dataset, List list) {
+                Log.d("HeroJongi", "On Conflict ");
+                return false;
+
+            }
+
+            public boolean onDatasetDeleted(Dataset dataset, String list) {
+                Log.d("HeroJongi", "On DatasetDeleted ");
+                return true;
+            }
+
+            public boolean onDatasetsMerged(Dataset dataset, List list) {
+                Log.d("HeroJongi", "OnDataSet Merged");
+                return true;
+            }
+
+            public void onFailure(DataStorageException exception) {
+                Log.d("HeroJongi", "On DataSet Fail " + exception.getMessage());
+            }
+        });
+
     }
 
     protected synchronized void buildGoogleApiClient() {
@@ -498,30 +540,40 @@ public class InsideApp extends AppCompatActivity implements RushUpDeliverySettin
         new Thread(new Runnable() {
             public void run() {
                 try {
-                   final DriverDeliveryHistory driverDeliveryHistory=AppHelper.getRushUpClient().driverHistoryGet();
-                    Log.d("HeroJongi","Delivery Success "+driverDeliveryHistory.getDriver_history().size());
-                   if(driverDeliveryHistory!=null && driverDeliveryHistory.getDriver_history()!=null){
-                        runOnUiThread(new Thread(new Runnable() {
-                         public void run() {
-                             historyProgressBar.setVisibility(View.GONE);
-                             if(driverDeliveryHistory.getDriver_history().size()>0) {
-                                 if (historyAdapter == null) {
-                                     no_history_found.setVisibility(View.GONE);
-                                     historyAdapter = new HistoryAdapter(driverDeliveryHistory.getDriver_history(), InsideApp.this, rushUpDeliverySettings);
-                                     LinearLayoutManager linearLayoutManager = new LinearLayoutManager(InsideApp.this, OrientationHelper.VERTICAL, false);
-                                     historyRecycleView.setLayoutManager(linearLayoutManager);
-                                     historyRecycleView.setItemAnimator(new DefaultItemAnimator());
-                                     historyRecycleView.setAdapter(historyAdapter);
-                                 } else {
-                                     historyAdapter.RefreshItems(driverDeliveryHistory.getDriver_history());
-                                 }
-                             }
-                             else{
-                                 Log.d("HeroJongi"," no history found ");
-                                 no_history_found.setVisibility(View.VISIBLE);
-                             }
-                            }
-                        }));
+                    date_History date_history=null;
+                    if (dataset_settings != null) {
+                        if (dataset_settings.get("date") != null) {
+                            String date = dataset_settings.get("date");
+                            date_history = new date_History(Long.parseLong(date));
+                        } else {
+                            date_history = new date_History(0L);
+                        }
+                        final DriverDeliveryHistory driverDeliveryHistory = AppHelper.getRushUpClient().deliveryHistoryDriverPost(date_history);
+                        Log.d("HeroJongi", "Delivery Success " + driverDeliveryHistory.getDriver_history().size());
+                        if (driverDeliveryHistory.getDriver_history() != null) {
+                            runOnUiThread(new Thread(new Runnable() {
+                                public void run() {
+                                    historyProgressBar.setVisibility(View.GONE);
+                                    if (driverDeliveryHistory.getDriver_history().size() > 0) {
+                                        if (historyAdapter == null) {
+                                            historyRecycleView.setVisibility(View.VISIBLE);
+                                            no_history_found.setVisibility(View.GONE);
+                                            historyAdapter = new HistoryAdapter(driverDeliveryHistory.getDriver_history(), InsideApp.this, rushUpDeliverySettings);
+                                            LinearLayoutManager linearLayoutManager = new LinearLayoutManager(InsideApp.this, OrientationHelper.VERTICAL, false);
+                                            historyRecycleView.setLayoutManager(linearLayoutManager);
+                                            historyRecycleView.setItemAnimator(new DefaultItemAnimator());
+                                            historyRecycleView.setAdapter(historyAdapter);
+                                        } else {
+                                            historyAdapter.RefreshItems(driverDeliveryHistory.getDriver_history());
+                                        }
+                                    } else {
+                                        Log.d("HeroJongi", " no history found ");
+                                        historyRecycleView.setVisibility(View.GONE);
+                                        no_history_found.setVisibility(View.VISIBLE);
+                                    }
+                                }
+                            }));
+                        }
                     }
 
                 }catch (Exception ex) {

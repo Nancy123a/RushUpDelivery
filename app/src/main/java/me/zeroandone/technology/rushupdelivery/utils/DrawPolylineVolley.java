@@ -56,8 +56,6 @@ public DrawPolylineVolley(Context context) {
                     if (response.getStatus().equals("OK")) {
                         List<LatLng> mDirections = getDirectionPolylines(response.getRoutes());
                         drawRouteOnMap(map, mDirections);
-                    } else {
-                        Toast.makeText(context, "Error", Toast.LENGTH_SHORT).show();
                     }
                 } catch (Exception e) {
                     e.printStackTrace();
@@ -78,9 +76,7 @@ public DrawPolylineVolley(Context context) {
                     PolylineObject polyline = step.getPolyline();
                     String points = polyline.getPoints();
                     List<LatLng> singlePolyline = decodePoly(points);
-                    for (LatLng direction : singlePolyline) {
-                        directionList.add(direction);
-                    }
+                    directionList.addAll(singlePolyline);
                 }
             }
         }

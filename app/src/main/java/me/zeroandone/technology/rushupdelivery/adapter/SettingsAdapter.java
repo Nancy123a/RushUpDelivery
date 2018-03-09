@@ -101,6 +101,11 @@ public class SettingsAdapter  extends RecyclerView.Adapter<RecyclerView.ViewHold
                 } else if (option.equalsIgnoreCase(_context.getResources().getString(R.string.password))) {
                     Utils.ChangePasswordDialog(_context, rushUpDeliverySettings);
                 }
+                else if(option.equalsIgnoreCase(_context.getResources().getString((R.string.clear_history)))){
+                    if(rushUpDeliverySettings!=null){
+                        rushUpDeliverySettings.clearHistory();
+                    }
+                }
 
             }
         });
