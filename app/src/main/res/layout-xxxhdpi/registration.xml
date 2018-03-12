@@ -169,7 +169,7 @@
         android:text="@string/insertcode"
         android:gravity="center"
         android:layout_centerHorizontal="true"
-        android:layout_marginTop="@dimen/padding_30"
+        android:layout_marginTop="@dimen/padding_15"
         android:textAllCaps="true"
         android:textSize="@dimen/text_size_15"
         android:textColor="@color/white"/>
@@ -237,10 +237,22 @@
         android:layout_centerHorizontal="true"
         android:text="@string/submit"
         android:textStyle="bold"
+        android:layout_marginTop="@dimen/padding_15"
+        android:layout_below="@+id/code"
         android:gravity="center"
-        android:paddingBottom="@dimen/padding_30"
-        android:layout_alignParentBottom="true"
         android:textColor="@color/white"
         android:textSize="@dimen/text_size_15"/>
+
+    <TextView
+        android:id="@+id/already_have_account"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="@dimen/padding_15"
+        android:layout_below="@+id/submit"
+        android:gravity="center"
+        android:textSize="@dimen/text_size_15"
+        android:text="@string/login_account"
+        android:textColor="@color/colorAccent"
+        android:layout_centerHorizontal="true"/>
 
 </RelativeLayout>

@@ -41,6 +41,7 @@ public class Registration extends AppCompatActivity implements View.OnClickListe
     private static final int EXTERNAL_STORAGE_PERMISSION_REQUEST_CODE = 93;
     EditText username, password, phone, email, number1, number2, number3, number4;
     TextView submit,insertcode;
+    TextView already_have_account;
     String Username, Password, Nb1, Nb2, Nb3, Nb4, Email, Phone,Code;
     CircleImageView pickImage;
     PickerInterface pickerInterface = this;
@@ -84,10 +85,12 @@ public class Registration extends AppCompatActivity implements View.OnClickListe
         number4 = (EditText) findViewById(R.id.number4);
         submit = (TextView) findViewById(R.id.submit);
         insertcode=(TextView) findViewById(R.id.insertcode);
+        already_have_account=(TextView) findViewById(R.id.already_have_account);
         pickImage = (CircleImageView) findViewById(R.id.camera);
         AppHelper.initializeCognitoPool(Registration.this);
         submit.setOnClickListener(this);
         pickImage.setOnClickListener(this);
+        already_have_account.setOnClickListener(this);
 
 
     }
@@ -165,6 +168,10 @@ public class Registration extends AppCompatActivity implements View.OnClickListe
     @Override
     public void onClick(View v) {
         switch (v.getId()) {
+            case R.id.already_have_account:
+                Intent intent=new Intent(this,UserLogin.class);
+                startActivity(intent);
+                break;
             case R.id.submit:
                 if (isFormFull()) {
                     Log.d("SPECIAL", " Username " + isFormFull());

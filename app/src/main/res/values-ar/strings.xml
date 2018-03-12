@@ -89,4 +89,5 @@
     <string name="phonenumber_already_exist">رقم الهاتف موجود سابقا</string>
     <string name="username_already_exist">اسم المستخدم موجود من قبل.</string>
     <string name="email_already_exist">البريد الالكتروني موجود سابقا.</string>
+    <string name="login_account">لديك بالفعل حساب! سجل دخولك.</string>
 </resources>

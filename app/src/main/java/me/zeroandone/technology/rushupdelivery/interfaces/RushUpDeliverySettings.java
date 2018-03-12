@@ -3,7 +3,10 @@ package me.zeroandone.technology.rushupdelivery.interfaces;
 
 import android.app.Dialog;
 
+import com.google.android.gms.maps.model.LatLng;
+
 import java.io.File;
+import java.util.List;
 
 import me.zeroandone.technology.rushupdelivery.objects.DeliveryRequest;
 import me.zeroandone.technology.rushupdelivery.objects.PushType;
