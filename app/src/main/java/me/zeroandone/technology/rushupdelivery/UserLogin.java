@@ -8,6 +8,7 @@ import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.view.View;
 import android.widget.EditText;
+import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.amazonaws.mobile.auth.core.IdentityManager;
@@ -32,6 +33,7 @@ public class UserLogin extends AppCompatActivity implements SignInStateChangeLis
     String Username, Password;
     TextView  login,forget_login;
     IdentityManager identityManager;
+    ImageView close;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -40,6 +42,7 @@ public class UserLogin extends AppCompatActivity implements SignInStateChangeLis
         username=(EditText) findViewById(R.id.username);
         password=(EditText) findViewById(R.id.password);
         login=(TextView) findViewById(R.id.login);
+        close=(ImageView) findViewById(R.id.close);
         forget_login=(TextView) findViewById(R.id.forget_login);
         identityManager = IdentityManager.getDefaultIdentityManager();
         identityManager.addSignInStateChangeListener(this);
@@ -59,6 +62,12 @@ public class UserLogin extends AppCompatActivity implements SignInStateChangeLis
             @Override
             public void onClick(View view) {
                 OpenForgetPasswordActivity();
+            }
+        });
+        close.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+
             }
         });
     }

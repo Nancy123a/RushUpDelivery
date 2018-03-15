@@ -75,6 +75,7 @@ import com.google.android.gms.maps.model.MarkerOptions;
 import com.wunderlist.slidinglayer.SlidingLayer;
 import java.io.File;
 import java.io.IOException;
+import java.text.DecimalFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Collections;
@@ -464,7 +465,8 @@ public class InsideApp extends AppCompatActivity implements RushUpDeliverySettin
     private void setRatingBar(String _score) {
         float __score=Float.parseFloat(_score);
         ratingBar.setRating(__score);
-        score.setText(_score);
+        double _double_rating=Double.parseDouble(_score);
+        score.setText(new DecimalFormat("##.##").format(_double_rating));
     }
 
 

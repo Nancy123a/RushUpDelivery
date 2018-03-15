@@ -190,6 +190,7 @@
             android:background="@drawable/edittextshape"
             android:padding="@dimen/padding_1"
             android:gravity="center"
+            android:maxLength="1"
             android:textColor="@color/white"
             android:layout_marginRight="@dimen/padding_10"
             android:inputType="number"/>
@@ -201,6 +202,7 @@
             android:background="@drawable/edittextshape"
             android:padding="@dimen/padding_1"
             android:gravity="center"
+            android:maxLength="1"
             android:textColor="@color/white"
             android:layout_marginRight="@dimen/padding_10"
             android:inputType="number"/>
@@ -212,6 +214,7 @@
             android:background="@drawable/edittextshape"
             android:padding="@dimen/padding_1"
             android:gravity="center"
+            android:maxLength="1"
             android:textColor="@color/white"
             android:layout_marginRight="@dimen/padding_10"
             android:inputType="number"/>
@@ -223,6 +226,7 @@
             android:background="@drawable/edittextshape"
             android:padding="@dimen/padding_1"
             android:gravity="center"
+            android:maxLength="1"
             android:textColor="@color/white"
             android:layout_marginRight="@dimen/padding_10"
             android:inputType="number"/>
