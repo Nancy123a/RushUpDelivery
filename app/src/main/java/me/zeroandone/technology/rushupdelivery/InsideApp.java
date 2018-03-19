@@ -27,7 +27,7 @@ import com.google.android.gms.location.LocationListener;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
-import android.os.Handler;
+import android.view.animation.AnimationUtils;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.app.ActivityCompat;
@@ -87,6 +87,7 @@ import me.zeroandone.technology.rushupdelivery.adapter.BalanceAdapter;
 import me.zeroandone.technology.rushupdelivery.adapter.HistoryAdapter;
 import me.zeroandone.technology.rushupdelivery.adapter.SettingsAdapter;
 import me.zeroandone.technology.rushupdelivery.dialogs.MapDialog;
+import me.zeroandone.technology.rushupdelivery.interfaces.LatLngInterpolator;
 import me.zeroandone.technology.rushupdelivery.interfaces.RushUpDeliverySettings;
 import me.zeroandone.technology.rushupdelivery.model.Driver;
 import me.zeroandone.technology.rushupdelivery.objects.DeliveryRequest;
@@ -123,6 +124,8 @@ public class InsideApp extends AppCompatActivity implements RushUpDeliverySettin
     String Username, Phonenumber;
     LinearLayout options;
     isPickUp isPickUp;
+    LatLngInterpolator latLngInterpolator;
+    ValueAnimator valueAnimator;
     private float v;
     private double lat, lng;
     LatLng startPosition,endPosition;
@@ -150,7 +153,7 @@ public class InsideApp extends AppCompatActivity implements RushUpDeliverySettin
 
 
     // Location updates intervals in sec
-    private static int UPDATE_INTERVAL = 60 * 1000; // 1min
+    private static int UPDATE_INTERVAL = 5000; // 5 sec
 
 
     private Location mLastLocation;
@@ -234,6 +237,11 @@ public class InsideApp extends AppCompatActivity implements RushUpDeliverySettin
         if (mapFragment != null) {
             mapFragment.getMapAsync(this);
         }
+
+        latLngInterpolator = new LatLngInterpolator.LinearFixed();
+        valueAnimator = ValueAnimator.ofFloat(0, 1);
+        valueAnimator.setDuration(5000); // duration 5 second
+        valueAnimator.setInterpolator(new LinearInterpolator());
 
         settings.setOnClickListener(this);
         history.setOnClickListener(this);
@@ -356,21 +364,6 @@ public class InsideApp extends AppCompatActivity implements RushUpDeliverySettin
 
     }
 
-
-    private float getBearing(LatLng begin, LatLng end) {
-        double lat = Math.abs(begin.latitude - end.latitude);
-        double lng = Math.abs(begin.longitude - end.longitude);
-
-        if (begin.latitude < end.latitude && begin.longitude < end.longitude)
-            return (float) (Math.toDegrees(Math.atan(lng / lat)));
-        else if (begin.latitude >= end.latitude && begin.longitude < end.longitude)
-            return (float) ((90 - Math.toDegrees(Math.atan(lng / lat))) + 90);
-        else if (begin.latitude >= end.latitude && begin.longitude >= end.longitude)
-            return (float) (Math.toDegrees(Math.atan(lng / lat)) + 180);
-        else if (begin.latitude < end.latitude && begin.longitude >= end.longitude)
-            return (float) ((90 - Math.toDegrees(Math.atan(lng / lat))) + 270);
-        return -1;
-    }
 
     protected synchronized void buildGoogleApiClient() {
         mGoogleApiClient = new GoogleApiClient.Builder(this)
@@ -720,20 +713,35 @@ public class InsideApp extends AppCompatActivity implements RushUpDeliverySettin
           _prevLocation=_thisLocation;
           _thisLocation=location;
       }
-        if (location != null) {
+        if (location!=null) {
             mLastLocation = location;
             AppHelper.sendDriverLocation(location);
             if (Driver == null) {
                 DropDriverOnMap(location.getLatitude(), location.getLongitude(), true);
-            } else {
-                Driver.setPosition(new LatLng(location.getLatitude(), location.getLongitude()));
-                setBearing();
+            }
+            else {
+                valueAnimator.addUpdateListener(new ValueAnimator.AnimatorUpdateListener() {
+                    @Override public void onAnimationUpdate(ValueAnimator animation) {
+                        try {
+                            float v = animation.getAnimatedFraction();
+                            startPosition=new LatLng(_prevLocation.getLatitude(),_prevLocation.getLongitude());
+                            endPosition=new LatLng(_thisLocation.getLatitude(),_thisLocation.getLongitude());
+                            LatLng newPosition = latLngInterpolator.interpolate(v, startPosition, endPosition);
+                            Driver.setPosition(newPosition);
+                        } catch (Exception ex) {
+                            // I don't care atm..
+                        }
+                    }
+                });
+
+                valueAnimator.start();
               }
+            setBearing();
         }
     }
 
-
     public void setBearing(){
+        if(map!=null){
         float bearing = _prevLocation.bearingTo(_thisLocation) ;
         Log.d("BEARING "," bearing is "+bearing);
         if(bearing!=0) {
@@ -741,17 +749,58 @@ public class InsideApp extends AppCompatActivity implements RushUpDeliverySettin
                 Driver.setRotation(bearing);
                 Driver.setAnchor(0.5f, 0.5f);
                 Driver.setFlat(true);
+                CameraPosition cameraPosition=null;
+                if (PickupMarker != null && DropOffMarker != null) {
+//                    LatLngBounds.Builder builder = new LatLngBounds.Builder();
+//                    if(PickupMarker!=null) {
+//                        builder.include(PickupMarker.getPosition());
+//                    }
+//                    if(DropOffMarker!=null) {
+//                        builder.include(DropOffMarker.getPosition());
+//                    }
+//                    if(Driver!=null) {
+//                        builder.include(Driver.getPosition());
+//                    }
+                  //  LatLngBounds latLngBounds=builder.build();
+                    cameraPosition = new CameraPosition.Builder().target(Driver.getPosition()).tilt(60).zoom(16).bearing(bearing).build();
+                    map.animateCamera(CameraUpdateFactory.newCameraPosition(cameraPosition), 5000, new GoogleMap.CancelableCallback() {
+                        @Override
+                        public void onFinish() {}
+                        @Override
+                        public void onCancel() {}
+                    });
+               }
+                else {
+                    cameraPosition = new CameraPosition.Builder().target(Driver.getPosition()).tilt(0).zoom(16).bearing(bearing).build();
+                    map.animateCamera(CameraUpdateFactory.newCameraPosition(cameraPosition), 5000, new GoogleMap.CancelableCallback() {
+                        @Override
+                        public void onFinish() {}
+                        @Override
+                        public void onCancel() {}
+                    });
+                }
             }
         }
+        else{
+           CameraPosition cameraPosition = new CameraPosition.Builder().target(Driver.getPosition()).tilt(0).zoom(16).bearing(bearing).build();
+            map.animateCamera(CameraUpdateFactory.newCameraPosition(cameraPosition), 5000, new GoogleMap.CancelableCallback() {
+                @Override
+                public void onFinish() {}
+                @Override
+                public void onCancel() {}
+            });
+        }
+        }
+
     }
 
-    public void ZoomtoMyCurrentLocation(double latitudeValue, double longitudeValue) {
-        if (map != null) {
-            LatLng coordinate = new LatLng(latitudeValue, longitudeValue);
-            CameraUpdate location = CameraUpdateFactory.newLatLngZoom(coordinate, 15);
-            map.animateCamera(location);
-        }
-    }
+//    public void ZoomtoMyCurrentLocation(double latitudeValue, double longitudeValue) {
+//        if (map != null) {
+//            LatLng coordinate = new LatLng(latitudeValue, longitudeValue);
+//            CameraUpdate location = CameraUpdateFactory.newLatLngZoom(coordinate, 15);
+//            map.animateCamera(location);
+//        }
+//    }
 
     public void DropDriverOnMap(double latitude, double longitude, boolean zoomtomylocation) {
         if (map != null) {
@@ -759,9 +808,6 @@ public class InsideApp extends AppCompatActivity implements RushUpDeliverySettin
             MarkerOptions markerOpts = new MarkerOptions().position(new LatLng(latitude, longitude));
             markerOpts.icon(BitmapDescriptorFactory.fromResource(R.mipmap.bike));
             Driver = map.addMarker(markerOpts);
-            if (zoomtomylocation) {
-                ZoomtoMyCurrentLocation(latitude, longitude);
-            }
         }
     }
 
@@ -830,6 +876,14 @@ public class InsideApp extends AppCompatActivity implements RushUpDeliverySettin
             LocationServices.FusedLocationApi.requestLocationUpdates(mGoogleApiClient, mLocationRequest, locationListener);
         }
 
+    }
+
+    public void setCameraToInitial() {
+        if(map!=null){
+            LatLng latLng=new LatLng(33.888630,35.495480);
+            CameraPosition cameraPosition = new CameraPosition.Builder().target(latLng).zoom(10).tilt(0).build();
+            map.animateCamera(CameraUpdateFactory.newCameraPosition(cameraPosition));
+        }
     }
 
     /**
@@ -920,7 +974,7 @@ public class InsideApp extends AppCompatActivity implements RushUpDeliverySettin
             if(mLastLocation!=null) {
                 DropDriverOnMap(mLastLocation.getLatitude(), mLastLocation.getLongitude(), false);
             }
-            ZoomCameraToBothPins();
+          //  ZoomCameraToBothPins();
             APICallToDrawPolyline();
         }
     }
@@ -979,6 +1033,7 @@ public class InsideApp extends AppCompatActivity implements RushUpDeliverySettin
                     insert_code_edittext.startAnimation(shake);
                 } else {
                     //reset
+                    setCameraToInitial();
                     isPickUp.saveisPickup(false);
                     bottomMenu.setVisibility(View.GONE);
                     options.setVisibility(View.VISIBLE);
@@ -1196,21 +1251,21 @@ public class InsideApp extends AppCompatActivity implements RushUpDeliverySettin
         }
     }
 
-    private void ZoomCameraToBothPins() {
-        if(map!=null) {
-         LatLngBounds.Builder builder = new LatLngBounds.Builder();
-          if(PickupMarker!=null) {
-           builder.include(PickupMarker.getPosition());
-           }
-           if(DropOffMarker!=null) {
-            builder.include(DropOffMarker.getPosition());
-          }
-          if(Driver!=null) {
-           builder.include(Driver.getPosition());
-           }
-            map.moveCamera(CameraUpdateFactory.newLatLngBounds(builder.build(), 170));
-        }
-    }
+//    private void ZoomCameraToBothPins() {
+//        if(map!=null) {
+//         LatLngBounds.Builder builder = new LatLngBounds.Builder();
+//          if(PickupMarker!=null) {
+//           builder.include(PickupMarker.getPosition());
+//           }
+//           if(DropOffMarker!=null) {
+//            builder.include(DropOffMarker.getPosition());
+//          }
+//          if(Driver!=null) {
+//           builder.include(Driver.getPosition());
+//           }
+//            map.moveCamera(CameraUpdateFactory.newLatLngBounds(builder.build(), 170));
+//        }
+//    }
 
 
     @Override
