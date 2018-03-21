@@ -2,6 +2,7 @@ package me.zeroandone.technology.rushupdelivery;
 
 
 import android.content.Intent;
+import android.graphics.drawable.AnimationDrawable;
 import android.os.Bundle;
 import android.support.v4.app.FragmentManager;
 import android.support.v7.app.AppCompatActivity;
@@ -9,6 +10,7 @@ import android.util.Log;
 import android.view.View;
 import android.widget.EditText;
 import android.widget.ImageView;
+import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import com.amazonaws.mobile.auth.core.IdentityManager;
@@ -34,6 +36,9 @@ public class UserLogin extends AppCompatActivity implements SignInStateChangeLis
     TextView  login,forget_login;
     IdentityManager identityManager;
     ImageView close;
+    private RelativeLayout constraintLayout;
+    private AnimationDrawable animationDrawable;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -70,7 +75,29 @@ public class UserLogin extends AppCompatActivity implements SignInStateChangeLis
 
             }
         });
+        constraintLayout=(RelativeLayout) findViewById(R.id.loginrelative);
+        animationDrawable = (AnimationDrawable) constraintLayout.getBackground();
     }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        if (animationDrawable != null && !animationDrawable.isRunning()) {
+            // start the animation
+            animationDrawable.start();
+        }
+
+    }
+
+    @Override
+    protected void onPause() {
+        super.onPause();
+        if (animationDrawable != null && animationDrawable.isRunning()) {
+            // stop the animation
+            animationDrawable.stop();
+        }
+    }
+
 
     private void OpenForgetPasswordActivity() {
         //   finish();

@@ -8,6 +8,7 @@ import android.app.Dialog;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
+import android.graphics.drawable.AnimationDrawable;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
@@ -20,6 +21,7 @@ import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.view.View;
 import android.widget.EditText;
+import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import com.amazonaws.mobileconnectors.cognitoidentityprovider.CognitoUser;
@@ -45,6 +47,9 @@ public class Registration extends AppCompatActivity implements View.OnClickListe
     String Username, Password, Nb1, Nb2, Nb3, Nb4, Email, Phone,Code;
     CircleImageView pickImage;
     PickerInterface pickerInterface = this;
+    private RelativeLayout constraintLayout;
+    private AnimationDrawable animationDrawable;
+
     SignUpHandler signUpHandler = new SignUpHandler() {
         @Override
         public void onSuccess(CognitoUser user, boolean signUpConfirmationState, CognitoUserCodeDeliveryDetails cognitoUserCodeDeliveryDetails) {
@@ -91,9 +96,28 @@ public class Registration extends AppCompatActivity implements View.OnClickListe
         submit.setOnClickListener(this);
         pickImage.setOnClickListener(this);
         already_have_account.setOnClickListener(this);
-
-
+        constraintLayout=(RelativeLayout) findViewById(R.id.register);
+        animationDrawable = (AnimationDrawable) constraintLayout.getBackground();
     }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        if (animationDrawable != null && !animationDrawable.isRunning()) {
+            // start the animation
+            animationDrawable.start();
+        }
+    }
+
+    @Override
+    protected void onPause() {
+        super.onPause();
+        if (animationDrawable != null && animationDrawable.isRunning()) {
+            // stop the animation
+            animationDrawable.stop();
+        }
+    }
+
 
     public boolean isFormFull() {
         Username = username.getText().toString();

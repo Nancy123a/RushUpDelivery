@@ -2,13 +2,21 @@ package me.zeroandone.technology.rushupdelivery;
 
 import android.content.Intent;
 import android.content.OperationApplicationException;
+import android.content.res.Resources;
 import android.graphics.Region;
+import android.graphics.drawable.AnimationDrawable;
+import android.graphics.drawable.Drawable;
+import android.graphics.drawable.TransitionDrawable;
+import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
+import android.support.annotation.RequiresApi;
+import android.support.constraint.ConstraintLayout;
 import android.support.v4.app.FragmentManager;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.view.MotionEvent;
+import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import com.amazonaws.RequestClientOptions;
@@ -18,6 +26,10 @@ import com.amazonaws.mobile.auth.core.StartupAuthResult;
 import com.amazonaws.mobile.auth.core.StartupAuthResultHandler;
 import com.amazonaws.mobile.auth.core.signin.AuthException;
 import com.crashlytics.android.Crashlytics;
+
+import java.util.Timer;
+import java.util.TimerTask;
+
 import io.fabric.sdk.android.Fabric;
 import me.zeroandone.technology.rushupdelivery.objects.DeliveryRequest;
 import me.zeroandone.technology.rushupdelivery.utils.FirstTimeOpen;
@@ -27,7 +39,10 @@ public class MainActivity extends AppCompatActivity implements StartupAuthResult
     private static final String LOG_TAG = MainActivity.class.getSimpleName();
     TextView rushup,theapp,deliver;
     FirstTimeOpen firstTimeOpen;
+    private RelativeLayout constraintLayout;
+    private AnimationDrawable animationDrawable;
 
+    @RequiresApi(api = Build.VERSION_CODES.LOLLIPOP)
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -43,7 +58,31 @@ public class MainActivity extends AppCompatActivity implements StartupAuthResult
         final IdentityManager identityManager = IdentityManager.getDefaultIdentityManager();
         Log.d("XXXN"," "+identityManager.getCachedUserID());
         identityManager.resumeSession(this,this,1000);
+        // init constraintLayout
+        constraintLayout = (RelativeLayout) findViewById(R.id.constraintLayout);
+        // initializing animation drawable by getting background from constraint layout
+        animationDrawable = (AnimationDrawable) constraintLayout.getBackground();
     }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        if (animationDrawable != null && !animationDrawable.isRunning()) {
+            // start the animation
+            animationDrawable.start();
+        }
+
+    }
+
+    @Override
+    protected void onPause() {
+        super.onPause();
+        if (animationDrawable != null && animationDrawable.isRunning()) {
+            // stop the animation
+            animationDrawable.stop();
+        }
+    }
+
 
     @Override
     public void onBackPressed() {
@@ -99,4 +138,7 @@ public class MainActivity extends AppCompatActivity implements StartupAuthResult
             finish();
         }
     }
+
+
+
 }
