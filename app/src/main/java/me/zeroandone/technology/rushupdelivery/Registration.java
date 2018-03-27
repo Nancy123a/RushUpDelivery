@@ -5,9 +5,11 @@ import android.Manifest;
 import android.annotation.TargetApi;
 import android.app.AlertDialog;
 import android.app.Dialog;
+import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.graphics.drawable.AnimationDrawable;
 import android.net.Uri;
 import android.os.Build;
@@ -30,6 +32,8 @@ import com.amazonaws.mobileconnectors.cognitoidentityprovider.CognitoUserCodeDel
 import com.amazonaws.mobileconnectors.cognitoidentityprovider.handlers.SignUpHandler;
 import com.squareup.picasso.Picasso;
 
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
 import java.io.IOException;
 
 import de.hdodenhof.circleimageview.CircleImageView;
@@ -283,6 +287,7 @@ public class Registration extends AppCompatActivity implements View.OnClickListe
 
     @Override
     public void OnCameraClicked(Intent intent) {
+
         startActivityForResult(intent, 1);
     }
 
@@ -294,6 +299,7 @@ public class Registration extends AppCompatActivity implements View.OnClickListe
     @Override
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
+        Log.d("HeroJongi"," Reach here ");
         if (resultCode == RESULT_OK) {
             if (requestCode == 1) {
                 if (data != null) {
@@ -315,7 +321,7 @@ public class Registration extends AppCompatActivity implements View.OnClickListe
                         try {
                             byte[] byteArray = Utils.readBytes(selectedImage, this);
                             Utils.writeBitmaptoInternalStorage(this, byteArray);
-                            Picasso.with(getApplicationContext()).load(selectedImage).into(pickImage);
+                            Picasso.with(getApplicationContext()).load(selectedImage).resize(pickImage.getWidth(),pickImage.getHeight()).into(pickImage);
                         } catch (IOException e) {
                             e.printStackTrace();
                         }

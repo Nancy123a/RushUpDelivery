@@ -10,8 +10,10 @@ import android.graphics.Bitmap;
 import android.graphics.Color;
 import android.graphics.Typeface;
 import android.graphics.drawable.ColorDrawable;
+import android.hardware.Camera;
 import android.net.Uri;
 import android.os.CountDownTimer;
+import android.os.Environment;
 import android.os.Handler;
 import android.provider.MediaStore;
 import android.text.InputType;
@@ -30,6 +32,7 @@ import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.GooglePlayServicesUtil;
 
 import java.io.ByteArrayOutputStream;
+import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.List;
@@ -117,8 +120,13 @@ public class Utils {
         new Handler().postDelayed(new Runnable() {
             @Override
             public void run() {
-                if(dialog!=null) {
-                    dialog.dismiss();
+                if(dialog!=null && dialog.isShowing()) {
+                    try {
+                        dialog.dismiss();
+                    }
+                    catch (Exception exception){
+                        Log.d("HeroJongi"," exception "+exception.getMessage());
+                    }
                 }
             }
         }, 3000);
@@ -142,7 +150,7 @@ public class Utils {
         return true;
     }
 
-    public static Dialog showDriverDialog(Context context, final DeliveryRequest deliveryRequest, final RushUpDeliverySettings rushUpDeliverySettings, final DriverStatusSharedPreference driverStatusSharedPreference){
+    public static Dialog showDriverDialog(final Context context, final DeliveryRequest deliveryRequest, final RushUpDeliverySettings rushUpDeliverySettings, final DriverStatusSharedPreference driverStatusSharedPreference){
         Dialog dialog=null;
         if(context!=null) {
             if (rushUpDeliverySettings != null && deliveryRequest != null && deliveryRequest.getPickupLocation() != null && deliveryRequest.getPickupLocation().getName() != null
@@ -185,26 +193,41 @@ public class Utils {
                 acceptdelivery.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View v) {
-                        finalDialog.dismiss();
-                        rushUpDeliverySettings.PlotPins(deliveryRequest);
-                        rushUpDeliverySettings.SaveActiveDelivery(deliveryRequest);
-                        rushUpDeliverySettings.showBottomMenu(deliveryRequest);
-                        rushUpDeliverySettings.FillUpBottomMenu(deliveryRequest, true);
-                        // save state to assign
-                        AppHelper.assignDeliveryToDriver(deliveryRequest);
-                        // change state of user to occupied
-                        AppHelper.UpdateStatusofDriver(DriverStatus.occupied);
+                        Activity activity=(Activity) context;
+                        if(finalDialog.isShowing() &&  !activity.isFinishing()) {
+                            try {
+                                finalDialog.dismiss();
+                                rushUpDeliverySettings.PlotPins(deliveryRequest);
+                                rushUpDeliverySettings.SaveActiveDelivery(deliveryRequest);
+                                rushUpDeliverySettings.showBottomMenu(deliveryRequest);
+                                rushUpDeliverySettings.FillUpBottomMenu(deliveryRequest, true);
+                                // save state to assign
+                                AppHelper.assignDeliveryToDriver(deliveryRequest);
+                                // change state of user to occupied
+                                AppHelper.UpdateStatusofDriver(DriverStatus.occupied);
 
-                        driverStatusSharedPreference.saveStatus("occupied");
-
+                                driverStatusSharedPreference.saveStatus("occupied");
+                            }
+                            catch (Exception e){
+                                Log.d("HeroJongi"," exception "+e.getMessage());
+                            }
+                        }
                     }
                 });
 
                 decline_delivery.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View v) {
-                        finalDialog.dismiss();
-                        rushUpDeliverySettings.showOptions();
+                        Activity activity=(Activity) context;
+                        if(finalDialog.isShowing() &&  !activity.isFinishing()) {
+                            try {
+                                finalDialog.dismiss();
+                                rushUpDeliverySettings.showOptions();
+                            }
+                            catch (Exception exception){
+                                Log.d("HeroJongi"," exception "+exception.getMessage());
+                            }
+                        }
                     }
                 });
 
@@ -223,10 +246,16 @@ public class Utils {
                 public void run() {
                     Log.d("HeroJongi", "onTime");
                     if (object instanceof DeliveryRequest) {
-                        if (dialog != null) {
-                            Log.d("HeroJongi", "on Reciever Side");
-                            dialog.dismiss();
-                            RemoveNotification(context, "driver_request");
+                        Activity activity=(Activity) context;
+                        if(dialog!=null && dialog.isShowing() &&  !activity.isFinishing()) {
+                            try {
+                                Log.d("HeroJongi", "on Reciever Side");
+                                dialog.dismiss();
+                                RemoveNotification(context, "driver_request");
+                            }
+                            catch (Exception exception){
+                                Log.d("HeroJongi"," exception "+exception.getMessage());
+                            }
                         }
                     }
                 }
@@ -281,7 +310,7 @@ public class Utils {
             close.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View view) {
-                    if (dialog != null && dialog.isShowing()) {
+                    if ( dialog.isShowing()) {
                         dialog.dismiss();
                     }
                 }
@@ -289,9 +318,11 @@ public class Utils {
             camera.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View view) {
-                    Intent intent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
+                    Intent intent = new Intent(android.provider.MediaStore.ACTION_IMAGE_CAPTURE);
                     pickerDialog.OnCameraClicked(intent);
-                    dialog.dismiss();
+                    if(dialog.isShowing()) {
+                        dialog.dismiss();
+                    }
                 }
             });
             gallery.setOnClickListener(new View.OnClickListener() {
@@ -299,7 +330,9 @@ public class Utils {
                 public void onClick(View view) {
                     Intent intent = new Intent(Intent.ACTION_PICK, android.provider.MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
                     pickerDialog.OnGalleryClicked(intent);
-                    dialog.dismiss();
+                    if(dialog.isShowing()) {
+                        dialog.dismiss();
+                    }
                 }
             });
         }

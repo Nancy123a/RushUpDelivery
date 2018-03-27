@@ -54,10 +54,10 @@
 
     <de.hdodenhof.circleimageview.CircleImageView
         android:id="@+id/camera"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
+        android:layout_width="200dp"
+        android:layout_height="200dp"
         android:scaleType="centerCrop"
-        android:layout_marginTop="@dimen/padding_20"
+        android:layout_marginTop="@dimen/padding_5"
         android:layout_below="@+id/profile"
         android:layout_centerHorizontal="true"
         android:src="@mipmap/camera" />
@@ -71,7 +71,7 @@
         android:layout_alignStart="@+id/imageView"
         android:layout_below="@+id/camera"
         android:layout_marginRight="@dimen/padding_16"
-        android:layout_marginTop="@dimen/padding_15"
+        android:layout_marginTop="@dimen/padding_5"
         android:padding="@dimen/padding_8"
         android:textSize="@dimen/text_size_20"
         android:background="@drawable/edittextshape"
@@ -247,7 +247,7 @@
         android:textStyle="bold"
         android:gravity="center"
         android:layout_below="@+id/code"
-        android:layout_marginTop="@dimen/padding_20"
+        android:layout_marginTop="@dimen/padding_50"
         android:textColor="@color/white"
         android:textSize="@dimen/text_size_20"/>
 
@@ -255,10 +255,10 @@
         android:id="@+id/already_have_account"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginTop="@dimen/padding_15"
-        android:layout_below="@+id/submit"
+        android:layout_alignParentBottom="true"
+        android:layout_marginBottom="@dimen/padding_20"
         android:gravity="center"
-        android:textSize="@dimen/text_size_15"
+        android:textSize="@dimen/text_size_20"
         android:text="@string/login_account"
         android:textColor="@color/colorAccent"
         android:layout_centerHorizontal="true"/>

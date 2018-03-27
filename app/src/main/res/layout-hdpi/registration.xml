@@ -54,10 +54,10 @@
 
     <de.hdodenhof.circleimageview.CircleImageView
         android:id="@+id/camera"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
+        android:layout_width="120dp"
+        android:layout_height="120dp"
         android:scaleType="centerCrop"
-        android:layout_marginTop="@dimen/padding_15"
+        android:layout_marginTop="@dimen/padding_5"
         android:layout_below="@+id/profile"
         android:layout_centerHorizontal="true"
         android:src="@mipmap/camera" />
@@ -254,8 +254,8 @@
         android:id="@+id/already_have_account"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginTop="@dimen/padding_10"
-        android:layout_below="@+id/submit"
+        android:layout_alignParentBottom="true"
+        android:layout_marginBottom="@dimen/padding_15"
         android:gravity="center"
         android:textSize="@dimen/text_size_12"
         android:text="@string/login_account"
