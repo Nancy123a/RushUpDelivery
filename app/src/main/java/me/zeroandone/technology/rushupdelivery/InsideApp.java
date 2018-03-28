@@ -212,42 +212,6 @@ public class InsideApp extends AppCompatActivity implements RushUpDeliverySettin
         no_balance_found=(TextView) findViewById(R.id.no_balance_found);
         driverStatusSharedPreference = new DriverStatusSharedPreference(this);
 
-        upperMenu.setOnInteractListener(new SlidingLayer.OnInteractListener() {
-            @Override
-            public void onOpen() {
-              if(deliveryRequest.getDelivery_status().equals(DeliveryStatus.assigned)){
-                bottomMenu.closeLayer(true);
-                }
-            }
-
-            @Override
-            public void onShowPreview() {
-
-            }
-
-            @Override
-            public void onClose() {
-                if(deliveryRequest.getDelivery_status().equals(DeliveryStatus.assigned)){
-                    bottomMenu.openLayer(true);
-                }
-            }
-
-            @Override
-            public void onOpened() {
-
-            }
-
-            @Override
-            public void onPreviewShowed() {
-
-            }
-
-            @Override
-            public void onClosed() {
-
-            }
-        });
-
         if (driverStatusSharedPreference.getStatus() != null && !driverStatusSharedPreference.getStatus().equalsIgnoreCase("")) {
             if (driverStatusSharedPreference.getStatus().equalsIgnoreCase("on") || driverStatusSharedPreference.getStatus().equalsIgnoreCase("occupied")) {
                 activeButton(on);
@@ -322,6 +286,43 @@ public class InsideApp extends AppCompatActivity implements RushUpDeliverySettin
                 return false;
             }
         });
+
+        upperMenu.setOnInteractListener(new SlidingLayer.OnInteractListener() {
+            @Override
+            public void onOpen() {
+                if(deliveryRequest!=null && deliveryRequest.getDelivery_status()!=null && deliveryRequest.getDelivery_status().equals(DeliveryStatus.assigned)){
+                    bottomMenu.closeLayer(true);
+                }
+            }
+
+            @Override
+            public void onShowPreview() {
+
+            }
+
+            @Override
+            public void onClose() {
+                if(deliveryRequest!=null && deliveryRequest.getDelivery_status()!=null && deliveryRequest.getDelivery_status().equals(DeliveryStatus.assigned)){
+                    bottomMenu.openLayer(true);
+                }
+            }
+
+            @Override
+            public void onOpened() {
+
+            }
+
+            @Override
+            public void onPreviewShowed() {
+
+            }
+
+            @Override
+            public void onClosed() {
+
+            }
+        });
+
 
     }
 
