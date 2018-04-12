@@ -72,7 +72,8 @@ public class UserLogin extends AppCompatActivity implements SignInStateChangeLis
         close.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-
+               Intent intent=new Intent(UserLogin.this,Registration.class);
+               startActivity(intent);
             }
         });
         constraintLayout=(RelativeLayout) findViewById(R.id.loginrelative);
@@ -100,12 +101,13 @@ public class UserLogin extends AppCompatActivity implements SignInStateChangeLis
 
 
     private void OpenForgetPasswordActivity() {
-        //   finish();
+        //   finish();2c
         FragmentManager fm = getSupportFragmentManager();
         ForgetPassword forgetDialog = ForgetPassword.newInstance("Some Title");
         forgetDialog.setStyle(android.app.DialogFragment.STYLE_NO_TITLE, R.style.MyTheme);
         forgetDialog.show(fm, "activity_profile");
     }
+
 
     private boolean checkUsernameAndPassword() {
         Username = username.getText().toString();

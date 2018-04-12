@@ -4,6 +4,7 @@ import android.content.Context;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.net.Uri;
+import android.util.Log;
 
 import java.io.ByteArrayOutputStream;
 import java.io.File;
@@ -56,6 +57,7 @@ public class InternalStorage {
 
     public static void writeBitmap(Context context, byte[] bitmap,String key) throws IOException {
         if(context!=null && bitmap!=null) {
+            Log.d("HeroJongi"," bitmap not null ");
             FileOutputStream out = context.openFileOutput(key, Context.MODE_PRIVATE);
             out.write(bitmap);
             out.close();
@@ -79,6 +81,7 @@ public class InternalStorage {
         try {
             f.createNewFile();
             Bitmap bitmap = readBitmap(context,key);
+            Log.d("HeroJongi","bitmap is "+bitmap);
             if(bitmap!=null) {
                 ByteArrayOutputStream bos = new ByteArrayOutputStream();
                 bitmap.compress(Bitmap.CompressFormat.JPEG, 100 /*ignored for PNG*/, bos);
@@ -92,9 +95,16 @@ public class InternalStorage {
             }
         } catch (IOException e) {
             e.printStackTrace();
+            Log.d("HeroJongi"," exception on return bitmap "+e.getMessage());
         }
 
         return f;
+    }
+
+    public static void deleteFile(Context context,String key){
+        File f = new File(context.getCacheDir(), key);
+        boolean d0 = f.delete();
+        Log.d("HeroJongi", "File deleted: " +d0);
     }
 
 

@@ -8,9 +8,9 @@ import com.amazonaws.mobile.auth.core.IdentityManager;
 import com.amazonaws.mobile.auth.ui.AuthUIConfiguration;
 import com.amazonaws.mobile.auth.userpools.CognitoUserPoolsSignInProvider;
 import com.amazonaws.mobile.config.AWSConfiguration;
-import com.amazonaws.mobile.util.AbstractApplicationLifeCycleHelper;
 import com.amazonaws.mobileconnectors.pinpoint.PinpointConfiguration;
 import com.amazonaws.mobileconnectors.pinpoint.PinpointManager;
+import com.amazonaws.util.AbstractApplicationLifeCycleHelper;
 import com.android.volley.RequestQueue;
 
 import me.zeroandone.technology.rushupdelivery.interfaces.RushUpDeliverySettings;

@@ -48,7 +48,7 @@ public class Confirm extends AppCompatActivity{
     EditText code;
     TextView resendCode;
     TextView step2, profile;
-    ImageView close;
+    ImageView close,ivLoading;
     FirstTimeOpen firstTimeOpen;
     AVLoadingIndicatorView avLoadingIndicatorView;
 
@@ -62,6 +62,7 @@ public class Confirm extends AppCompatActivity{
         step2 = (TextView) findViewById(R.id.steptwo);
         profile = (TextView)findViewById(R.id.profile);
         resendCode = (TextView) findViewById(R.id.resend_code);
+        ivLoading=(ImageView) findViewById(R.id.ivLoading);
         firstTimeOpen=new FirstTimeOpen(this);
         avLoadingIndicatorView=(AVLoadingIndicatorView) findViewById(R.id.indicator);
         Bundle bundle = getIntent().getExtras();
@@ -99,6 +100,10 @@ public class Confirm extends AppCompatActivity{
                 }
             }
         });
+        Animation rotation = AnimationUtils.loadAnimation(this, R.anim.rotatecircle);
+        rotation.setRepeatCount(Animation.INFINITE);
+        ivLoading.startAnimation(rotation);
+
 
     }
 
@@ -126,6 +131,7 @@ public class Confirm extends AppCompatActivity{
         @Override
         public void onSuccess(final CognitoUserSession cognitoUserSession, CognitoDevice device) {
             AppHelper.federateWithProvider();
+            AppHelper.SaveDriverFCMTokenToCloud(Confirm.this,Username,null);
             firstTimeOpen.isSignin(true);
             Intent intent=new Intent(Confirm.this,InsideApp.class);
             startActivity(intent);

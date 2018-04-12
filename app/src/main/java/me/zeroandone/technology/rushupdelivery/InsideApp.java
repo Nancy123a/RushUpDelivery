@@ -12,6 +12,11 @@ import android.content.res.Resources;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.location.Location;
+
+import com.amazonaws.AmazonClientException;
+import com.amazonaws.content.ContentItem;
+import com.amazonaws.content.ContentProgressListener;
+import com.amazonaws.content.UserFileManager;
 import com.amazonaws.mobile.auth.core.IdentityManager;
 import com.amazonaws.mobile.auth.core.SignInStateChangeListener;
 import com.amazonaws.mobile.config.AWSConfiguration;
@@ -103,6 +108,7 @@ import me.zeroandone.technology.rushupdelivery.utils.Application;
 import me.zeroandone.technology.rushupdelivery.utils.DrawPolylineVolley;
 import me.zeroandone.technology.rushupdelivery.utils.DriverStatusSharedPreference;
 import me.zeroandone.technology.rushupdelivery.utils.InternalStorage;
+import me.zeroandone.technology.rushupdelivery.utils.UserSharedPreference;
 import me.zeroandone.technology.rushupdelivery.utils.Utils;
 import me.zeroandone.technology.rushupdelivery.utils.isPickUp;
 
@@ -150,7 +156,7 @@ public class InsideApp extends AppCompatActivity implements RushUpDeliverySettin
     HistoryAdapter historyAdapter;
     BalanceAdapter balanceAdapter;
     ProgressBar historyProgressBar,balanceProgressBar;
-
+    UserSharedPreference userSharedPreference;
 
     // Location updates intervals in sec
     private static int UPDATE_INTERVAL = 5000; // 5 sec
@@ -211,6 +217,7 @@ public class InsideApp extends AppCompatActivity implements RushUpDeliverySettin
         balanceProgressBar=(ProgressBar) findViewById(R.id.balanceProgressBar);
         no_balance_found=(TextView) findViewById(R.id.no_balance_found);
         driverStatusSharedPreference = new DriverStatusSharedPreference(this);
+        userSharedPreference=new UserSharedPreference(this);
 
         if (driverStatusSharedPreference.getStatus() != null && !driverStatusSharedPreference.getStatus().equalsIgnoreCase("")) {
             if (driverStatusSharedPreference.getStatus().equalsIgnoreCase("on") || driverStatusSharedPreference.getStatus().equalsIgnoreCase("occupied")) {
@@ -287,41 +294,6 @@ public class InsideApp extends AppCompatActivity implements RushUpDeliverySettin
             }
         });
 
-        upperMenu.setOnInteractListener(new SlidingLayer.OnInteractListener() {
-            @Override
-            public void onOpen() {
-                if(deliveryRequest!=null && deliveryRequest.getDelivery_status()!=null && deliveryRequest.getDelivery_status().equals(DeliveryStatus.assigned)){
-                    bottomMenu.closeLayer(true);
-                }
-            }
-
-            @Override
-            public void onShowPreview() {
-
-            }
-
-            @Override
-            public void onClose() {
-                if(deliveryRequest!=null && deliveryRequest.getDelivery_status()!=null && deliveryRequest.getDelivery_status().equals(DeliveryStatus.assigned)){
-                    bottomMenu.openLayer(true);
-                }
-            }
-
-            @Override
-            public void onOpened() {
-
-            }
-
-            @Override
-            public void onPreviewShowed() {
-
-            }
-
-            @Override
-            public void onClosed() {
-
-            }
-        });
 
 
     }
@@ -401,6 +373,12 @@ public class InsideApp extends AppCompatActivity implements RushUpDeliverySettin
 
     }
 
+    @Override
+    public void deleteFile() {
+      InternalStorage.deleteFile(this,"driverPicture");
+
+    }
+
 
     protected synchronized void buildGoogleApiClient() {
         mGoogleApiClient = new GoogleApiClient.Builder(this)
@@ -416,8 +394,6 @@ public class InsideApp extends AppCompatActivity implements RushUpDeliverySettin
         mLocationRequest.setPriority(LocationRequest.PRIORITY_HIGH_ACCURACY);
         // mLocationRequest.setSmallestDisplacement(DISPLACEMENT);
     }
-
-
     GetDetailsHandler detailsHandler = new GetDetailsHandler() {
         public void onSuccess(CognitoUserDetails cognitoUserDetails) {
             Log.d("HeroJongi", " Here details handler");
@@ -427,25 +403,29 @@ public class InsideApp extends AppCompatActivity implements RushUpDeliverySettin
             ReadSettings();
             SharedPreferences settingss = getSharedPreferences("showpopup", 0);
             SharedPreferences.Editor editor = settingss.edit();
-            if (!settingss.contains("firsttime")) {
-                editor.putBoolean("firsttime", true);
-                editor.apply();
-                File file = InternalStorage.returnFile(InsideApp.this, "driverPicture");
-                Log.d("Herojongi", "first time upload " + file);
-                if (file.length() != 0) {
-                    AppHelper.uploadDownloadPicture(true, InsideApp.this, file, identityManager, rushUpDeliverySettings);
-                } else {
-                    AppHelper.uploadDownloadPicture(false, InsideApp.this, null, identityManager, rushUpDeliverySettings);
-                }
-                Log.d("HeroJongi"," check if user login "+identityManager.isUserSignedIn());
+
+            if(userSharedPreference.getUserName()==null || userSharedPreference.getUserName().equalsIgnoreCase("") || !userSharedPreference.getUserName().equalsIgnoreCase(Username)){
                 if(identityManager.isUserSignedIn()){
                     AppHelper.SaveDriverFCMTokenToCloud(InsideApp.this,Username,rushUpDeliverySettings);
+                    Log.d("HeroJongi"," User is posting token");
+                    userSharedPreference.saveUserName(Username);
+                    File file = InternalStorage.returnFile(InsideApp.this, "driverPicture");
+                    Log.d("HeroJongi", "first time upload " + file+" "+file.length());
+                    if (file.length() != 0) {
+                        AppHelper.uploadDownloadPicture(true, InsideApp.this, file, identityManager, rushUpDeliverySettings);
+                    } else {
+                        AppHelper.uploadDownloadPicture(false, InsideApp.this, null, identityManager, rushUpDeliverySettings);
+                    }
+                    setRatingofDriver();
                 }
-            } else {
-                Log.d("HeroJongi", " not first time download");
-                AppHelper.uploadDownloadPicture(false, InsideApp.this, null, identityManager, rushUpDeliverySettings);
+            }
+            else{
+                Log.d("HeroJongi"," WE are here ");
+                AppHelper.uploadDownloadPicture(false,InsideApp.this,null,identityManager,rushUpDeliverySettings);
                 setRatingofDriver();
             }
+
+
             setAdapter();
             IntentsListener();
             if (Username.length() > 0) {
@@ -688,8 +668,8 @@ public class InsideApp extends AppCompatActivity implements RushUpDeliverySettin
 
     public void activeButton(Button button) {
         LinearLayout.LayoutParams params = (LinearLayout.LayoutParams) button.getLayoutParams();
-        params.width = (int) convertDpToPixel(90, this);
-        params.height = (int) convertDpToPixel(90, this);
+        params.width = (int) convertDpToPixel(100, this);
+        params.height = (int) convertDpToPixel(100, this);
         button.setLayoutParams(params);
     }
 
@@ -774,7 +754,7 @@ public class InsideApp extends AppCompatActivity implements RushUpDeliverySettin
                 valueAnimator.start();
               }
             setBearing();
-        }
+     }
     }
 
     public void setBearing(){
@@ -841,7 +821,7 @@ public class InsideApp extends AppCompatActivity implements RushUpDeliverySettin
 
     public void DropDriverOnMap(double latitude, double longitude, boolean zoomtomylocation) {
         if (map != null) {
-            Log.d("HeroJongi", "location " + "Pick Up pin");
+            Log.d("HeroJongi", "location Pick Up pin");
             MarkerOptions markerOpts = new MarkerOptions().position(new LatLng(latitude, longitude));
             markerOpts.icon(BitmapDescriptorFactory.fromResource(R.mipmap.bike));
             Driver = map.addMarker(markerOpts);
@@ -1247,7 +1227,7 @@ public class InsideApp extends AppCompatActivity implements RushUpDeliverySettin
     @Override
     public void Signout() {
         if (AppHelper.getPool() != null && AppHelper.getPool().getCognitoUserPool().getCurrentUser() != null) {
-            AppHelper.getPool().getCognitoUserPool().getCurrentUser().signOut();
+            identityManager.signOut();
             Intent signout = new Intent(this, UserLogin.class);
             signout.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
             startActivity(signout);

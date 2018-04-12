@@ -341,7 +341,8 @@ public class Utils {
 
     public static void writeBitmaptoInternalStorage(Context context,byte[] byteArray){
         if(context!=null && byteArray!=null) {
-            try {
+            try{
+            Log.d("HeroJongi"," we are saving bitmap in internal storage");
                 InternalStorage.writeBitmap(context, byteArray, "driverPicture");
             } catch (IOException e) {
                 e.printStackTrace();

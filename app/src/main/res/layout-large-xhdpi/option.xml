@@ -13,11 +13,11 @@
 
     <ImageView
         android:id="@+id/optionclick"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
+        android:layout_width="30dp"
+        android:layout_height="30dp"
         android:layout_alignParentRight="true"
-        android:layout_margin="@dimen/padding_20"
+        android:layout_margin="@dimen/padding_16"
         android:src="@mipmap/right"
-        android:tint="@color/grey" />
+        android:tint="@color/black" />
 
 </RelativeLayout>

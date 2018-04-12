@@ -96,7 +96,7 @@
         android:layout_alignStart="@+id/imageView"
         android:layout_below="@+id/username"
         android:layout_marginRight="@dimen/padding_16"
-        android:layout_marginTop="@dimen/padding_15"
+        android:layout_marginTop="@dimen/padding_8"
         android:padding="@dimen/padding_8"
         android:textSize="@dimen/text_size_20"
         android:background="@drawable/edittextshape"
@@ -121,7 +121,7 @@
         android:layout_alignStart="@+id/imageView"
         android:layout_below="@+id/email"
         android:layout_marginRight="@dimen/padding_16"
-        android:layout_marginTop="@dimen/padding_15"
+        android:layout_marginTop="@dimen/padding_8"
         android:padding="@dimen/padding_8"
         android:textSize="@dimen/text_size_20"
         android:background="@drawable/edittextshape"
@@ -147,7 +147,7 @@
         android:layout_alignStart="@+id/imageView"
         android:layout_below="@+id/phone"
         android:layout_marginRight="@dimen/padding_16"
-        android:layout_marginTop="@dimen/padding_15"
+        android:layout_marginTop="@dimen/padding_8"
         android:padding="@dimen/padding_10"
         android:textSize="@dimen/text_size_20"
         android:background="@drawable/edittextshape"
@@ -184,7 +184,7 @@
         android:layout_height="wrap_content"
         android:layout_centerHorizontal="true"
         android:layout_below="@+id/insertcode"
-        android:layout_marginTop="@dimen/padding_20"
+        android:layout_marginTop="@dimen/padding_10"
         android:orientation="horizontal">
 
         <EditText
@@ -247,7 +247,7 @@
         android:textStyle="bold"
         android:gravity="center"
         android:layout_below="@+id/code"
-        android:layout_marginTop="@dimen/padding_50"
+        android:layout_marginTop="@dimen/padding_20"
         android:textColor="@color/white"
         android:textSize="@dimen/text_size_20"/>
 
@@ -256,7 +256,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_alignParentBottom="true"
-        android:layout_marginBottom="@dimen/padding_20"
+        android:layout_marginBottom="@dimen/padding_30"
         android:gravity="center"
         android:textSize="@dimen/text_size_20"
         android:text="@string/login_account"

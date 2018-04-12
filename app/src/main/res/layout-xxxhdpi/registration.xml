@@ -54,8 +54,8 @@
 
     <de.hdodenhof.circleimageview.CircleImageView
         android:id="@+id/camera"
-        android:layout_width="160dp"
-        android:layout_height="160dp"
+        android:layout_width="150dp"
+        android:layout_height="150dp"
         android:scaleType="centerCrop"
         android:layout_marginTop="@dimen/padding_5"
         android:layout_below="@+id/profile"
@@ -95,7 +95,7 @@
         android:layout_alignStart="@+id/imageView"
         android:layout_below="@+id/username"
         android:layout_marginRight="@dimen/padding_16"
-        android:layout_marginTop="@dimen/padding_10"
+        android:layout_marginTop="@dimen/padding_5"
         android:padding="@dimen/padding_8"
         android:textSize="@dimen/text_size_15"
         android:background="@drawable/edittextshape"
@@ -120,7 +120,7 @@
         android:layout_alignStart="@+id/imageView"
         android:layout_below="@+id/email"
         android:layout_marginRight="@dimen/padding_16"
-        android:layout_marginTop="@dimen/padding_10"
+        android:layout_marginTop="@dimen/padding_5"
         android:padding="@dimen/padding_8"
         android:textSize="@dimen/text_size_15"
         android:background="@drawable/edittextshape"
@@ -146,7 +146,7 @@
         android:layout_alignStart="@+id/imageView"
         android:layout_below="@+id/phone"
         android:layout_marginRight="@dimen/padding_16"
-        android:layout_marginTop="@dimen/padding_10"
+        android:layout_marginTop="@dimen/padding_5"
         android:padding="@dimen/padding_8"
         android:textSize="@dimen/text_size_15"
         android:background="@drawable/edittextshape"
@@ -171,7 +171,7 @@
         android:text="@string/insertcode"
         android:gravity="center"
         android:layout_centerHorizontal="true"
-        android:layout_marginTop="@dimen/padding_15"
+        android:layout_marginTop="@dimen/padding_10"
         android:textAllCaps="true"
         android:textSize="@dimen/text_size_15"
         android:textColor="@color/white"/>
@@ -182,7 +182,7 @@
         android:layout_height="wrap_content"
         android:layout_centerHorizontal="true"
         android:layout_below="@+id/insertcode"
-        android:layout_marginTop="@dimen/padding_16"
+        android:layout_marginTop="@dimen/padding_5"
         android:orientation="horizontal">
 
         <EditText
@@ -243,7 +243,7 @@
         android:layout_centerHorizontal="true"
         android:text="@string/submit"
         android:textStyle="bold"
-        android:layout_marginTop="@dimen/padding_15"
+        android:layout_marginTop="@dimen/padding_10"
         android:layout_below="@+id/code"
         android:gravity="center"
         android:textColor="@color/white"

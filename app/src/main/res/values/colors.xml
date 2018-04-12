@@ -21,4 +21,5 @@
     <color name="trans_hint">#F2939393</color>
     <color name="dialog_color">#D9D31F1D</color>
     <color name="dialog_sec">#D9811D2B</color>
+    <color name="light_blue">#008B8B</color>
 </resources>

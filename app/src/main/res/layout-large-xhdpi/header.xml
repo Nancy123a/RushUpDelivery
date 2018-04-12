@@ -8,7 +8,7 @@
         android:id="@+id/line"
         android:layout_width="match_parent"
         android:layout_height="1dp"
-        android:background="@color/transgray" />
+        android:background="@android:color/black" />
 
     <TextView
         android:id="@+id/headerText"
@@ -16,8 +16,8 @@
         android:layout_height="wrap_content"
         android:layout_below="@+id/line"
         android:layout_marginLeft="@dimen/padding_20"
-        android:layout_marginTop="@dimen/padding_10"
-        android:textSize="@dimen/text_size_15"
+        android:layout_marginTop="@dimen/padding_5"
+        android:textSize="@dimen/text_size_25"
         android:textStyle="bold" />
 
 
@@ -26,6 +26,6 @@
         android:layout_width="match_parent"
         android:layout_height="1dp"
         android:layout_below="@+id/headerText"
-        android:layout_marginTop="@dimen/padding_20"
-        android:background="@color/transgray" />
+        android:layout_marginTop="@dimen/padding_5"
+        android:background="@android:color/black" />
 </RelativeLayout>

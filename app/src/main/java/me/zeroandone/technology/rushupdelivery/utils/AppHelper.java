@@ -4,78 +4,39 @@ import android.content.Context;
 import android.location.Location;
 import android.util.Log;
 
-import com.amazonaws.mobile.api.idrevskyx266.RushupClient;
+import com.amazonaws.api.idrevskyx266.RushupClient;
+import com.amazonaws.content.ContentDownloadPolicy;
+import com.amazonaws.content.ContentItem;
+import com.amazonaws.content.ContentProgressListener;
+import com.amazonaws.content.UserFileManager;
 import com.amazonaws.mobile.auth.core.IdentityManager;
 import com.amazonaws.mobile.auth.userpools.CognitoUserPoolsSignInProvider;
 import com.amazonaws.mobile.config.AWSConfiguration;
-import com.amazonaws.mobile.content.ContentDownloadPolicy;
-import com.amazonaws.mobile.content.ContentItem;
-import com.amazonaws.mobile.content.ContentProgressListener;
-import com.amazonaws.mobile.content.UserFileManager;
+
 import com.amazonaws.mobileconnectors.apigateway.ApiClientFactory;
 import com.amazonaws.mobileconnectors.cognitoidentityprovider.CognitoDevice;
 import com.amazonaws.mobileconnectors.cognitoidentityprovider.CognitoUserSession;
-import com.amazonaws.regions.Regions;
 
 import java.io.File;
 
 import me.zeroandone.technology.rushupdelivery.interfaces.RushUpDeliverySettings;
-import me.zeroandone.technology.rushupdelivery.model.DeliveryStatusRequest;
 import me.zeroandone.technology.rushupdelivery.model.DriverLocationRequest;
 import me.zeroandone.technology.rushupdelivery.model.TokenRequest;
 import me.zeroandone.technology.rushupdelivery.objects.DeliveryPickUpDropoff;
 import me.zeroandone.technology.rushupdelivery.objects.DeliveryRequest;
 import me.zeroandone.technology.rushupdelivery.objects.DeliveryStatus;
 import me.zeroandone.technology.rushupdelivery.objects.DriverCode;
-import me.zeroandone.technology.rushupdelivery.objects.DriverDeliveryHistory;
 import me.zeroandone.technology.rushupdelivery.objects.DriverStatus;
 import me.zeroandone.technology.rushupdelivery.objects.DriverStatusRequest;
 
 
 public class AppHelper{
     public static final String S3_PREFIX_PRIVATE = "private/";
-    //google key
-    public static final String Google_key = "6488603275-vbipema563ljm0sfjitl87hg3ii63u1k.apps.googleusercontent.com";
-    //User / Federated Pool
-    public static final String userPoolId = "eu-west-2_9Rfg3SRNy";
-    public static final String federatedPoolId = "eu-west-2:9ee028f7-5d7b-4bb5-9406-769a7dc72abd";
-    /**
-     * Add you app id
-     */
-    public static final String clientId = "3i6shcjg4ef7t1cu5gq5q7vkgk";
-    /**
-     * App secret associated with your app id - if the App id does not have an associated App secret,
-     * set the App secret to null.
-     * e.g. clientSecret = null;
-     */
-    public static final String clientSecret = "dd2gpb6sdv1fsnoeno941c3n7gbk4mn291o2phqig39812ii2kq";
-    public static final String BUCKET_NAME = "rushup-userfiles-mobilehub-197211853";
-
-    public static final String s3_base_url = "https://s3.eu-west-2.amazonaws.com/";
-
-
-    public static final int SUCCESS_RESULT = 0;
-
-    public static final int FAILURE_RESULT = 1;
-
-    public static final String PACKAGE_NAME = "me.zeroandone.technology.rushup";
-    public static final String RECEIVER = PACKAGE_NAME + ".RECEIVER";
-
-    public static final String RESULT_DATA_KEY = PACKAGE_NAME + ".RESULT_DATA_KEY";
-
-    public static final String LOCATION_DATA_EXTRA = PACKAGE_NAME + ".LOCATION_DATA_EXTRA";
-
-    public static final String LOCATION_DATA_AREA = PACKAGE_NAME + ".LOCATION_DATA_AREA";
-    public static final String LOCATION_DATA_CITY = PACKAGE_NAME + ".LOCATION_DATA_CITY";
-    public static final String LOCATION_DATA_STREET = PACKAGE_NAME + ".LOCATION_DATA_STREET";
-
 
     private static final String LOG_TAG = AppHelper.class.getSimpleName();
-    /**
-     * Set Your User Pools region.
-     * e.g. if your user pools are in US East (N Virginia) then set cognitoRegion = Regions.US_EAST_1.
-     */
-    public static final Regions cognitoRegion = Regions.EU_WEST_2;
+
+
+
     // User details from the service
     public static CognitoUserPoolsSignInProvider cognitoUserPoolsSignInProvider;
     private static AppHelper appHelper;
@@ -83,7 +44,6 @@ public class AppHelper{
     private static CognitoDevice newDevice;
     private static CognitoUserSession currSession;
 
-    UserFileManager User_File;
 
 
     public static void init() {
@@ -191,9 +151,6 @@ public class AppHelper{
                     try {
                         DriverCode driverCode = new DriverCode(username, "");
                         AppHelper.getRushUpClient().driverGroupAssignPost(driverCode);
-                        if(rushUpDeliverySettings!=null) {
-                            rushUpDeliverySettings.setRatingofDriver();
-                        }
                         Log.d("HeroJongi"," driver code "+username);
                     } catch (Exception e) {
                         Log.d("HeroJongi", " Fail add driver to group " + e.getMessage());
@@ -300,10 +257,10 @@ public class AppHelper{
     }
 
 
-
     public static void uploadDownloadPicture(final boolean upload, final Context context, final File file, IdentityManager identityManager, final RushUpDeliverySettings rushUpSettings){
         final String identityId = identityManager.getCachedUserID();
         final String prefix =  S3_PREFIX_PRIVATE + identityId + "/";
+        Log.d("HeroJongi"," perfix "+prefix);
         new UserFileManager.Builder()
                 .withContext(context)
                 .withIdentityManager(IdentityManager.getDefaultIdentityManager())
@@ -329,15 +286,20 @@ public class AppHelper{
 
     public static void uploadPicture(final UserFileManager userFileManager, File file, final RushUpDeliverySettings rushUpSettings){
         if(userFileManager!=null && file!=null){
+            Log.d("HeroJongi","upload "+userFileManager+"  "+file+"  "+rushUpSettings+"  "+file.getName());
             userFileManager.uploadContent(file, file.getName(), new ContentProgressListener() {
                 @Override
                 public void onSuccess(ContentItem contentItem) {
                     Log.d("HeroJongi"," upload on success");
+                    if(rushUpSettings!=null){
+                        rushUpSettings.deleteFile();
+                    }
                     downloadPicture(userFileManager,rushUpSettings);
                 }
 
                 @Override
                 public void onProgressUpdate(String filePath, boolean isWaiting, long bytesCurrent, long bytesTotal) {
+                    Log.d("HeroJongi"," upload on progress");
                 }
 
                 @Override
