@@ -21,7 +21,9 @@ import android.support.v4.app.FragmentManager;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
+import android.view.KeyEvent;
 import android.view.View;
+import android.view.inputmethod.EditorInfo;
 import android.widget.EditText;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
@@ -102,6 +104,15 @@ public class Registration extends AppCompatActivity implements View.OnClickListe
         already_have_account.setOnClickListener(this);
         constraintLayout=(RelativeLayout) findViewById(R.id.register);
         animationDrawable = (AnimationDrawable) constraintLayout.getBackground();
+        number4.setOnEditorActionListener(new TextView.OnEditorActionListener() {
+            @Override
+            public boolean onEditorAction(TextView textView, int i, KeyEvent keyEvent) {
+                if (i == EditorInfo.IME_ACTION_DONE) {
+                  Submit();
+                }
+                return false;
+            }
+        });
     }
 
     @Override
@@ -201,58 +212,7 @@ public class Registration extends AppCompatActivity implements View.OnClickListe
                 startActivity(intent);
                 break;
             case R.id.submit:
-                if (isFormFull()) {
-                    Log.d("SPECIAL", " Username " + isFormFull());
-                    insertcode.setText(getResources().getString(R.string.insertcode));
-                    new Thread(new Runnable() {
-                        public void run() {
-                            try {
-                                Code = Nb1 + Nb2 + Nb3 + Nb4;
-                                DriverCode driverCode = new DriverCode(Username, Code);
-                                DriverCode _driverCode = AppHelper.getRushUpClientUnauthenticated().driverCodeCheckcodePost(driverCode);
-                                if (_driverCode.getCode() != null) {
-                                    if (_driverCode.getCode().equalsIgnoreCase(Code)) {
-                                        CognitoUserAttributes userAttributes = new CognitoUserAttributes();
-                                        userAttributes.addAttribute("name", Username);
-                                        userAttributes.addAttribute("email", Email);
-                                        userAttributes.addAttribute("phone_number", Phone);
-                                        userAttributes.addAttribute("custom:type","driver");
-                                        if (AppHelper.getPool() != null) {
-                                            AppHelper.getPool().getCognitoUserPool().signUpInBackground(Username, Password, userAttributes, null, signUpHandler);
-                                        }
-
-                                    } else {
-                                        runOnUiThread(new Thread(new Runnable() {
-                                            public void run() {
-                                                // enter correct code
-                                                insertcode.setText(getResources().getString(R.string.please_insert_correct_code));
-                                            }
-                                        }));
-                                    }
-                                }
-                            } catch (final Exception ex) {
-                                Log.d("SPECIAL", ex.getMessage());
-                                runOnUiThread(new Thread(new Runnable() {
-                                    public void run() {
-                                        if (ex.getMessage().contains("Enter your correct user name")) {
-                                            username.setError(getResources().getString(R.string.username_wrong));
-                                        } else if (ex.getMessage().contains("User already exists")) {
-                                            username.setError(getResources().getString(R.string.username_already_exist));
-                                        } else if (ex.getMessage().contains("PreSignUp failed with error Email already exist")) {
-                                            email.setError(getResources().getString(R.string.email_already_exist));
-                                        } else if (ex.getMessage().contains("PreSignUp failed with error Phone already exist")) {
-                                            phone.setError(getResources().getString(R.string.phonenumber_already_exist));
-                                        }
-
-                                    }
-
-                                }
-                                ));
-                            }
-                        }
-                    }).start();
-
-                }
+             Submit();
                 break;
             case R.id.camera:
                 if (ContextCompat.checkSelfPermission(getApplicationContext(), android.Manifest.permission.WRITE_EXTERNAL_STORAGE) == PackageManager.PERMISSION_GRANTED
@@ -263,6 +223,61 @@ public class Registration extends AppCompatActivity implements View.OnClickListe
                     requestPermissions(new String[]{android.Manifest.permission.WRITE_EXTERNAL_STORAGE, android.Manifest.permission.READ_EXTERNAL_STORAGE, android.Manifest.permission.CAMERA}, EXTERNAL_STORAGE_PERMISSION_REQUEST_CODE);
                 }
                 break;
+        }
+    }
+
+    public void Submit(){
+        if (isFormFull()) {
+            Log.d("SPECIAL", " Username " + isFormFull());
+            insertcode.setText(getResources().getString(R.string.insertcode));
+            new Thread(new Runnable() {
+                public void run() {
+                    try {
+                        Code = Nb1 + Nb2 + Nb3 + Nb4;
+                        DriverCode driverCode = new DriverCode(Username, Code);
+                        DriverCode _driverCode = AppHelper.getRushUpClientUnauthenticated().driverCodeCheckcodePost(driverCode);
+                        if (_driverCode.getCode() != null) {
+                            if (_driverCode.getCode().equalsIgnoreCase(Code)) {
+                                CognitoUserAttributes userAttributes = new CognitoUserAttributes();
+                                userAttributes.addAttribute("name", Username);
+                                userAttributes.addAttribute("email", Email);
+                                userAttributes.addAttribute("phone_number", Phone);
+                                userAttributes.addAttribute("custom:type","driver");
+                                if (AppHelper.getPool() != null) {
+                                    AppHelper.getPool().getCognitoUserPool().signUpInBackground(Username, Password, userAttributes, null, signUpHandler);
+                                }
+
+                            } else {
+                                runOnUiThread(new Thread(new Runnable() {
+                                    public void run() {
+                                        // enter correct code
+                                        insertcode.setText(getResources().getString(R.string.please_insert_correct_code));
+                                    }
+                                }));
+                            }
+                        }
+                    } catch (final Exception ex) {
+                        Log.d("SPECIAL", ex.getMessage());
+                        runOnUiThread(new Thread(new Runnable() {
+                            public void run() {
+                                if (ex.getMessage().contains("Enter your correct user name")) {
+                                    username.setError(getResources().getString(R.string.username_wrong));
+                                } else if (ex.getMessage().contains("User already exists")) {
+                                    username.setError(getResources().getString(R.string.username_already_exist));
+                                } else if (ex.getMessage().contains("PreSignUp failed with error Email already exist")) {
+                                    email.setError(getResources().getString(R.string.email_already_exist));
+                                } else if (ex.getMessage().contains("PreSignUp failed with error Phone already exist")) {
+                                    phone.setError(getResources().getString(R.string.phonenumber_already_exist));
+                                }
+
+                            }
+
+                        }
+                        ));
+                    }
+                }
+            }).start();
+
         }
     }
 

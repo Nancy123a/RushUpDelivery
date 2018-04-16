@@ -32,7 +32,7 @@ public class isPickUp {
     }
 
     public boolean getisPickUp(){
-        return pref.getBoolean("ispickup",false);
+        return pref.getBoolean("ispickup",true);
     }
 
     public void clearSharedPreference(){

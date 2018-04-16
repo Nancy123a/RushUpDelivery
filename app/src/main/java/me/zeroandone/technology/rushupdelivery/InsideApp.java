@@ -12,11 +12,6 @@ import android.content.res.Resources;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.location.Location;
-
-import com.amazonaws.AmazonClientException;
-import com.amazonaws.content.ContentItem;
-import com.amazonaws.content.ContentProgressListener;
-import com.amazonaws.content.UserFileManager;
 import com.amazonaws.mobile.auth.core.IdentityManager;
 import com.amazonaws.mobile.auth.core.SignInStateChangeListener;
 import com.amazonaws.mobile.config.AWSConfiguration;
@@ -275,14 +270,17 @@ public class InsideApp extends AppCompatActivity implements RushUpDeliverySettin
                 if (i == EditorInfo.IME_ACTION_DONE) {
                     Log.d("HeroJongi", "editText" + insert_code_edittext.getText().toString());
                     if (!insert_code_edittext.getText().toString().equalsIgnoreCase("")) {
+                        // if its pickup
                         if (isPickUp.getisPickUp()) {
                             Log.d("HeroJongi", "ItsPickup");
                             AppHelper.CheckCode(deliveryRequest, insert_code_edittext.getText().toString(), DeliveryStatus.with_delivery, true, rushUpDeliverySettings);
-                        } else {
+                        }
+                        else {
                             Log.d("HeroJongi", "ItsDropOffup");
                             AppHelper.CheckCode(deliveryRequest, insert_code_edittext.getText().toString(), DeliveryStatus.delivered, false, rushUpDeliverySettings);
                         }
-                    } else {
+                    }
+                    else {
                         // hide kwyboard
                         Log.d("HeroJongi", "editText is empty " + insert_code_edittext.getText().toString());
 
@@ -811,13 +809,13 @@ public class InsideApp extends AppCompatActivity implements RushUpDeliverySettin
 
     }
 
-//    public void ZoomtoMyCurrentLocation(double latitudeValue, double longitudeValue) {
-//        if (map != null) {
-//            LatLng coordinate = new LatLng(latitudeValue, longitudeValue);
-//            CameraUpdate location = CameraUpdateFactory.newLatLngZoom(coordinate, 15);
-//            map.animateCamera(location);
-//        }
-//    }
+    public void ZoomtoMyCurrentLocation(double latitudeValue, double longitudeValue) {
+        if (map != null) {
+            LatLng coordinate = new LatLng(latitudeValue, longitudeValue);
+            CameraUpdate location = CameraUpdateFactory.newLatLngZoom(coordinate, 15);
+            map.animateCamera(location);
+        }
+    }
 
     public void DropDriverOnMap(double latitude, double longitude, boolean zoomtomylocation) {
         if (map != null) {
@@ -825,6 +823,7 @@ public class InsideApp extends AppCompatActivity implements RushUpDeliverySettin
             MarkerOptions markerOpts = new MarkerOptions().position(new LatLng(latitude, longitude));
             markerOpts.icon(BitmapDescriptorFactory.fromResource(R.mipmap.bike));
             Driver = map.addMarker(markerOpts);
+            ZoomtoMyCurrentLocation(latitude,longitude);
         }
     }
 
@@ -1010,7 +1009,7 @@ public class InsideApp extends AppCompatActivity implements RushUpDeliverySettin
          bottomMenu.setVisibility(View.VISIBLE);
          bottomMenu.openLayer(true);
          bottomMenu.setSlidingEnabled(false);
-         isPickUp.saveisPickup(true);
+    //     isPickUp.saveisPickup(true);
     }
 
     @Override
@@ -1051,7 +1050,7 @@ public class InsideApp extends AppCompatActivity implements RushUpDeliverySettin
                 } else {
                     //reset
                     setCameraToInitial();
-                    isPickUp.saveisPickup(false);
+                    isPickUp.saveisPickup(true);
                     bottomMenu.setVisibility(View.GONE);
                     options.setVisibility(View.VISIBLE);
                     clearDelivery();
@@ -1267,23 +1266,6 @@ public class InsideApp extends AppCompatActivity implements RushUpDeliverySettin
             DropOffMarker = map.addMarker(markerOpts);
         }
     }
-
-//    private void ZoomCameraToBothPins() {
-//        if(map!=null) {
-//         LatLngBounds.Builder builder = new LatLngBounds.Builder();
-//          if(PickupMarker!=null) {
-//           builder.include(PickupMarker.getPosition());
-//           }
-//           if(DropOffMarker!=null) {
-//            builder.include(DropOffMarker.getPosition());
-//          }
-//          if(Driver!=null) {
-//           builder.include(Driver.getPosition());
-//           }
-//            map.moveCamera(CameraUpdateFactory.newLatLngBounds(builder.build(), 170));
-//        }
-//    }
-
 
     @Override
     public void onUserSignedIn() {

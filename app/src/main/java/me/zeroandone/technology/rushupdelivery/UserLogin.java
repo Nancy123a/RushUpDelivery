@@ -7,7 +7,9 @@ import android.os.Bundle;
 import android.support.v4.app.FragmentManager;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
+import android.view.KeyEvent;
 import android.view.View;
+import android.view.inputmethod.EditorInfo;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.RelativeLayout;
@@ -57,10 +59,17 @@ public class UserLogin extends AppCompatActivity implements SignInStateChangeLis
         login.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                indicator.setVisibility(View.VISIBLE);
-                if (checkUsernameAndPassword()) {
-                    AppHelper.getPool().getCognitoUserPool().getUser(Username).getSessionInBackground(authenticationHandler);
+               Login();
+            }
+        });
+
+        password.setOnEditorActionListener(new TextView.OnEditorActionListener() {
+            @Override
+            public boolean onEditorAction(TextView textView, int i, KeyEvent keyEvent) {
+                if (i == EditorInfo.IME_ACTION_DONE) {
+                    Login();
                 }
+                return false;
             }
         });
         forget_login.setOnClickListener(new View.OnClickListener() {
@@ -78,6 +87,13 @@ public class UserLogin extends AppCompatActivity implements SignInStateChangeLis
         });
         constraintLayout=(RelativeLayout) findViewById(R.id.loginrelative);
         animationDrawable = (AnimationDrawable) constraintLayout.getBackground();
+    }
+
+    public void Login(){
+        indicator.setVisibility(View.VISIBLE);
+        if (checkUsernameAndPassword()) {
+            AppHelper.getPool().getCognitoUserPool().getUser(Username).getSessionInBackground(authenticationHandler);
+        }
     }
 
     @Override

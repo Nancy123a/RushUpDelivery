@@ -349,7 +349,7 @@
         <com.wunderlist.slidinglayer.SlidingLayer
             android:id="@+id/slidingLayer2"
             android:layout_width="match_parent"
-            android:layout_height="320dp"
+            android:layout_height="220dp"
             android:elevation="2dp"
             android:layout_alignParentBottom="true"
             slidingLayer:changeStateOnTap="false"

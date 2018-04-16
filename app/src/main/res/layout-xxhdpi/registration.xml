@@ -75,6 +75,7 @@
         android:textSize="@dimen/text_size_12"
         android:background="@drawable/edittextshape"
         android:ems="10"
+        android:imeOptions="actionNext"
         android:hint="@string/username"
         android:inputType="text"
         android:maxLines="1"
@@ -100,6 +101,7 @@
         android:textSize="@dimen/text_size_12"
         android:background="@drawable/edittextshape"
         android:ems="10"
+        android:imeOptions="actionNext"
         android:hint="@string/email"
         android:inputType="textEmailAddress"
         android:maxLines="1"
@@ -125,6 +127,7 @@
         android:textSize="@dimen/text_size_12"
         android:background="@drawable/edittextshape"
         android:ems="10"
+        android:imeOptions="actionNext"
         android:hint="@string/mobile"
         android:inputType="phone"
         android:maxLines="1"
@@ -151,6 +154,7 @@
         android:textSize="@dimen/text_size_12"
         android:background="@drawable/edittextshape"
         android:ems="10"
+        android:imeOptions="actionNext"
         android:hint="@string/password"
         android:inputType="textPassword"
         android:maxLines="1"
@@ -194,6 +198,7 @@
             android:padding="@dimen/padding_8"
             android:maxLength="1"
             android:gravity="center"
+            android:imeOptions="actionNext"
             android:textColor="@color/white"
             android:layout_marginRight="@dimen/padding_10"
             android:inputType="number"/>
@@ -206,6 +211,7 @@
             android:padding="@dimen/padding_8"
             android:gravity="center"
             android:maxLength="1"
+            android:imeOptions="actionNext"
             android:textColor="@color/white"
             android:layout_marginRight="@dimen/padding_10"
             android:inputType="number"/>
@@ -218,6 +224,7 @@
             android:padding="@dimen/padding_8"
             android:gravity="center"
             android:maxLength="1"
+            android:imeOptions="actionNext"
             android:textColor="@color/white"
             android:layout_marginRight="@dimen/padding_10"
             android:inputType="number"/>
@@ -230,6 +237,7 @@
             android:padding="@dimen/padding_8"
             android:gravity="center"
             android:maxLength="1"
+            android:imeOptions="actionDone"
             android:textColor="@color/white"
             android:layout_marginRight="@dimen/padding_10"
             android:inputType="number"/>
