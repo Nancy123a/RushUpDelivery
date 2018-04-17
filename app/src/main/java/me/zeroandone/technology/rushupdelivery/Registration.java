@@ -14,6 +14,7 @@ import android.graphics.drawable.AnimationDrawable;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
+import android.provider.MediaStore;
 import android.support.annotation.Nullable;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.FragmentActivity;
@@ -32,6 +33,7 @@ import com.amazonaws.mobileconnectors.cognitoidentityprovider.CognitoUser;
 import com.amazonaws.mobileconnectors.cognitoidentityprovider.CognitoUserAttributes;
 import com.amazonaws.mobileconnectors.cognitoidentityprovider.CognitoUserCodeDeliveryDetails;
 import com.amazonaws.mobileconnectors.cognitoidentityprovider.handlers.SignUpHandler;
+import com.crashlytics.android.Crashlytics;
 import com.squareup.picasso.Picasso;
 
 import java.io.FileInputStream;
@@ -55,6 +57,7 @@ public class Registration extends AppCompatActivity implements View.OnClickListe
     PickerInterface pickerInterface = this;
     private RelativeLayout constraintLayout;
     private AnimationDrawable animationDrawable;
+    Uri uri;
 
     SignUpHandler signUpHandler = new SignUpHandler() {
         @Override
@@ -301,8 +304,8 @@ public class Registration extends AppCompatActivity implements View.OnClickListe
     }
 
     @Override
-    public void OnCameraClicked(Intent intent) {
-
+    public void OnCameraClicked(Intent intent, Uri uri) {
+        this.uri=uri;
         startActivityForResult(intent, 1);
     }
 
@@ -312,39 +315,54 @@ public class Registration extends AppCompatActivity implements View.OnClickListe
     }
 
     @Override
+    public void rotateimage(Bitmap bitmap, Uri uri, int type) {
+        if(bitmap!=null && uri!=null) {
+            if (type == 1) {
+                Utils.BitmapOperation(this, bitmap);
+                pickImage.setImageBitmap(bitmap);
+            } else if (type == 2) {
+                try {
+                    byte[] byteArray = Utils.readBytes(uri,getApplicationContext());
+                    Utils.writeBitmaptoInternalStorage(this, byteArray);
+                    pickImage.setImageBitmap(bitmap);
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+            }
+        }
+    }
+
+    @Override
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
-        Log.d("HeroJongi"," Reach here ");
         if (resultCode == RESULT_OK) {
             if (requestCode == 1) {
-                if (data != null) {
-                    Bundle extras = data.getExtras();
-                    if (extras != null) {
-                        Bitmap bitmap = (Bitmap) extras.get("data");
-
-                        //camera reverse image
-                        if (bitmap != null) {
-                            Utils.BitmapOperation(this, bitmap);
-                            pickImage.setImageBitmap(bitmap);
-                        }
+                try {
+                    Log.d("HeroJongi"," Uri is "+uri);
+                    Bitmap thumbnail=null;
+                    if(uri!=null) {
+                        thumbnail = MediaStore.Images.Media.getBitmap(getContentResolver(), uri);
+                        Utils.rotateImage(this,uri,thumbnail,pickerInterface,1);
                     }
+                    else{
+                        Crashlytics.log("its null url");
+                    }
+                } catch (IOException e) {
+                    e.printStackTrace();
                 }
-            } else if (requestCode == 2) {
-                if (data.getData() != null) {
+            }
+            else if (requestCode == 2) {
+                if(data.getData()!=null) {
                     Uri selectedImage = data.getData();
-                    if (selectedImage != null) {
-                        try {
-                            byte[] byteArray = Utils.readBytes(selectedImage, this);
-                            Utils.writeBitmaptoInternalStorage(this, byteArray);
-                            Picasso.with(getApplicationContext()).load(selectedImage).resize(pickImage.getWidth(),pickImage.getHeight()).into(pickImage);
-                        } catch (IOException e) {
-                            e.printStackTrace();
-                        }
+                    Bitmap bitmap = null;
+                    try {
+                        bitmap = MediaStore.Images.Media.getBitmap(getContentResolver(),selectedImage);
+                        Utils.rotateImage(this,selectedImage,bitmap,pickerInterface,2);
+                    } catch (IOException e) {
+                        e.printStackTrace();
                     }
                 }
             }
-
-
         }
     }
 

@@ -8,6 +8,11 @@ buildscript {
     }
 }
 apply plugin: 'com.android.application'
+
+repositories {
+    maven { url 'https://maven.fabric.io/public' }
+}
+
 apply plugin: 'io.fabric'
 
 android {
@@ -19,7 +24,7 @@ android {
         targetSdkVersion 25
         versionCode 1
         multiDexEnabled true
-        versionName "0.0.14"
+        versionName "0.0.16"
         testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
     }
     buildTypes {

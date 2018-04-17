@@ -1049,6 +1049,7 @@ public class InsideApp extends AppCompatActivity implements RushUpDeliverySettin
                     insert_code_edittext.startAnimation(shake);
                 } else {
                     //reset
+                    setRatingofDriver();
                     setCameraToInitial();
                     isPickUp.saveisPickup(true);
                     bottomMenu.setVisibility(View.GONE);

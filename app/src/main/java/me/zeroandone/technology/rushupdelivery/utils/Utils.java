@@ -4,18 +4,23 @@ package me.zeroandone.technology.rushupdelivery.utils;
 import android.app.Activity;
 import android.app.Dialog;
 import android.app.NotificationManager;
+import android.content.ContentValues;
 import android.content.Context;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.Color;
+import android.graphics.Matrix;
 import android.graphics.Typeface;
 import android.graphics.drawable.ColorDrawable;
 import android.hardware.Camera;
+import android.media.ExifInterface;
 import android.net.Uri;
+import android.os.Build;
 import android.os.CountDownTimer;
 import android.os.Environment;
 import android.os.Handler;
 import android.provider.MediaStore;
+import android.support.annotation.Nullable;
 import android.text.InputType;
 import android.util.Log;
 import android.view.Gravity;
@@ -318,11 +323,25 @@ public class Utils {
             camera.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View view) {
-                    Intent intent = new Intent(android.provider.MediaStore.ACTION_IMAGE_CAPTURE);
-                    pickerDialog.OnCameraClicked(intent);
                     if(dialog.isShowing()) {
-                        dialog.dismiss();
+                        try {
+                            //File file = new File(context.getCacheDir(), String.valueOf(System.currentTimeMillis()) + ".jpg");
+                            ContentValues values = new ContentValues ();
+                            values.put (MediaStore.Images.Media.IS_PRIVATE, 1);
+                            values.put (MediaStore.Images.Media.TITLE, "RushUp Picture");
+                            values.put (MediaStore.Images.Media.DESCRIPTION, "User Picture for Rushup");
+
+                            Uri picUri = context.getContentResolver ().insert (MediaStore.Images.Media.EXTERNAL_CONTENT_URI, values);
+                            Intent intent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
+                            intent.putExtra (MediaStore.EXTRA_OUTPUT, picUri);
+                            pickerDialog.OnCameraClicked(intent,picUri);
+                            dialog.dismiss();
+                        }
+                        catch (Exception exception){
+                            Log.d("HeroJongi"," exception "+exception.getMessage());
+                        }
                     }
+
                 }
             });
             gallery.setOnClickListener(new View.OnClickListener() {
@@ -558,6 +577,79 @@ public class Utils {
         }
         return true;
     }
+
+    public static void rotateImage(Context context,Uri uri,Bitmap bitmap,PickerInterface pickerInterface,int type){
+        if(context!=null && bitmap!=null && pickerInterface!=null && uri!=null){
+            float rotation=getExifAngle(context,uri);
+            Log.d("HeroJongi"," Reach here for image "+rotation);
+            Matrix matrix = new Matrix();
+            if(rotation==90f){
+                matrix.postRotate(90);
+            }
+            else if(rotation==180f){
+                matrix.postRotate(180);
+            }
+            else if(rotation==270f){
+                matrix.postRotate(270);
+            }
+            else{
+                matrix.postRotate(0);
+            }
+            Bitmap _bitmap = Bitmap.createBitmap(bitmap , 0, 0, bitmap.getWidth(), bitmap.getHeight(), matrix, true);
+            pickerInterface.rotateimage(_bitmap,uri,type);
+        }
+    }
+
+    public static float getExifAngle(Context context, Uri uri) {
+        try {
+            ExifInterface exifInterface = getExifInterface(context, uri);
+            if(exifInterface == null) {
+                return -1f;
+            }
+
+            int orientation = exifInterface.getAttributeInt(ExifInterface.TAG_ORIENTATION, ExifInterface.ORIENTATION_UNDEFINED);
+
+            switch (orientation) {
+                case ExifInterface.ORIENTATION_ROTATE_90:
+                    return 90f;
+                case ExifInterface.ORIENTATION_ROTATE_180:
+                    return 180f;
+                case ExifInterface.ORIENTATION_ROTATE_270:
+                    return 270f;
+                case ExifInterface.ORIENTATION_NORMAL:
+                    return 0f;
+                case ExifInterface.ORIENTATION_UNDEFINED:
+                    return -1f;
+                default:
+                    return -1f;
+            }
+        }
+        catch (Exception e) {
+            e.printStackTrace();
+            return -1f;
+        }
+    }
+
+    @Nullable
+    public static ExifInterface getExifInterface(Context context, Uri uri) {
+        try {
+            String path = uri.toString();
+            if (path.startsWith("file://")) {
+                return new ExifInterface(path);
+            }
+            if (android.os.Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
+                if (path.startsWith("content://")) {
+                    InputStream inputStream = context.getContentResolver().openInputStream(uri);
+                    return new ExifInterface(inputStream);
+                }
+            }
+        }
+        catch (IOException e) {
+            e.printStackTrace();
+        }
+        return null;
+    }
+
 
 
 }
