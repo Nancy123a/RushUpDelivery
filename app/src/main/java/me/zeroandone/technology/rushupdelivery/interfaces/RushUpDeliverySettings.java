@@ -30,4 +30,6 @@ public interface RushUpDeliverySettings {
     public void onBalanceHistoryRowClicked(DeliveryRequest deliveryRequest,boolean isHistory);
     public void clearHistory();
     public void deleteFile();
+    public void afterDriverPickFinish(List<LatLng> LatLongs);
+    public void onPickupDriverFinish(List<LatLng> LatLongs);
 }

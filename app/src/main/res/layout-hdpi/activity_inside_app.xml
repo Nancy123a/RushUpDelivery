@@ -534,6 +534,15 @@
 
         </LinearLayout>
 
+        <Button
+            android:id="@+id/stimulate"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textSize="@dimen/text_size_12"
+            android:elevation="80dp"
+            android:visibility="gone"
+            android:text="stimulate"/>
+
     </RelativeLayout>
 
 </RelativeLayout>

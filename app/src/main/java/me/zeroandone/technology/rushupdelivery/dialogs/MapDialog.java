@@ -58,7 +58,7 @@ public class MapDialog extends DialogFragment implements OnMapReadyCallback,View
         super.onViewCreated(view, savedInstanceState);
          mapFragment=((SupportMapFragment) getActivity().getSupportFragmentManager().findFragmentById(R.id.map_dialog_map));
          imageView=(ImageView) view.findViewById(R.id.close);
-         drawPolyline=new DrawPolylineVolley(getActivity());
+         drawPolyline=new DrawPolylineVolley(getActivity(),null);
         if (mapFragment != null) {
             mapFragment.getMapAsync(this);
         }

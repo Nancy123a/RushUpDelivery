@@ -3,7 +3,6 @@ package me.zeroandone.technology.rushupdelivery.utils;
 
 import android.content.Context;
 import android.util.Log;
-import android.widget.Toast;
 
 import com.android.volley.DefaultRetryPolicy;
 import com.android.volley.Request;
@@ -13,10 +12,8 @@ import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.Polyline;
 import com.google.android.gms.maps.model.PolylineOptions;
-
 import java.util.ArrayList;
 import java.util.List;
-
 import me.zeroandone.technology.rushupdelivery.R;
 import me.zeroandone.technology.rushupdelivery.interfaces.RushUpDeliverySettings;
 import me.zeroandone.technology.rushupdelivery.objects.DirectionObject;
@@ -25,14 +22,13 @@ import me.zeroandone.technology.rushupdelivery.objects.PolylineObject;
 import me.zeroandone.technology.rushupdelivery.objects.RouteObject;
 import me.zeroandone.technology.rushupdelivery.objects.StepsObject;
 
-
-public class DrawPolylineVolley {
+public class DriverPickupVolley {
     GoogleMap map;
     Context context;
     Polyline polyline;
     RushUpDeliverySettings rushUpDeliverySettings;
 
-    public DrawPolylineVolley(Context context, RushUpDeliverySettings rushUpDeliverySettings) {
+    public DriverPickupVolley(Context context, RushUpDeliverySettings rushUpDeliverySettings) {
         this.context=context;
         this.rushUpDeliverySettings=rushUpDeliverySettings;
     }
@@ -51,11 +47,9 @@ public class DrawPolylineVolley {
                 try {
                     if (response.getStatus().equals("OK")) {
                         List<LatLng> mDirections = getDirectionPolylines(response.getRoutes());
-                        drawRouteOnMap(map, mDirections);
                         if(rushUpDeliverySettings!=null){
-                            rushUpDeliverySettings.onPickupDriverFinish(mDirections);
+                            rushUpDeliverySettings.afterDriverPickFinish(mDirections);
                         }
-
                     }
                 } catch (Exception e) {
                     e.printStackTrace();
@@ -93,20 +87,6 @@ public class DrawPolylineVolley {
         };
     }
 
-    private void drawRouteOnMap(GoogleMap map, List<LatLng> positions) {
-        if (polyline != null) {
-            polyline.remove();
-        }
-        PolylineOptions options = new PolylineOptions().width(6).color(context.getResources().getColor(R.color.dark_red)).geodesic(true);
-        options.addAll(positions);
-        polyline = map.addPolyline(options);
-    }
-
-    public void RemovePolyline(){
-        if(polyline!=null){
-            polyline.remove();
-        }
-    }
 
     private List<LatLng> decodePoly(String encoded) {
         List<LatLng> poly = new ArrayList<>();

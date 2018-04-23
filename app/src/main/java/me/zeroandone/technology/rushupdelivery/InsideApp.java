@@ -27,6 +27,7 @@ import com.google.android.gms.location.LocationListener;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
+import android.os.Handler;
 import android.view.animation.AnimationUtils;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
@@ -101,8 +102,10 @@ import me.zeroandone.technology.rushupdelivery.objects.date_History;
 import me.zeroandone.technology.rushupdelivery.utils.AppHelper;
 import me.zeroandone.technology.rushupdelivery.utils.Application;
 import me.zeroandone.technology.rushupdelivery.utils.DrawPolylineVolley;
+import me.zeroandone.technology.rushupdelivery.utils.DriverPickupVolley;
 import me.zeroandone.technology.rushupdelivery.utils.DriverStatusSharedPreference;
 import me.zeroandone.technology.rushupdelivery.utils.InternalStorage;
+import me.zeroandone.technology.rushupdelivery.utils.SaveI;
 import me.zeroandone.technology.rushupdelivery.utils.UserSharedPreference;
 import me.zeroandone.technology.rushupdelivery.utils.Utils;
 import me.zeroandone.technology.rushupdelivery.utils.isPickUp;
@@ -118,6 +121,7 @@ public class InsideApp extends AppCompatActivity implements RushUpDeliverySettin
     RatingBar ratingBar;
     ImageView settings_close, history_close, balance_close, user_image;
     EditText insert_code_edittext;
+    Button stimulate;
     RecyclerView historyRecycleView;
     RecyclerView balanceRecyclerView;
     RecyclerView settings_recycler_view;
@@ -140,6 +144,7 @@ public class InsideApp extends AppCompatActivity implements RushUpDeliverySettin
     Marker Driver;
     FrameLayout frameLayout;
     DrawPolylineVolley drawPolyline;
+    DriverPickupVolley driverPickupVolley;
     Marker PickupMarker, DropOffMarker;
     DeliveryRequest deliveryRequest;
     RushUpDeliverySettings rushUpDeliverySettings = this;
@@ -147,11 +152,16 @@ public class InsideApp extends AppCompatActivity implements RushUpDeliverySettin
     Button off, on;
     TextView pickupname, pickupaddress, Boy_photoname;
     CircleImageView boy_photo;
+    List<LatLng> latLngs=new ArrayList<>();
     String phoneNumber;
     HistoryAdapter historyAdapter;
     BalanceAdapter balanceAdapter;
     ProgressBar historyProgressBar,balanceProgressBar;
     UserSharedPreference userSharedPreference;
+    boolean drawPoly=false;
+    final int[] i = {0};
+    SaveI saveI;
+    boolean isautomatic=false;
 
     // Location updates intervals in sec
     private static int UPDATE_INTERVAL = 5000; // 5 sec
@@ -171,7 +181,9 @@ public class InsideApp extends AppCompatActivity implements RushUpDeliverySettin
         setContentView(R.layout.activity_inside_app);
 
         Application.getInstance().setRushUpDeliverySettings(rushUpDeliverySettings);
-        drawPolyline = new DrawPolylineVolley(this);
+        drawPolyline = new DrawPolylineVolley(this,this);
+        driverPickupVolley=new DriverPickupVolley(this,this);
+        saveI=new SaveI(this);
         deliveryRequest = new DeliveryRequest();
         isPickUp = new isPickUp(this);
         identityManager = identityManager.getDefaultIdentityManager();
@@ -181,6 +193,7 @@ public class InsideApp extends AppCompatActivity implements RushUpDeliverySettin
         settings_menu = (RelativeLayout) findViewById(R.id.settings_menu);
         history = (TextView) findViewById(R.id.history);
         balance = (TextView) findViewById(R.id.balance);
+        stimulate=(Button) findViewById(R.id.stimulate);
         history_menu = (RelativeLayout) findViewById(R.id.history_menu);
         settings_close = (ImageView) findViewById(R.id.settings_close);
         history_close = (ImageView) findViewById(R.id.history_close);
@@ -214,6 +227,8 @@ public class InsideApp extends AppCompatActivity implements RushUpDeliverySettin
         driverStatusSharedPreference = new DriverStatusSharedPreference(this);
         userSharedPreference=new UserSharedPreference(this);
 
+
+
         if (driverStatusSharedPreference.getStatus() != null && !driverStatusSharedPreference.getStatus().equalsIgnoreCase("")) {
             if (driverStatusSharedPreference.getStatus().equalsIgnoreCase("on") || driverStatusSharedPreference.getStatus().equalsIgnoreCase("occupied")) {
                 activeButton(on);
@@ -242,7 +257,7 @@ public class InsideApp extends AppCompatActivity implements RushUpDeliverySettin
 
         latLngInterpolator = new LatLngInterpolator.LinearFixed();
         valueAnimator = ValueAnimator.ofFloat(0, 1);
-        valueAnimator.setDuration(5000); // duration 5 second
+        valueAnimator.setDuration(2000); // duration 5 second
         valueAnimator.setInterpolator(new LinearInterpolator());
 
         settings.setOnClickListener(this);
@@ -255,6 +270,7 @@ public class InsideApp extends AppCompatActivity implements RushUpDeliverySettin
         on.setOnClickListener(this);
         insert_code.setOnClickListener(this);
         call.setOnClickListener(this);
+        stimulate.setOnClickListener(this);
 
         if (Utils.checkPlayServices(InsideApp.this)) {
 
@@ -377,6 +393,16 @@ public class InsideApp extends AppCompatActivity implements RushUpDeliverySettin
 
     }
 
+    @Override
+    public void afterDriverPickFinish(List<LatLng> LatLongs) {
+        APICallToDrawPolyline();
+        latLngs.addAll(LatLongs);
+    }
+
+    @Override
+    public void onPickupDriverFinish(List<LatLng> LatLongs) {
+        latLngs.addAll(LatLongs);
+    }
 
     protected synchronized void buildGoogleApiClient() {
         mGoogleApiClient = new GoogleApiClient.Builder(this)
@@ -460,6 +486,10 @@ public class InsideApp extends AppCompatActivity implements RushUpDeliverySettin
 
 
                 }
+
+                if(saveI.getII()!=0){
+                    i[0]=saveI.getII();
+                }
             }
         } catch (IOException e) {
             Log.d("HeroJongi", "error" + e.getMessage());
@@ -506,6 +536,53 @@ public class InsideApp extends AppCompatActivity implements RushUpDeliverySettin
     @Override
     public void onClick(View v) {
         switch (v.getId()) {
+            case R.id.stimulate:
+                Log.d("HeroJongi"," stimulate");
+                isautomatic=true;
+                    final Handler DriverHandler = new Handler();
+                    final Runnable DriverRunnable = new Runnable() {
+                        @Override
+                        public void run() {
+                         if(i[0]<latLngs.size()-1) {
+                             final LatLng latLngprevious = latLngs.get(i[0]);
+                             LatLng latLngcurrent = latLngs.get(i[0] + 1);
+
+                             final Location prev_location = new Location("driver_previous");
+                             Location current_location = new Location("driver_current");
+
+                             prev_location.setLongitude(latLngprevious.longitude);
+                             prev_location.setLatitude(latLngprevious.latitude);
+
+                             AppHelper.sendDriverLocation(prev_location);
+
+                             if (i[0] == 0) {
+                                 current_location = prev_location;
+                             } else {
+                                 if (latLngcurrent != null) {
+                                     current_location.setLatitude(latLngcurrent.latitude);
+                                     current_location.setLongitude(latLngcurrent.longitude);
+                                 }
+                             }
+                             if(latLngprevious!=null) {
+                                 Driver.setPosition(latLngprevious);
+                             }
+                             if (latLngcurrent != null) {
+                                 setBearing(prev_location, current_location);
+                             }
+
+                             i[0]++;
+                         }
+                         else{
+                                 DriverHandler.removeCallbacks(this);
+                                 isautomatic=false;
+
+                         }
+
+                           DriverHandler.postDelayed(this, 2000);
+                        }
+                    };
+                    DriverHandler.postDelayed(DriverRunnable, 100);
+                break;
             case R.id.call:
                 if (deliveryRequest != null) {
                     if (isPickUp.getisPickUp()) {
@@ -719,43 +796,47 @@ public class InsideApp extends AppCompatActivity implements RushUpDeliverySettin
 
     @Override
     public void onLocationChanged(Location location) {
-      if(count==0){
-          _thisLocation=location;
-          _prevLocation=_thisLocation;
-          count++;
-      }
-      else{
-          _prevLocation=_thisLocation;
-          _thisLocation=location;
-      }
-        if (location!=null) {
-            mLastLocation = location;
-            AppHelper.sendDriverLocation(location);
-            if (Driver == null) {
-                DropDriverOnMap(location.getLatitude(), location.getLongitude(), true);
+        if(!isautomatic) {
+            if (count == 0) {
+                _thisLocation = location;
+                _prevLocation = _thisLocation;
+                count++;
+            } else {
+                _prevLocation = _thisLocation;
+                _thisLocation = location;
             }
-            else {
-                valueAnimator.addUpdateListener(new ValueAnimator.AnimatorUpdateListener() {
-                    @Override public void onAnimationUpdate(ValueAnimator animation) {
-                        try {
-                            float v = animation.getAnimatedFraction();
-                            startPosition=new LatLng(_prevLocation.getLatitude(),_prevLocation.getLongitude());
-                            endPosition=new LatLng(_thisLocation.getLatitude(),_thisLocation.getLongitude());
-                            LatLng newPosition = latLngInterpolator.interpolate(v, startPosition, endPosition);
-                            Driver.setPosition(newPosition);
-                        } catch (Exception ex) {
-                            // I don't care atm..
-                        }
+            if (location != null) {
+                mLastLocation = location;
+                AppHelper.sendDriverLocation(location);
+                if (Driver == null) {
+                    DropDriverOnMap(location.getLatitude(), location.getLongitude(), true);
+                    if (drawPoly) {
+                        APICallToDrawPolylinePickUpDriver();
                     }
-                });
+                } else {
+                    valueAnimator.addUpdateListener(new ValueAnimator.AnimatorUpdateListener() {
+                        @Override
+                        public void onAnimationUpdate(ValueAnimator animation) {
+                            try {
+                                float v = animation.getAnimatedFraction();
+                                startPosition = new LatLng(_prevLocation.getLatitude(), _prevLocation.getLongitude());
+                                endPosition = new LatLng(_thisLocation.getLatitude(), _thisLocation.getLongitude());
+                                LatLng newPosition = latLngInterpolator.interpolate(v, startPosition, endPosition);
+                                Driver.setPosition(newPosition);
+                            } catch (Exception ex) {
+                                // I don't care atm..
+                            }
+                        }
+                    });
 
-                valueAnimator.start();
-              }
-            setBearing();
-     }
+                    valueAnimator.start();
+                }
+                setBearing(_prevLocation, _thisLocation);
+            }
+        }
     }
 
-    public void setBearing(){
+    public void setBearing(Location _prevLocation,Location _thisLocation){
         if(map!=null){
         float bearing = _prevLocation.bearingTo(_thisLocation) ;
         Log.d("BEARING "," bearing is "+bearing);
@@ -766,19 +847,8 @@ public class InsideApp extends AppCompatActivity implements RushUpDeliverySettin
                 Driver.setFlat(true);
                 CameraPosition cameraPosition=null;
                 if (PickupMarker != null && DropOffMarker != null) {
-//                    LatLngBounds.Builder builder = new LatLngBounds.Builder();
-//                    if(PickupMarker!=null) {
-//                        builder.include(PickupMarker.getPosition());
-//                    }
-//                    if(DropOffMarker!=null) {
-//                        builder.include(DropOffMarker.getPosition());
-//                    }
-//                    if(Driver!=null) {
-//                        builder.include(Driver.getPosition());
-//                    }
-                  //  LatLngBounds latLngBounds=builder.build();
                     cameraPosition = new CameraPosition.Builder().target(Driver.getPosition()).tilt(60).zoom(16).bearing(bearing).build();
-                    map.animateCamera(CameraUpdateFactory.newCameraPosition(cameraPosition), 5000, new GoogleMap.CancelableCallback() {
+                    map.animateCamera(CameraUpdateFactory.newCameraPosition(cameraPosition), 2000, new GoogleMap.CancelableCallback() {
                         @Override
                         public void onFinish() {}
                         @Override
@@ -787,7 +857,7 @@ public class InsideApp extends AppCompatActivity implements RushUpDeliverySettin
                }
                 else {
                     cameraPosition = new CameraPosition.Builder().target(Driver.getPosition()).tilt(0).zoom(16).bearing(bearing).build();
-                    map.animateCamera(CameraUpdateFactory.newCameraPosition(cameraPosition), 5000, new GoogleMap.CancelableCallback() {
+                    map.animateCamera(CameraUpdateFactory.newCameraPosition(cameraPosition), 2000, new GoogleMap.CancelableCallback() {
                         @Override
                         public void onFinish() {}
                         @Override
@@ -798,7 +868,7 @@ public class InsideApp extends AppCompatActivity implements RushUpDeliverySettin
         }
         else{
            CameraPosition cameraPosition = new CameraPosition.Builder().target(Driver.getPosition()).tilt(0).zoom(16).bearing(bearing).build();
-            map.animateCamera(CameraUpdateFactory.newCameraPosition(cameraPosition), 5000, new GoogleMap.CancelableCallback() {
+            map.animateCamera(CameraUpdateFactory.newCameraPosition(cameraPosition), 3000, new GoogleMap.CancelableCallback() {
                 @Override
                 public void onFinish() {}
                 @Override
@@ -821,7 +891,7 @@ public class InsideApp extends AppCompatActivity implements RushUpDeliverySettin
         if (map != null) {
             Log.d("HeroJongi", "location Pick Up pin");
             MarkerOptions markerOpts = new MarkerOptions().position(new LatLng(latitude, longitude));
-            markerOpts.icon(BitmapDescriptorFactory.fromResource(R.mipmap.bike));
+            markerOpts.icon(BitmapDescriptorFactory.fromResource(R.mipmap.cars));
             Driver = map.addMarker(markerOpts);
             ZoomtoMyCurrentLocation(latitude,longitude);
         }
@@ -871,6 +941,7 @@ public class InsideApp extends AppCompatActivity implements RushUpDeliverySettin
         if (mGoogleApiClient != null && mGoogleApiClient.isConnected()) {
             stopLocationUpdates();
         }
+        saveI.saveII(i[0]);
         SaveActiveDelivery(deliveryRequest);
     }
 
@@ -980,8 +1051,7 @@ public class InsideApp extends AppCompatActivity implements RushUpDeliverySettin
 
     @Override
     public void PlotPins(DeliveryRequest deliveryRequest) {
-        if (map!=null && deliveryRequest != null && deliveryRequest.getPickupLocation()!=null && deliveryRequest.getDropoffLocation()!=null && deliveryRequest.getDropoffLocation().getLatitude() != null && deliveryRequest.getDropoffLocation().getLongitude() != null && deliveryRequest.getPickupLocation().getLatitude()
-                != null && deliveryRequest.getPickupLocation().getLongitude() != null) {
+        if (map!=null && deliveryRequest != null && deliveryRequest.getPickupLocation()!=null && deliveryRequest.getDropoffLocation()!=null && deliveryRequest.getDropoffLocation().getLatitude() != null && deliveryRequest.getDropoffLocation().getLongitude() != null && deliveryRequest.getPickupLocation().getLatitude()!= null && deliveryRequest.getPickupLocation().getLongitude() != null) {
             map.clear();
             LatLng pickup = new LatLng(Double.parseDouble(deliveryRequest.getPickupLocation().getLatitude()), Double.parseDouble(deliveryRequest.getPickupLocation().getLongitude()));
             LatLng dropoff = new LatLng(Double.parseDouble(deliveryRequest.getDropoffLocation().getLatitude()), Double.parseDouble(deliveryRequest.getDropoffLocation().getLongitude()));
@@ -990,8 +1060,8 @@ public class InsideApp extends AppCompatActivity implements RushUpDeliverySettin
             if(mLastLocation!=null) {
                 DropDriverOnMap(mLastLocation.getLatitude(), mLastLocation.getLongitude(), false);
             }
-          //  ZoomCameraToBothPins();
-            APICallToDrawPolyline();
+          //  APICallToDrawPolyline();
+            APICallToDrawPolylinePickUpDriver();
         }
     }
 
@@ -1009,7 +1079,7 @@ public class InsideApp extends AppCompatActivity implements RushUpDeliverySettin
          bottomMenu.setVisibility(View.VISIBLE);
          bottomMenu.openLayer(true);
          bottomMenu.setSlidingEnabled(false);
-    //     isPickUp.saveisPickup(true);
+        stimulate.setVisibility(View.VISIBLE);
     }
 
     @Override
@@ -1069,7 +1139,8 @@ public class InsideApp extends AppCompatActivity implements RushUpDeliverySettin
             DeliveryRequest processHistory=new DeliveryRequest(null,null,null,null,"","",Phonenumber,"",null,null,0,false,false,"","","");
             deliveryRequest=processHistory;
             SaveActiveDelivery(deliveryRequest);
-
+            drawPoly=false;
+            saveI.saveII(0);
             RemovePickUpPin();
             RemoveDropOffPin();
             RemoveDriverPin();
@@ -1079,6 +1150,7 @@ public class InsideApp extends AppCompatActivity implements RushUpDeliverySettin
             PickupMarker=null;
             DropOffMarker=null;
             Driver=null;
+            stimulate.setVisibility(View.GONE);
         }
     }
 
@@ -1240,8 +1312,15 @@ public class InsideApp extends AppCompatActivity implements RushUpDeliverySettin
         double pickupLongitude = PickupMarker.getPosition().longitude;
         double dropOffLatitude = DropOffMarker.getPosition().latitude;
         double dropOffLongitude = DropOffMarker.getPosition().longitude;
-        return Utils.getUrl(InsideApp.this, String.valueOf(pickupLatitude), String.valueOf(pickupLongitude),
-                String.valueOf(dropOffLatitude), String.valueOf(dropOffLongitude));
+        return Utils.getUrl(InsideApp.this, String.valueOf(pickupLatitude), String.valueOf(pickupLongitude), String.valueOf(dropOffLatitude), String.valueOf(dropOffLongitude));
+    }
+
+    public String getDirectionUrlDriver() {
+        double pickupLatitude = PickupMarker.getPosition().latitude;
+        double pickupLongitude = PickupMarker.getPosition().longitude;
+        double driverLatitude = Driver.getPosition().latitude;
+        double driverLongitude = Driver.getPosition().longitude;
+        return Utils.getUrl(InsideApp.this, String.valueOf(driverLatitude), String.valueOf(driverLongitude), String.valueOf(pickupLatitude), String.valueOf(pickupLongitude));
     }
 
 
@@ -1251,6 +1330,18 @@ public class InsideApp extends AppCompatActivity implements RushUpDeliverySettin
             drawPolyline.getDirectionFromDirectionApiServer(directionAPI, map);
         }
     }
+
+    public void APICallToDrawPolylinePickUpDriver(){
+        if(map!=null && PickupMarker!=null && Driver!=null){
+            String pickUpDriver=getDirectionUrlDriver();
+            driverPickupVolley.getDirectionFromDirectionApiServer(pickUpDriver,map);
+        }
+        else{
+            drawPoly=true;
+        }
+    }
+
+
 
     public void DropPickUpPin(LatLng location){
         if(location!=null && location.latitude!=0 && location.longitude!=0 && map!=null) {
