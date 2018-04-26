@@ -32,4 +32,5 @@ public interface RushUpDeliverySettings {
     public void deleteFile();
     public void afterDriverPickFinish(List<LatLng> LatLongs);
     public void onPickupDriverFinish(List<LatLng> LatLongs);
+    public void setUserImage(File file,boolean isPickUp,DeliveryRequest deliveryRequest);
 }

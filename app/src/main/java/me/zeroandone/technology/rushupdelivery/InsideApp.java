@@ -404,6 +404,45 @@ public class InsideApp extends AppCompatActivity implements RushUpDeliverySettin
         latLngs.addAll(LatLongs);
     }
 
+    @Override
+    public void setUserImage(File file, boolean isPickUp,DeliveryRequest deliveryRequest) {
+      if(isPickUp){
+          if (deliveryRequest.getPickupName() != null && !deliveryRequest.getPickupName().equalsIgnoreCase("")) {
+              pickupname.setText(deliveryRequest.getPickupName());
+              if(file!=null && file.length()>0){
+                  boy_photo.setVisibility(View.VISIBLE);
+                  Boy_photoname.setVisibility(View.GONE);
+                  Bitmap myBitmap = BitmapFactory.decodeFile(file.getAbsolutePath());
+                  boy_photo.setImageBitmap(myBitmap);
+              }
+              else {
+                  boy_photo.setVisibility(View.GONE);
+                  Boy_photoname.setVisibility(View.VISIBLE);
+                  char firstletter = Character.toUpperCase(deliveryRequest.getPickupName().charAt(0));
+                  Boy_photoname.setText(String.valueOf(firstletter));
+              }
+          }
+
+      }
+      else{
+          if (deliveryRequest.getDropoffName() != null && !deliveryRequest.getDropoffName().equalsIgnoreCase("")) {
+              pickupname.setText(deliveryRequest.getPickupName());
+              if(file!=null && file.length()>0){
+                  boy_photo.setVisibility(View.VISIBLE);
+                  Boy_photoname.setVisibility(View.GONE);
+                  Bitmap myBitmap = BitmapFactory.decodeFile(file.getAbsolutePath());
+                  boy_photo.setImageBitmap(myBitmap);
+              }
+              else {
+                  boy_photo.setVisibility(View.GONE);
+                  Boy_photoname.setVisibility(View.VISIBLE);
+                  char firstletter = Character.toUpperCase(deliveryRequest.getPickupName().charAt(0));
+                  Boy_photoname.setText(String.valueOf(firstletter));
+              }
+          }
+      }
+    }
+
     protected synchronized void buildGoogleApiClient() {
         mGoogleApiClient = new GoogleApiClient.Builder(this)
                 .addConnectionCallbacks(this)
@@ -1175,30 +1214,22 @@ public class InsideApp extends AppCompatActivity implements RushUpDeliverySettin
     @Override
     public void FillUpBottomMenu(DeliveryRequest deliveryRequest,boolean isPickUp){
         if(deliveryRequest!=null) {
-            if(isPickUp) {
-                if (deliveryRequest.getPickupName() != null && !deliveryRequest.getPickupName().equalsIgnoreCase("")) {
-                    pickupname.setText(deliveryRequest.getPickupName());
-                    boy_photo.setVisibility(View.GONE);
-                    Boy_photoname.setVisibility(View.VISIBLE);
-                    char firstletter = Character.toUpperCase(deliveryRequest.getPickupName().charAt(0));
-                    Boy_photoname.setText(String.valueOf(firstletter));
-                }
-                if (deliveryRequest.getPickupLocation() != null && deliveryRequest.getPickupLocation().getName() != null && !deliveryRequest.getPickupLocation().getName().equalsIgnoreCase("")) {
-                    pickupaddress.setText(deliveryRequest.getPickupLocation().getName());
-                }
-            }
-            else{
-                if (deliveryRequest.getDropoffName()!= null && !deliveryRequest.getDropoffName().equalsIgnoreCase("")) {
-                    pickupname.setText(deliveryRequest.getDropoffName());
-                    boy_photo.setVisibility(View.GONE);
-                    Boy_photoname.setVisibility(View.VISIBLE);
-                    char firstletter = Character.toUpperCase(deliveryRequest.getDropoffName().charAt(0));
-                    Boy_photoname.setText(String.valueOf(firstletter));
-                }
-                if (deliveryRequest.getDropoffLocation() != null && deliveryRequest.getDropoffLocation().getName() != null && !deliveryRequest.getDropoffLocation().getName().equalsIgnoreCase("")) {
-                    pickupaddress.setText(deliveryRequest.getDropoffLocation().getName());
-                }
-            }
+          if(isPickUp){
+              if (deliveryRequest.getPickupLocation() != null && deliveryRequest.getPickupLocation().getName() != null && !deliveryRequest.getPickupLocation().getName().equalsIgnoreCase("")) {
+                  pickupaddress.setText(deliveryRequest.getPickupLocation().getName());
+              }
+              if(deliveryRequest.getFrom()!=null && !deliveryRequest.getFrom().equalsIgnoreCase("")){
+                  AppHelper.getPickUpOrDropOffImage(this,deliveryRequest.getFrom(),true,rushUpDeliverySettings,deliveryRequest);
+              }
+          }
+          else{
+              if (deliveryRequest.getDropoffLocation() != null && deliveryRequest.getDropoffLocation().getName() != null && !deliveryRequest.getDropoffLocation().getName().equalsIgnoreCase("")) {
+                  pickupaddress.setText(deliveryRequest.getDropoffLocation().getName());
+              }
+              if(deliveryRequest.getTo()!=null && !deliveryRequest.getTo().equalsIgnoreCase("")){
+                  AppHelper.getPickUpOrDropOffImage(this,deliveryRequest.getTo(),false,rushUpDeliverySettings,deliveryRequest);
+              }
+          }
         }
     }
 

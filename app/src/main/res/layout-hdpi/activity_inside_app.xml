@@ -352,6 +352,7 @@
             android:layout_width="match_parent"
             android:layout_height="220dp"
             android:elevation="2dp"
+            slidingLayer:offsetDistance="220dp"
             android:layout_alignParentBottom="true"
             slidingLayer:changeStateOnTap="false"
             slidingLayer:stickTo="bottom">
@@ -406,7 +407,7 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_toLeftOf="@+id/description"
-                    android:layout_marginRight="@dimen/padding_30"
+                    android:layout_marginRight="@dimen/padding_10"
                     android:layout_below="@+id/package_pickup">
 
                     <de.hdodenhof.circleimageview.CircleImageView
@@ -423,6 +424,7 @@
                         android:background="@drawable/greycircle"
                         android:gravity="center"
                         android:visibility="gone"
+                        android:layout_marginLeft="@dimen/padding_20"
                         android:textAlignment="center"
                         android:textColor="@color/white"
                         android:textSize="@dimen/text_size_20"/>

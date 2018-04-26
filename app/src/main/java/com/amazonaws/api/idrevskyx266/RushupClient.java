@@ -29,6 +29,8 @@ import me.zeroandone.technology.rushupdelivery.objects.DriverBalance;
 import me.zeroandone.technology.rushupdelivery.objects.DriverCode;
 import me.zeroandone.technology.rushupdelivery.objects.DriverDeliveryHistory;
 import me.zeroandone.technology.rushupdelivery.objects.DriverStatusRequest;
+import me.zeroandone.technology.rushupdelivery.objects.RushUpUser;
+import me.zeroandone.technology.rushupdelivery.objects.UserRushup;
 import me.zeroandone.technology.rushupdelivery.objects.date_History;
 
 @com.amazonaws.mobileconnectors.apigateway.annotation.Service(endpoint = "https://p9q3m0eqg1.execute-api.eu-west-1.amazonaws.com/prod/")
@@ -40,6 +42,9 @@ public interface RushupClient {
      * @return ApiResponse
      */
     com.amazonaws.mobileconnectors.apigateway.ApiResponse execute(com.amazonaws.mobileconnectors.apigateway.ApiRequest request);
+
+    @com.amazonaws.mobileconnectors.apigateway.annotation.Operation(path = "/rushie/getIdentityId", method = "POST")
+    RushUpUser getIdentityId(UserRushup userRushup);
 
     /**
      *

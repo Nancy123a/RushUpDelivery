@@ -28,10 +28,12 @@ import me.zeroandone.technology.rushupdelivery.objects.DeliveryStatus;
 import me.zeroandone.technology.rushupdelivery.objects.DriverCode;
 import me.zeroandone.technology.rushupdelivery.objects.DriverStatus;
 import me.zeroandone.technology.rushupdelivery.objects.DriverStatusRequest;
+import me.zeroandone.technology.rushupdelivery.objects.RushUpUser;
+import me.zeroandone.technology.rushupdelivery.objects.UserRushup;
 
 
 public class AppHelper{
-    public static final String S3_PREFIX_PRIVATE = "private/";
+    public static final String S3_PREFIX_PROTECTED= "protected/";
 
     private static final String LOG_TAG = AppHelper.class.getSimpleName();
 
@@ -259,7 +261,7 @@ public class AppHelper{
 
     public static void uploadDownloadPicture(final boolean upload, final Context context, final File file, IdentityManager identityManager, final RushUpDeliverySettings rushUpSettings){
         final String identityId = identityManager.getCachedUserID();
-        final String prefix =  S3_PREFIX_PRIVATE + identityId + "/";
+        final String prefix =  S3_PREFIX_PROTECTED + identityId + "/";
         Log.d("HeroJongi"," perfix "+prefix);
         new UserFileManager.Builder()
                 .withContext(context)
@@ -335,5 +337,58 @@ public class AppHelper{
         }
     }
 
+    public static void getPickUpOrDropOffImage(final Context context, final String phoneNumber, final boolean isPickUp, final  RushUpDeliverySettings rushUpDeliverySettings, final DeliveryRequest deliveryRequest){
+        new Thread(new Runnable() {
+            public void run() {
+                try {
+                    UserRushup userRushup=new UserRushup(phoneNumber);
+                    RushUpUser rushUpUser=getRushUpClient().getIdentityId(userRushup);
+                    String identity_id=rushUpUser.getIdentity_id();
+                    Log.d("Delivery "," Identity Id is "+identity_id);
+                    DownloadUserPicture(context,identity_id,isPickUp,rushUpDeliverySettings,deliveryRequest);
+                }
+                catch (Exception ex) {
+                    Log.e("HeroJongi","Fail status update",ex);
+                }
+            }
+        }).start();
+    }
+
+    private static void DownloadUserPicture(Context context, String identity_id, final boolean isPickUp, final RushUpDeliverySettings rushUpDeliverySettings, final DeliveryRequest deliveryRequest) {
+        if(rushUpDeliverySettings!=null && identity_id!=null && context!=null){
+            final String prefix =  S3_PREFIX_PROTECTED+ identity_id+ "/";
+            new UserFileManager.Builder()
+                    .withContext(context)
+                    .withIdentityManager(IdentityManager.getDefaultIdentityManager())
+                    .withS3ObjectDirPrefix(prefix)
+                    .withLocalBasePath(context.getFilesDir().getAbsolutePath())
+                    .withAWSConfiguration(new AWSConfiguration(context))
+                    .build(new UserFileManager.BuilderResultHandler() {
+                        @Override
+                        public void onComplete( UserFileManager userFileManager) {
+                            userFileManager.getContent("userPicture",0,
+                                    ContentDownloadPolicy.DOWNLOAD_IF_NEWER_EXIST, true, new ContentProgressListener() {
+                                        @Override
+                                        public void onSuccess(ContentItem contentItem) {
+                                            if(contentItem!=null && contentItem.getFile()!=null){
+                                                Log.d("Delivery "," Download picture success ");
+                                                rushUpDeliverySettings.setUserImage(contentItem.getFile(),isPickUp,deliveryRequest);
+                                            }
+                                        }
+                                        @Override
+                                        public void onProgressUpdate(String filePath, boolean isWaiting, long bytesCurrent, long bytesTotal) {
+
+                                        }
+
+                                        @Override
+                                        public void onError(String filePath, Exception ex) {
+                                            Log.d("Delivery "," Download picture fail ");
+                                            rushUpDeliverySettings.setUserImage(null,isPickUp,deliveryRequest);
+                                        }
+                                    });
+                        }
+                    });
+        }
+    }
 
 }
