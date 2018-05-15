@@ -262,7 +262,7 @@ public class AppHelper{
     public static void uploadDownloadPicture(final boolean upload, final Context context, final File file, IdentityManager identityManager, final RushUpDeliverySettings rushUpSettings){
         final String identityId = identityManager.getCachedUserID();
         final String prefix =  S3_PREFIX_PROTECTED + identityId + "/";
-        Log.d("HeroJongi"," perfix "+prefix);
+        Log.d("SOLS"," perfix "+prefix);
         new UserFileManager.Builder()
                 .withContext(context)
                 .withIdentityManager(IdentityManager.getDefaultIdentityManager())
@@ -273,12 +273,12 @@ public class AppHelper{
                     @Override
                     public void onComplete( UserFileManager userFileManager) {
                         if(upload){
-                            Log.d("HeroJongi","on Upload");
+                            Log.d("SOLS","on Upload");
                             uploadPicture(userFileManager,file,rushUpSettings);
                         }
                         else{
                             // download
-                            Log.d("HeroJongi","on Download");
+                            Log.d("SOLS","on Download");
                             downloadPicture(userFileManager,rushUpSettings);
                         }
                     }
@@ -288,11 +288,11 @@ public class AppHelper{
 
     public static void uploadPicture(final UserFileManager userFileManager, File file, final RushUpDeliverySettings rushUpSettings){
         if(userFileManager!=null && file!=null){
-            Log.d("HeroJongi","upload "+userFileManager+"  "+file+"  "+rushUpSettings+"  "+file.getName());
+            Log.d("SOLS","upload "+userFileManager+"  "+file+"  "+rushUpSettings+"  "+file.getName());
             userFileManager.uploadContent(file, file.getName(), new ContentProgressListener() {
                 @Override
                 public void onSuccess(ContentItem contentItem) {
-                    Log.d("HeroJongi"," upload on success");
+                    Log.d("SOLS"," upload on success");
                     if(rushUpSettings!=null){
                         rushUpSettings.deleteFile();
                     }
@@ -301,12 +301,12 @@ public class AppHelper{
 
                 @Override
                 public void onProgressUpdate(String filePath, boolean isWaiting, long bytesCurrent, long bytesTotal) {
-                    Log.d("HeroJongi"," upload on progress");
+                    Log.d("SOLS"," upload on progress");
                 }
 
                 @Override
                 public void onError(String filePath, Exception ex) {
-                    Log.d("HeroJongi","Picture upload on error");
+                    Log.d("SOLS","Picture upload on error");
                 }
             });
         }
@@ -318,7 +318,7 @@ public class AppHelper{
                     ContentDownloadPolicy.DOWNLOAD_IF_NEWER_EXIST, true, new ContentProgressListener() {
                         @Override
                         public void onSuccess(ContentItem contentItem) {
-                            Log.d("HeroJongi","on Download success ");
+                            Log.d("SOLS","on Download success ");
                             if(contentItem!=null && contentItem.getFile()!=null){
                                 rushUpSettings.displayPicture(contentItem.getFile());
                             }
@@ -331,7 +331,7 @@ public class AppHelper{
 
                         @Override
                         public void onError(String filePath, Exception ex) {
-                            Log.d("HeroJongi","download on error "+ex.getMessage());
+                            Log.d("NANCY","download on error "+ex.getMessage());
                         }
                     });
         }

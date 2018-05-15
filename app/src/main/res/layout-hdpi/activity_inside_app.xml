@@ -352,7 +352,6 @@
             android:layout_width="match_parent"
             android:layout_height="220dp"
             android:elevation="2dp"
-            slidingLayer:offsetDistance="220dp"
             android:layout_alignParentBottom="true"
             slidingLayer:changeStateOnTap="false"
             slidingLayer:stickTo="bottom">

@@ -426,7 +426,7 @@ public class InsideApp extends AppCompatActivity implements RushUpDeliverySettin
       }
       else{
           if (deliveryRequest.getDropoffName() != null && !deliveryRequest.getDropoffName().equalsIgnoreCase("")) {
-              pickupname.setText(deliveryRequest.getPickupName());
+              pickupname.setText(deliveryRequest.getDropoffName());
               if(file!=null && file.length()>0){
                   boy_photo.setVisibility(View.VISIBLE);
                   Boy_photoname.setVisibility(View.GONE);
@@ -467,13 +467,13 @@ public class InsideApp extends AppCompatActivity implements RushUpDeliverySettin
             SharedPreferences settingss = getSharedPreferences("showpopup", 0);
             SharedPreferences.Editor editor = settingss.edit();
 
-            if(userSharedPreference.getUserName()==null || userSharedPreference.getUserName().equalsIgnoreCase("") || !userSharedPreference.getUserName().equalsIgnoreCase(Username)){
+           if(userSharedPreference.getUserName()==null || userSharedPreference.getUserName().equalsIgnoreCase("") || !userSharedPreference.getUserName().equalsIgnoreCase(Username)){
                 if(identityManager.isUserSignedIn()){
                     AppHelper.SaveDriverFCMTokenToCloud(InsideApp.this,Username,rushUpDeliverySettings);
-                    Log.d("HeroJongi"," User is posting token");
+                    Log.d("SOLS"," User is posting token");
                     userSharedPreference.saveUserName(Username);
                     File file = InternalStorage.returnFile(InsideApp.this, "driverPicture");
-                    Log.d("HeroJongi", "first time upload " + file+" "+file.length());
+                    Log.d("SOLS", "first time upload " + file+" "+file.length());
                     if (file.length() != 0) {
                         AppHelper.uploadDownloadPicture(true, InsideApp.this, file, identityManager, rushUpDeliverySettings);
                     } else {
@@ -603,7 +603,9 @@ public class InsideApp extends AppCompatActivity implements RushUpDeliverySettin
                                  }
                              }
                              if(latLngprevious!=null) {
-                                 Driver.setPosition(latLngprevious);
+                                 if(Driver!=null) {
+                                     Driver.setPosition(latLngprevious);
+                                 }
                              }
                              if (latLngcurrent != null) {
                                  setBearing(prev_location, current_location);
@@ -617,7 +619,7 @@ public class InsideApp extends AppCompatActivity implements RushUpDeliverySettin
 
                          }
 
-                           DriverHandler.postDelayed(this, 2000);
+                           DriverHandler.postDelayed(this, 3500); // 8 seconds
                         }
                     };
                     DriverHandler.postDelayed(DriverRunnable, 100);
@@ -885,8 +887,8 @@ public class InsideApp extends AppCompatActivity implements RushUpDeliverySettin
                 Driver.setAnchor(0.5f, 0.5f);
                 Driver.setFlat(true);
                 CameraPosition cameraPosition=null;
-                if (PickupMarker != null && DropOffMarker != null) {
-                    cameraPosition = new CameraPosition.Builder().target(Driver.getPosition()).tilt(60).zoom(16).bearing(bearing).build();
+                if (PickupMarker != null && DropOffMarker != null && Driver.getPosition()!=null) {
+                    cameraPosition = new CameraPosition.Builder().target(Driver.getPosition()).tilt(60).zoom(15).bearing(bearing).build();
                     map.animateCamera(CameraUpdateFactory.newCameraPosition(cameraPosition), 2000, new GoogleMap.CancelableCallback() {
                         @Override
                         public void onFinish() {}
@@ -895,24 +897,34 @@ public class InsideApp extends AppCompatActivity implements RushUpDeliverySettin
                     });
                }
                 else {
-                    cameraPosition = new CameraPosition.Builder().target(Driver.getPosition()).tilt(0).zoom(16).bearing(bearing).build();
-                    map.animateCamera(CameraUpdateFactory.newCameraPosition(cameraPosition), 2000, new GoogleMap.CancelableCallback() {
-                        @Override
-                        public void onFinish() {}
-                        @Override
-                        public void onCancel() {}
-                    });
+                    if (Driver.getPosition() != null) {
+                        cameraPosition = new CameraPosition.Builder().target(Driver.getPosition()).tilt(0).zoom(15).bearing(bearing).build();
+                        map.animateCamera(CameraUpdateFactory.newCameraPosition(cameraPosition), 2000, new GoogleMap.CancelableCallback() {
+                            @Override
+                            public void onFinish() {
+                            }
+
+                            @Override
+                            public void onCancel() {
+                            }
+                        });
+                    }
                 }
             }
         }
         else{
-           CameraPosition cameraPosition = new CameraPosition.Builder().target(Driver.getPosition()).tilt(0).zoom(16).bearing(bearing).build();
-            map.animateCamera(CameraUpdateFactory.newCameraPosition(cameraPosition), 3000, new GoogleMap.CancelableCallback() {
-                @Override
-                public void onFinish() {}
-                @Override
-                public void onCancel() {}
-            });
+            if(Driver !=null && Driver.getPosition()!=null) {
+                CameraPosition cameraPosition = new CameraPosition.Builder().target(Driver.getPosition()).tilt(0).zoom(15).bearing(bearing).build();
+                map.animateCamera(CameraUpdateFactory.newCameraPosition(cameraPosition), 3000, new GoogleMap.CancelableCallback() {
+                    @Override
+                    public void onFinish() {
+                    }
+
+                    @Override
+                    public void onCancel() {
+                    }
+                });
+            }
         }
         }
 
