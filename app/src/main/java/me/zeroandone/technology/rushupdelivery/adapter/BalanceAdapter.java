@@ -38,7 +38,7 @@ public class BalanceAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder
     @Override
     public void onBindViewHolder(RecyclerView.ViewHolder holder, final int position) {
       DeliveryRequest deliveryRequest=result.get(position);
-      String pickup_location=deliveryRequest.getPickupLocation().getName()+" \n delivered";
+      String pickup_location=deliveryRequest.getPickupLocation().getName()+" \n "+context.getResources().getString(R.string.delivered);
         ((ViewHolder)holder).pickup_point.setText(pickup_location);
         ((ViewHolder) holder).go.setOnClickListener(new View.OnClickListener() {
             @Override

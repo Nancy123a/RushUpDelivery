@@ -90,4 +90,5 @@
     <string name="username_already_exist">اسم المستخدم موجود من قبل.</string>
     <string name="email_already_exist">البريد الالكتروني موجود سابقا.</string>
     <string name="login_account">لديك بالفعل حساب! سجل دخولك.</string>
+    <string name="delivered">تم التوصيل</string>
 </resources>
